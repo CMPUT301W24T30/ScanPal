@@ -1,37 +1,56 @@
 package com.example.scanpal;
 
 public abstract class User {
-    private String userName;
-    protected boolean adminFlag;//so child classes can access
-    private int permissions; // 'permissions' level, either 0, 1 or 2?
+    private final String username;
+    protected boolean administrator; //so child classes can access
+
+    private String firstName;
+    private String lastName;
+
+    private String photo; // Profile Photo of the User
+
 
     //add field for user profile data here
 
-    User(String username) {
-        this.userName = username;
+    public User(String username, String firstName, String lastName) {
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public boolean isAdminFlag() {
-        return adminFlag;
+    public boolean isAdministrator() {
+        return administrator;
     }
 
-    public int getPermissions() {
-        return permissions;
+    public void setAdministrator(boolean administrator) {
+        this.administrator = administrator;
     }
 
-    public void setUserName(String newName) {
-        this.userName = newName;
-
-        // do stuff to update name in the database
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setPermissions(int newPermissions) {
-        this.permissions = newPermissions;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-        // do stuff to update perms in the database
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 }

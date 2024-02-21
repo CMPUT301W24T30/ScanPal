@@ -1,13 +1,13 @@
 package com.example.scanpal;
 
+/**
+ * Initializes a user that has administrative permissions.
+ */
 public class Administrator extends User {
 
-    Administrator(String username) {
-        super(username);
-        super.adminFlag = true; //set this account to admin
-
-        // stuff to add new admin to the database
+    Administrator(String username, String firstName, String lastName ) {
+        super(username, firstName, lastName);
+        this.administrator = true; //set this account to admin
     }
-
 
 }
