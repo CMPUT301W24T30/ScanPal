@@ -144,7 +144,7 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="95dp"
         android:layout_marginBottom="24dp"
-        android:text="Users"
+        android:text="Attendees"
         android:textColor="@color/white"
         android:textSize="30dp"
         app:layout_constraintBottom_toTopOf="@+id/searchView"
