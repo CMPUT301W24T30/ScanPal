@@ -1,6 +1,6 @@
 package com.example.scanpal;
 
-public abstract class User {
+public class User {
     private final String username;
     protected boolean administrator; //so child classes can access
 
