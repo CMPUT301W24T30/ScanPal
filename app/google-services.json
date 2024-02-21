@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "285586286768",
+    "project_id": "scanpal-15383",
+    "storage_bucket": "scanpal-15383.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:285586286768:android:c39a9393b0075b60f2b375",
+        "android_client_info": {
+          "package_name": "com.examples.scanpal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAvpgUQtjVs6NE9Zakqf8syON76E9K69s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
