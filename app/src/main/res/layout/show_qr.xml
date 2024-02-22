@@ -144,36 +144,39 @@
         android:id="@+id/button_share_code"
         android:layout_height="wrap_content"
         android:layout_marginStart="144dp"
-        android:layout_marginTop="47dp"
         android:layout_marginEnd="145dp"
-        android:layout_marginBottom="33dp"
         android:backgroundTint="@color/black"
         android:text="Share Code"
-        app:layout_constraintBottom_toTopOf="@+id/event_name_qrcode"
+        app:layout_constraintBottom_toTopOf="@+id/app_bar"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/qr_code" />
+        app:layout_constraintTop_toBottomOf="@+id/qr_code"
+        app:layout_constraintVertical_bias="0.343" />
 
     <ImageView
         android:id="@+id/qr_code"
         android:layout_width="250dp"
         android:layout_height="250dp"
-        tools:layout_editor_absoluteX="80dp"
-        tools:layout_editor_absoluteY="173dp" />
+        app:layout_constraintBottom_toTopOf="@+id/app_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.328"
+        tools:srcCompat="@drawable/ic_launcher_background" />
 
     <TextView
         android:id="@+id/event_name_qrcode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="125dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="125dp"
-        android:layout_marginBottom="224dp"
+        android:layout_marginBottom="24dp"
         android:text="Event Name"
         android:textColor="@color/white"
         android:textSize="30dp"
         app:layout_constraintBottom_toTopOf="@+id/app_bar"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_share_code" />
 
