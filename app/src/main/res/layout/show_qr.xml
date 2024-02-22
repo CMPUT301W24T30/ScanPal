@@ -40,21 +40,7 @@
         app:srcCompat="@android:drawable/ic_camera"
         app:tint="@color/white" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/button_save_event"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#16181F"
-        android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.954"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023"
-        app:shapeAppearance="rectangle"
-        app:srcCompat="@android:drawable/ic_menu_save"
-        app:tint="@color/white" />
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_go_back"
@@ -140,116 +126,57 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="95dp"
+        android:layout_marginStart="56dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="95dp"
         android:layout_marginBottom="24dp"
-        android:text="Event Details"
+        android:text="Scan Event"
         android:textColor="@color/white"
         android:textSize="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button_save_event"
-        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.075"
         app:layout_constraintStart_toEndOf="@+id/button_go_back"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.003" />
+
+    <Button
+        android:id="@+id/button_share_code"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="144dp"
+        android:layout_marginTop="47dp"
+        android:layout_marginEnd="145dp"
+        android:layout_marginBottom="33dp"
+        android:backgroundTint="@color/black"
+        android:text="Share Code"
+        app:layout_constraintBottom_toTopOf="@+id/event_name_qrcode"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/qr_code" />
 
     <ImageView
-        android:id="@+id/eventImage"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:layout_marginStart="27dp"
-        android:layout_marginTop="71dp"
-        android:layout_marginEnd="234dp"
-        android:layout_marginBottom="519dp"
+        android:id="@+id/qr_code"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        tools:layout_editor_absoluteX="80dp"
+        tools:layout_editor_absoluteY="173dp" />
+
+    <TextView
+        android:id="@+id/event_name_qrcode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="125dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="125dp"
+        android:layout_marginBottom="224dp"
+        android:text="Event Name"
+        android:textColor="@color/white"
+        android:textSize="30dp"
         app:layout_constraintBottom_toTopOf="@+id/app_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_go_back" />
+        app:layout_constraintTop_toBottomOf="@+id/button_share_code" />
 
-    <Button
-        android:id="@+id/event_edit_image"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="56dp"
-        android:layout_marginTop="150dp"
-        android:layout_marginEnd="72dp"
-        android:backgroundTint="@color/black"
-        android:text="Edit Image"
-        app:layout_constraintBottom_toTopOf="@+id/max_attendee_edit"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/eventImage"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/max_attendee_edit"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="42dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="52dp"
-        android:layout_marginBottom="555dp"
-        android:inputType="number"
-        app:layout_constraintBottom_toTopOf="@+id/app_bar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/eventImage"
-        app:layout_constraintTop_toBottomOf="@+id/event_edit_image" />
-
-    <EditText
-        android:id="@+id/event_name_edit"
-        android:layout_width="300dp"
-        android:inputType="text"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="59dp"
-        android:layout_marginTop="67dp"
-        android:layout_marginEnd="52dp"
-        android:layout_marginBottom="417dp"
-        app:layout_constraintBottom_toTopOf="@+id/app_bar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/eventImage" />
-
-    <EditText
-        android:id="@+id/event_location_edit"
-        android:layout_width="300dp"
-        android:inputType="text"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="59dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="52dp"
-        android:layout_marginBottom="324dp"
-        app:layout_constraintBottom_toTopOf="@+id/app_bar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_name_edit" />
-
-    <EditText
-        android:layout_width="300dp"
-        android:inputType="text"
-        android:layout_height="125dp"
-        android:layout_marginStart="59dp"
-        android:layout_marginTop="52dp"
-        android:layout_marginEnd="52dp"
-        android:layout_marginBottom="147dp"
-        app:layout_constraintBottom_toTopOf="@+id/app_bar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_location_edit" />
-
-    <Button
-        android:id="@+id/delete_edit_event"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#FF5722"
-        android:text="Delete Event"
-        android:textSize="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.848" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
