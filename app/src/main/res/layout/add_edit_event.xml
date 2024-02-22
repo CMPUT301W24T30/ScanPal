@@ -237,7 +237,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="#FF5722"
         android:text="Delete Event"
-        android:textSize="25dp"
+        android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
