@@ -5,9 +5,8 @@ package com.example.scanpal;
  */
 public class Administrator extends User {
 
-    Administrator(String username, String firstName, String lastName ) {
+    public Administrator(String username, String firstName, String lastName ) {
         super(username, firstName, lastName);
-        this.administrator = true; //set this account to admin
+        this.setAdministrator(true); //set this account to admin
     }
-
 }

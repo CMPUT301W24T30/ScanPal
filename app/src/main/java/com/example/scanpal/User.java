@@ -2,7 +2,7 @@ package com.example.scanpal;
 
 public class User {
     private final String username;
-    protected boolean administrator; //so child classes can access
+    private boolean administrator = false;
 
     private String firstName;
     private String lastName;

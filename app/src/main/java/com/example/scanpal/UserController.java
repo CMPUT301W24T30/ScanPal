@@ -25,7 +25,7 @@ public class UserController {
         userMap.put("lastName", user.getLastName());
 
         // Save to database
-        database.collection("users").document(user.getUsername()).set(userMap)
+        database.collection("Users").document(user.getUsername()).set(userMap)
                 .addOnSuccessListener(aVoid -> System.out.println("User added successfully!"))
                 .addOnFailureListener(e -> System.out.println("Error adding user: " + e.getMessage()));
     }
