@@ -36,8 +36,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        app:shapeAppearance="circle"
-        app:srcCompat="@android:drawable/ic_camera"
+        app:srcCompat="@drawable/camera_icon"
         app:tint="@color/white" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -52,7 +51,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.023"
-        app:shapeAppearance="circle"
         app:srcCompat="@android:drawable/ic_input_delete"
         app:tint="@color/white" />
 
@@ -68,8 +66,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.023"
-        app:shapeAppearance="circle"
-        app:srcCompat="@android:drawable/ic_menu_back"
+        app:srcCompat="@drawable/arrow_back"
         app:tint="@color/white" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -84,7 +81,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.983"
-        app:shapeAppearance="circle"
         app:srcCompat="@android:drawable/ic_dialog_email"
         app:tint="#7f7f7f" />
 
@@ -100,7 +96,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.983"
-        app:shapeAppearance="circle"
         app:srcCompat="@android:drawable/ic_input_get"
         app:tint="#7f7f7f" />
 
@@ -116,8 +111,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.983"
-        app:shapeAppearance="circle"
-        app:srcCompat="@android:drawable/ic_menu"
+        app:srcCompat="@drawable/menu_fill"
         app:tint="#7f7f7f"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -132,8 +126,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.983"
-        app:shapeAppearance="circle"
-        app:srcCompat="@android:drawable/ic_menu_home"
+        app:srcCompat="@drawable/home_icon"
         app:tint="#7f7f7f" />
 
     <TextView
