@@ -1,5 +1,7 @@
 package com.example.scanpal;
 
+import android.graphics.Bitmap;
+
 /**
  * Base class for events, contains all event data.
  */
@@ -12,6 +14,7 @@ public class Event {
     private Attendee[] participants;
     private String signUpAddress;
     private String infoAddress;
+    private Bitmap qr;
 
     public Event(User organizer, String name, String description) {
         this.organizer = organizer;
@@ -73,5 +76,13 @@ public class Event {
 
     public void setInfoAddress(String infoAddress) {
         this.infoAddress = infoAddress;
+    }
+
+    public Bitmap getQr() {
+        return qr;
+    }
+
+    public void setQr(Bitmap qr) {
+        this.qr = qr;
     }
 }
