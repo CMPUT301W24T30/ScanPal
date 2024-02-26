@@ -7,41 +7,47 @@
     android:background="#16181F">
 
 
-    <TextView
+    <EditText
         android:id="@+id/addUsername"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="328dp"
+        android:layout_height="43dp"
         android:layout_marginTop="56dp"
         android:width="327dp"
         android:height="60dp"
-        android:text="Enter Username"
+        android:hint="@string/addUsername"
+        android:inputType="text"
         android:textColor="@color/white"
+        android:textColorHint="@color/grey"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
-    <TextView
+    <EditText
         android:id="@+id/addFirstName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:width="327dp"
         android:height="60dp"
-        android:text="Enter First Name"
+        android:hint="@string/addFirstName"
+        android:inputType="text"
         android:textColor="@color/white"
+        android:textColorHint="@color/grey"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addUsername" />
 
-    <TextView
+    <EditText
         android:id="@+id/addLastName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
         android:width="327dp"
         android:height="60dp"
-        android:text="Enter Last Name"
+        android:hint="@string/addLastName"
+        android:inputType="text"
         android:textColor="@color/white"
+        android:textColorHint="@color/grey"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addFirstName" />
@@ -53,7 +59,7 @@
         android:width="327dp"
         android:height="60dp"
         android:backgroundTint="#3580FF"
-        android:text="Continue"
+        android:text="@string/continueButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -65,11 +71,35 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
-        android:contentDescription="User Image"
+        android:layout_marginTop="40dp"
+        android:contentDescription="@string/addUserImage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
         tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="151dp"
+        android:layout_height="26dp"
+        android:layout_marginTop="72dp"
+        android:text="Create Profile"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.142"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Please enter your information and create your account"
+        android:textColor="@color/grey"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 </androidx.constraintlayout.widget.ConstraintLayout>
