@@ -1,5 +1,6 @@
 package com.example.scanpal;
 
+
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,12 +12,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.nav_host);
 
         setupNavController();
     }
 
-    // TODO look into a better way to do this
+    // Sets up navigation
     private void setupNavController() {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         assert navHostFragment != null;

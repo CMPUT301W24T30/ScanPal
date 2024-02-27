@@ -1,5 +1,6 @@
 package com.example.scanpal;
 
+
 public class User {
     private final String username;
     private boolean administrator = false;

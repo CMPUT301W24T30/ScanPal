@@ -9,6 +9,16 @@
         android:id="@+id/signupFragment"
         android:name="com.example.scanpal.SignupFragment"
         android:label="Signup Screen"
-        tools:layout="@layout/signup_page" />
+        tools:layout="@layout/signup_page">
+        <action
+            android:id="@+id/addUserContinueAction"
+            app:destination="@id/roleSelectPage" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/roleSelectPage"
+        android:name="com.example.scanpal.RoleSelectFragment"
+        android:label="fragment_role_select"
+        tools:layout="@layout/role_select" />
 </navigation>
 
