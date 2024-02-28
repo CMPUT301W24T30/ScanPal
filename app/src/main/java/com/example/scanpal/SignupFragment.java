@@ -18,17 +18,18 @@ public class SignupFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.signup_page, container, false);
-
-        TextView username = view.findViewById(R.id.addUsername);
-        TextView firstName = view.findViewById(R.id.addFirstName);
-        TextView lastName = view.findViewById(R.id.addLastName);
-
-        Bundle bundle = new Bundle();
-        bundle.putString("username", username.getText().toString());
-        bundle.putString("firstName", firstName.getText().toString());
-        bundle.putString("lastName", lastName.getText().toString());
-
+        
         view.findViewById(R.id.addUserContinue).setOnClickListener(v -> {
+
+            TextView username = view.findViewById(R.id.addUsername);
+            TextView firstName = view.findViewById(R.id.addFirstName);
+            TextView lastName = view.findViewById(R.id.addLastName);
+
+            Bundle bundle = new Bundle();
+            bundle.putString("username", username.getText().toString());
+            bundle.putString("firstName", firstName.getText().toString());
+            bundle.putString("lastName", lastName.getText().toString());
+
             NavController navController = NavHostFragment.findNavController(this);
             navController.navigate(R.id.addUserContinueAction, bundle);
         });

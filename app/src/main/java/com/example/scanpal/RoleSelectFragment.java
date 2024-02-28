@@ -28,7 +28,7 @@ public class RoleSelectFragment extends Fragment {
         });
 
         view.findViewById(R.id.createAdminButton).setOnClickListener(v -> {
-
+            new UserController(FirebaseFirestore.getInstance()).addUser(new Administrator(username, firstName, lastName));
         });
 
         return view;
