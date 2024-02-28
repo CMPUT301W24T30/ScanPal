@@ -19,7 +19,6 @@ public class UserController {
     public void addUser(User user) {
         // will be responsible for add all user types to the database
         Map<String, Object> userMap = new HashMap<>();
-        userMap.put("username", user.getUsername());
         userMap.put("administrator", user.isAdministrator());
         userMap.put("firstName", user.getFirstName());
         userMap.put("lastName", user.getLastName());

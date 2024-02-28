@@ -18,8 +18,13 @@ public class RoleSelectFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.role_select, container, false);
 
+        assert getArguments() != null;
+        String username = getArguments().getString("username", "");
+        String firstName = getArguments().getString("firstName", "");
+        String lastName = getArguments().getString("lastName", "");
+
         view.findViewById(R.id.createUserButton).setOnClickListener(v -> {
-            new UserController(FirebaseFirestore.getInstance()).addUser(new User(""));
+            new UserController(FirebaseFirestore.getInstance()).addUser(new User(username, firstName, lastName));
         });
 
         view.findViewById(R.id.createAdminButton).setOnClickListener(v -> {
