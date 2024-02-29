@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -23,12 +24,21 @@ public class RoleSelectFragment extends Fragment {
         String firstName = getArguments().getString("firstName", "");
         String lastName = getArguments().getString("lastName", "");
 
-        view.findViewById(R.id.createUserButton).setOnClickListener(v -> {
-            new UserController(FirebaseFirestore.getInstance()).addUser(new User(username, firstName, lastName));
+        view.findViewById(R.id.createUserButton).setOnClickListener(userButton -> {
+            try {
+                new UserController(FirebaseFirestore.getInstance()).addUser(new User(username, firstName, lastName));
+            } catch (Exception e) {
+                Toast.makeText(userButton.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+
         });
 
-        view.findViewById(R.id.createAdminButton).setOnClickListener(v -> {
-            new UserController(FirebaseFirestore.getInstance()).addUser(new Administrator(username, firstName, lastName));
+        view.findViewById(R.id.createAdminButton).setOnClickListener(adminButton -> {
+            try {
+                new UserController(FirebaseFirestore.getInstance()).addUser(new Administrator(username, firstName, lastName));
+            } catch (Exception e) {
+                Toast.makeText(adminButton.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            }
         });
 
         return view;

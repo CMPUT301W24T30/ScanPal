@@ -1,5 +1,7 @@
 package com.example.scanpal;
 
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -24,10 +26,21 @@ public class UserController {
         userMap.put("firstName", user.getFirstName());
         userMap.put("lastName", user.getLastName());
 
+        DocumentReference docRef = database.collection("Users").document(user.getUsername());
 
-        // Save to database
-        database.collection("Users").document(user.getUsername()).set(userMap)
-                .addOnSuccessListener(aVoid -> System.out.println("User added successfully!"))
-                .addOnFailureListener(e -> System.out.println("Error adding user: " + e.getMessage()));
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    System.out.println("User already exists!");
+                } else {
+                    docRef.set(userMap)
+                            .addOnSuccessListener(aVoid -> System.out.println("User added successfully!"))
+                            .addOnFailureListener(e -> System.out.println("Error adding user: " + e.getMessage()));
+                }
+            } else {
+                System.out.println("Error checking user existence: " + task.getException());
+            }
+        });
     }
 }
