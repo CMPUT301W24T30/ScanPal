@@ -47,7 +47,7 @@ public class EventController {
         }
         eventMap.put("participants", participantRefs);
 
-        // Try creating bitmap for qrcode
+        // Try creating bitmap for qrcode and add it to event
         try {
             event.setQr(generateQRCode(event.getId()));  // try setting bitmap in event to generated qr code
         } catch (WriterException e) {
