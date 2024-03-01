@@ -13,13 +13,16 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * Fragment controlling user sign up screen
+ */
 public class SignupFragment extends Fragment {
     public SignupFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.signup_page, container, false);
 
         view.findViewById(R.id.addUserContinue).setOnClickListener(v -> {
@@ -33,26 +36,27 @@ public class SignupFragment extends Fragment {
             bundle.putString("firstName", firstName.getText().toString());
             bundle.putString("lastName", lastName.getText().toString());
 
-            new UserController(FirebaseFirestore.getInstance()).isUsernameTaken(username.getText().toString(), new UsernameCheckCallback() {
+            new UserController(FirebaseFirestore.getInstance()).isUsernameTaken(username.getText().toString(),
+                    new UsernameCheckCallback() {
 
-                @Override
-                public void onUsernameTaken(boolean isTaken) {
-                    if (isTaken) {
-                        Toast.makeText(view.getContext(), "Username is already taken", Toast.LENGTH_LONG).show();
-                    } else {
-                        NavController navController = NavHostFragment.findNavController(SignupFragment.this);
-                        navController.navigate(R.id.addUserContinueAction, bundle);
-                    }
+                        @Override
+                        public void onUsernameTaken(boolean isTaken) {
+                            if (isTaken) {
+                                Toast.makeText(view.getContext(), "Username is already taken", Toast.LENGTH_LONG)
+                                        .show();
+                            } else {
+                                NavController navController = NavHostFragment.findNavController(SignupFragment.this);
+                                navController.navigate(R.id.addUserContinueAction, bundle);
+                            }
 
-                }
+                        }
 
-                @Override
-                public void onError(Exception e) {
-                    Toast.makeText(view.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                }
+                        @Override
+                        public void onError(Exception e) {
+                            Toast.makeText(view.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
 
-            });
-
+                    });
 
         });
 

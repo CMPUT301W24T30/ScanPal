@@ -12,13 +12,16 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * Fragment controlling user role selection screen
+ */
 public class RoleSelectFragment extends Fragment {
     public RoleSelectFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.role_select, container, false);
 
         assert getArguments() != null;
@@ -28,31 +31,33 @@ public class RoleSelectFragment extends Fragment {
 
         UserController userController = new UserController(FirebaseFirestore.getInstance());
 
-        view.findViewById(R.id.createUserButton).setOnClickListener(userButton -> userController.addUser(new User(username, firstName, lastName), new UserAddCallback() {
-            @Override
-            public void onSuccess() {
-                NavController navController = NavHostFragment.findNavController(RoleSelectFragment.this);
-                navController.navigate(R.id.createUserCompleted);
-            }
+        view.findViewById(R.id.createUserButton).setOnClickListener(
+                userButton -> userController.addUser(new User(username, firstName, lastName), new UserAddCallback() {
+                    @Override
+                    public void onSuccess() {
+                        NavController navController = NavHostFragment.findNavController(RoleSelectFragment.this);
+                        navController.navigate(R.id.createUserCompleted);
+                    }
 
-            @Override
-            public void onError(Exception e) {
-                Toast.makeText(userButton.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        }));
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(userButton.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }));
 
-        view.findViewById(R.id.createAdminButton).setOnClickListener(userButton -> userController.addUser(new Administrator(username, firstName, lastName), new UserAddCallback() {
-            @Override
-            public void onSuccess() {
-                NavController navController = NavHostFragment.findNavController(RoleSelectFragment.this);
-                navController.navigate(R.id.createUserCompleted);
-            }
+        view.findViewById(R.id.createAdminButton).setOnClickListener(userButton -> userController
+                .addUser(new Administrator(username, firstName, lastName), new UserAddCallback() {
+                    @Override
+                    public void onSuccess() {
+                        NavController navController = NavHostFragment.findNavController(RoleSelectFragment.this);
+                        navController.navigate(R.id.createUserCompleted);
+                    }
 
-            @Override
-            public void onError(Exception e) {
-                Toast.makeText(userButton.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        }));
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(userButton.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }));
         return view;
     }
 }

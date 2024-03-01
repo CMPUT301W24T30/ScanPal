@@ -7,13 +7,29 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Handles operations related to user management in a Firestore database.
+ */
 public class UserController {
     private final FirebaseFirestore database;
 
+    /**
+     * Constructs a UserController with a reference to a Firestore database.
+     *
+     * @param database The Firestore database instance used for user operations.
+     */
     public UserController(FirebaseFirestore database) {
         this.database = database;
     }
 
+    /**
+     * Adds a new user to the Firestore database if the username does not already
+     * exist.
+     *
+     * @param user     The user to be added to the database.
+     * @param callback The callback to be invoked upon completion of the add
+     *                 operation.
+     */
     public void addUser(User user, UserAddCallback callback) {
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("administrator", user.isAdministrator());
@@ -38,6 +54,13 @@ public class UserController {
         });
     }
 
+    /**
+     * Retrieves a user from the Firestore database based on the username.
+     *
+     * @param username The username of the user to fetch.
+     * @param callback The callback to be invoked upon completion of the fetch
+     *                 operation.
+     */
     public void getUser(String username, UserFetchCallback callback) {
         DocumentReference docRef = database.collection("Users").document(username);
 
@@ -61,6 +84,12 @@ public class UserController {
         });
     }
 
+    /**
+     * Checks if a username is already taken in the Firestore database.
+     *
+     * @param username The username to check for availability.
+     * @param callback The callback to be invoked with the result of the check.
+     */
     public void isUsernameTaken(String username, UsernameCheckCallback callback) {
         DocumentReference docRef = database.collection("Users").document(username);
         docRef.get().addOnSuccessListener(task -> {

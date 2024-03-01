@@ -6,8 +6,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Handles operations related to attendee management in a Firestore database.
+ */
 public class AttendeeController {
-    private final FirebaseFirestore database; //instance of the database
+    private final FirebaseFirestore database; // instance of the database
 
     public AttendeeController(FirebaseFirestore database) {
         this.database = database;
@@ -17,6 +20,11 @@ public class AttendeeController {
         return this.database;
     }
 
+    /*
+     * Adds a new attendee to the Firestore database.
+     * 
+     * @param attendee The attendee to be added to the database.
+     */
     public void addAttendee(Attendee attendee) {
         // will be responsible for add all user types to the database
         Map<String, Object> attendeeMap = new HashMap<>();
