@@ -28,37 +28,31 @@ public class RoleSelectFragment extends Fragment {
 
         UserController userController = new UserController(FirebaseFirestore.getInstance());
 
-        view.findViewById(R.id.createUserButton).setOnClickListener(userButton -> {
+        view.findViewById(R.id.createUserButton).setOnClickListener(userButton -> userController.addUser(new User(username, firstName, lastName), new UserAddCallback() {
+            @Override
+            public void onSuccess() {
+                NavController navController = NavHostFragment.findNavController(RoleSelectFragment.this);
+                navController.navigate(R.id.createUserCompleted);
+            }
 
-            userController.addUser(new User(username, firstName, lastName), new UserAddCallback() {
-                @Override
-                public void onSuccess() {
-                    NavController navController = NavHostFragment.findNavController(RoleSelectFragment.this);
-                    navController.navigate(R.id.createUserCompleted);
-                }
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(userButton.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }));
 
-                @Override
-                public void onError(Exception e) {
-                    Toast.makeText(userButton.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            });
-        });
+        view.findViewById(R.id.createAdminButton).setOnClickListener(userButton -> userController.addUser(new Administrator(username, firstName, lastName), new UserAddCallback() {
+            @Override
+            public void onSuccess() {
+                NavController navController = NavHostFragment.findNavController(RoleSelectFragment.this);
+                navController.navigate(R.id.createUserCompleted);
+            }
 
-        view.findViewById(R.id.createAdminButton).setOnClickListener(userButton -> {
-
-            userController.addUser(new Administrator(username, firstName, lastName), new UserAddCallback() {
-                @Override
-                public void onSuccess() {
-                    NavController navController = NavHostFragment.findNavController(RoleSelectFragment.this);
-                    navController.navigate(R.id.createUserCompleted);
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    Toast.makeText(userButton.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            });
-        });
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(userButton.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }));
         return view;
     }
 }
