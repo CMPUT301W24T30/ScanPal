@@ -47,17 +47,18 @@ public class EventController {
         }
         eventMap.put("participants", participantRefs);
 
-        // Save to database
-        database.collection("Events").document(event.getId()).set(eventMap)
-                .addOnSuccessListener(aVoid -> System.out.println("Event added successfully!"))
-                .addOnFailureListener(e -> System.out.println("Error adding event: " + e.getMessage()));
-
         // Try creating bitmap for qrcode
         try {
             event.setQr(generateQRCode(event.getId()));  // try setting bitmap in event to generated qr code
         } catch (WriterException e) {
             System.err.println("Error generating QR Code for event " + event.getId() + ": " + e.getMessage());  // throw writing bitmap error otherwise
         }
+
+        // Save to database
+        database.collection("Events").document(event.getId()).set(eventMap)
+                .addOnSuccessListener(aVoid -> System.out.println("Event added successfully!"))
+                .addOnFailureListener(e -> System.out.println("Error adding event: " + e.getMessage()));
+
     }
 
 
