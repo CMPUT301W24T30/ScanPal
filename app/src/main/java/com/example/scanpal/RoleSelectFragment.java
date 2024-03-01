@@ -43,6 +43,22 @@ public class RoleSelectFragment extends Fragment {
                 }
             });
         });
+
+        view.findViewById(R.id.createAdminButton).setOnClickListener(userButton -> {
+
+            userController.addUser(new Administrator(username, firstName, lastName), new UserAddCallback() {
+                @Override
+                public void onSuccess() {
+                    NavController navController = NavHostFragment.findNavController(RoleSelectFragment.this);
+                    navController.navigate(R.id.createUserCompleted);
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Toast.makeText(userButton.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+        });
         return view;
     }
 }
