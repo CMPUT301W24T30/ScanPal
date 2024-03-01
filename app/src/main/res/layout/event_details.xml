@@ -18,15 +18,17 @@
         android:textColor="#C1BABA"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/About_event" />
+        app:layout_constraintTop_toBottomOf="@+id/event_share" />
 
     <ImageView
         android:id="@+id/imageView7"
         android:layout_width="410dp"
         android:layout_height="274dp"
+        android:layout_marginEnd="1dp"
         android:scaleType="fitXY"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="-2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@drawable/ic_launcher_background" />
 
     <Button
@@ -148,7 +150,7 @@
         app:srcCompat="@android:drawable/ic_input_add" />
 
     <TextView
-        android:id="@+id/About_event"
+        android:id="@+id/event_description_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="44dp"
@@ -173,7 +175,7 @@
         app:srcCompat="@android:drawable/ic_menu_share" />
 
     <TextView
-        android:id="@+id/About_event"
+        android:id="@+id/event_share"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="58dp"
@@ -195,7 +197,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/About_event"
+        android:id="@+id/event_orgName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
