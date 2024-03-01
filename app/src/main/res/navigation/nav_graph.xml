@@ -19,6 +19,16 @@
         android:id="@+id/roleSelectPage"
         android:name="com.example.scanpal.RoleSelectFragment"
         android:label="fragment_role_select"
-        tools:layout="@layout/role_select" />
+        tools:layout="@layout/role_select">
+        <action
+            android:id="@+id/createUserCompleted"
+            app:destination="@id/eventsPage" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/eventsPage"
+        android:name="com.example.scanpal.EventPageFragment"
+        android:label="fragment_events_page"
+        tools:layout="@layout/events_page" />
 </navigation>
 

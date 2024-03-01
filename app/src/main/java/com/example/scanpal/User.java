@@ -1,7 +1,6 @@
 package com.example.scanpal;
 
 
-
 public class User {
     private final String username;
     private boolean administrator = false;
@@ -47,6 +46,7 @@ public class User {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
 
     public String getPhoto() {
         return photo;

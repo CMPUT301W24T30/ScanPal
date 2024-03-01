@@ -5,10 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SignupFragment extends Fragment {
     public SignupFragment() {
@@ -18,7 +21,7 @@ public class SignupFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.signup_page, container, false);
-        
+
         view.findViewById(R.id.addUserContinue).setOnClickListener(v -> {
 
             TextView username = view.findViewById(R.id.addUsername);
@@ -30,8 +33,27 @@ public class SignupFragment extends Fragment {
             bundle.putString("firstName", firstName.getText().toString());
             bundle.putString("lastName", lastName.getText().toString());
 
-            NavController navController = NavHostFragment.findNavController(this);
-            navController.navigate(R.id.addUserContinueAction, bundle);
+            new UserController(FirebaseFirestore.getInstance()).isUsernameTaken(username.getText().toString(), new UsernameCheckCallback() {
+
+                @Override
+                public void onUsernameTaken(boolean isTaken) {
+                    if (isTaken) {
+                        Toast.makeText(view.getContext(), "Username is already taken", Toast.LENGTH_LONG).show();
+                    } else {
+                        NavController navController = NavHostFragment.findNavController(SignupFragment.this);
+                        navController.navigate(R.id.addUserContinueAction, bundle);
+                    }
+
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Toast.makeText(view.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            });
+
+
         });
 
         return view;
