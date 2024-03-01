@@ -1,5 +1,10 @@
 package com.example.scanpal;
 
+import android.graphics.Bitmap;
+
+import java.io.ByteArrayOutputStream;
+
+
 /**
  * Base class for events, contains all event data.
  */
@@ -12,6 +17,7 @@ public class Event {
     private Attendee[] participants;
     private String signUpAddress;
     private String infoAddress;
+    private Bitmap eventQRCode;
 
     /**
      * Constructs an event with an organizer, name, and description.
@@ -81,4 +87,20 @@ public class Event {
     public void setInfoAddress(String infoAddress) {
         this.infoAddress = infoAddress;
     }
+
+    public void setEventQRCode(Bitmap qrCode) {
+        eventQRCode = qrCode;
+    }
+
+    public Bitmap getEventQRCode() {
+        return eventQRCode;
+    }
+
+    public byte[] getEventQRCodeByteArray() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        eventQRCode.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        return baos.toByteArray();
+    }
+
+
 }
