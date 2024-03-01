@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-
+    id("androidx.navigation.safeargs")
     id("com.google.gms.google-services")
 }
 
