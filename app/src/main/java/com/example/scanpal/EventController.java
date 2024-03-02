@@ -1,12 +1,24 @@
 package com.example.scanpal;
 
+import android.graphics.Bitmap;
+import android.graphics.Color;
+
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+
 
 /**
  * Handles operations related to event management in a Firestore database.
@@ -49,15 +61,25 @@ public class EventController {
 
         List<DocumentReference> participantRefs = new ArrayList<>();
         for (Attendee participant : event.getParticipants()) {
-            DocumentReference participantRef = database.collection("Attendees")
-                    .document(participant.getUser().getUsername());
+            DocumentReference participantRef = database.collection("Attendees").document(participant.getUser().getUsername());
             participantRefs.add(participantRef);
         }
         eventMap.put("participants", participantRefs);
+
+        // Creating bitmap for qrcode and add it to event
+        Bitmap qr = QrCodeController.generate(event.getId());
+        event.setQr(qr);  // setting bitmap in event to generated qr code
+
+        // Storing the bitmap into firebase by converting into byte array
+        byte[] imageData = QrCodeController.bitmapToByteArray(qr);
+        eventMap.put("QrCode", imageData);
 
         // Save to database
         database.collection("Events").document(event.getId()).set(eventMap)
                 .addOnSuccessListener(aVoid -> System.out.println("Event added successfully!"))
                 .addOnFailureListener(e -> System.out.println("Error adding event: " + e.getMessage()));
+
     }
+
 }
+
