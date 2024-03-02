@@ -68,7 +68,9 @@ public class EventController {
 
         // Try creating bitmap for qrcode and add it to event
         try {
-            event.setQr(generateQRCode(event.getId()));  // try setting bitmap in event to generated qr code
+            Bitmap qr = generateQRCode(event.getId());
+            event.setQr(qr);  // etting bitmap in event to generated qr code
+            eventMap.put("QrCode", qr);
         } catch (WriterException e) {
             System.err.println("Error generating QR Code for event " + event.getId() + ": " + e.getMessage());  // throw writing bitmap error otherwise
         }
