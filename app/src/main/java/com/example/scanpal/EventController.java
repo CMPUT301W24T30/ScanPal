@@ -6,6 +6,7 @@ import android.graphics.Color;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,20 +61,18 @@ public class EventController {
 
         List<DocumentReference> participantRefs = new ArrayList<>();
         for (Attendee participant : event.getParticipants()) {
-            DocumentReference participantRef = database.collection("Attendees")
-                    .document(participant.getUser().getUsername());
+            DocumentReference participantRef = database.collection("Attendees").document(participant.getUser().getUsername());
             participantRefs.add(participantRef);
         }
         eventMap.put("participants", participantRefs);
 
-        // Try creating bitmap for qrcode and add it to event
-        try {
-            Bitmap qr = generateQRCode(event.getId());
-            event.setQr(qr);  // etting bitmap in event to generated qr code
-            eventMap.put("QrCode", qr);
-        } catch (WriterException e) {
-            System.err.println("Error generating QR Code for event " + event.getId() + ": " + e.getMessage());  // throw writing bitmap error otherwise
-        }
+        // Creating bitmap for qrcode and add it to event
+        Bitmap qr = QrCodeController.generate(event.getId());
+        event.setQr(qr);  // setting bitmap in event to generated qr code
+
+        // Storing the bitmap into firebase by converting into byte array
+        byte[] imageData = QrCodeController.bitmapToByteArray(qr);
+        eventMap.put("QrCode", imageData);
 
         // Save to database
         database.collection("Events").document(event.getId()).set(eventMap)
@@ -82,26 +81,5 @@ public class EventController {
 
     }
 
-
-    public Bitmap generateQRCode(String data) throws WriterException {  // the data is the event id
-        int width = 300;
-        int height = 300;
-
-        Map<EncodeHintType, Object> hints = new HashMap<>();
-        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
-        hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
-
-        QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(data, BarcodeFormat.QR_CODE, width, height, hints);
-
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                bitmap.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
-            }
-        }
-
-        return bitmap;
-    }
 }
 
