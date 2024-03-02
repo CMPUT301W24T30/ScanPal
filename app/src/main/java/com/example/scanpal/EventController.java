@@ -19,18 +19,36 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 
+/**
+ * Handles operations related to event management in a Firestore database.
+ */
 public class EventController {
 
-    private final FirebaseFirestore database; //instance of the database
+    private final FirebaseFirestore database; // instance of the database
 
+    /**
+     * Constructs an EventController with a reference to a Firestore database.
+     *
+     * @param database The Firestore database instance used for event operations.
+     */
     public EventController(FirebaseFirestore database) {
         this.database = database;
     }
 
+    /**
+     * Retrieves the Firestore database instance used for event operations.
+     *
+     * @return The Firestore database instance used for event operations.
+     */
     public FirebaseFirestore getDatabase() {
         return this.database;
     }
 
+    /**
+     * Adds a new event to the Firestore database.
+     *
+     * @param event The event to be added to the database.
+     */
     public void addEvent(Event event) {
         // will be responsible for add all user types to the database
         Map<String, Object> eventMap = new HashMap<>();
@@ -42,7 +60,8 @@ public class EventController {
 
         List<DocumentReference> participantRefs = new ArrayList<>();
         for (Attendee participant : event.getParticipants()) {
-            DocumentReference participantRef = database.collection("Attendees").document(participant.getUser().getUsername());
+            DocumentReference participantRef = database.collection("Attendees")
+                    .document(participant.getUser().getUsername());
             participantRefs.add(participantRef);
         }
         eventMap.put("participants", participantRefs);

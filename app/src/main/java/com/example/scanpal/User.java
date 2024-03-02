@@ -1,5 +1,8 @@
 package com.example.scanpal;
 
+/**
+ * Initializes a user with a username, first name, and last name.
+ */
 public class User {
     private final String username;
     private boolean administrator = false;
@@ -9,9 +12,13 @@ public class User {
 
     private String photo; // Profile Photo of the User
 
-
-    //add field for user profile data here
-
+    /**
+     * Constructs a user with a username, first name, and last name.
+     *
+     * @param username  The username of the user.
+     * @param firstName The first name of the user.
+     * @param lastName  The last name of the user.
+     */
     public User(String username, String firstName, String lastName) {
         this.username = username;
         this.firstName = firstName;

@@ -16,6 +16,13 @@ public class Event {
     private String infoAddress;
     private Bitmap qr;
 
+    /**
+     * Constructs an event with an organizer, name, and description.
+     *
+     * @param organizer   The user who organized the event.
+     * @param name        The name of the event.
+     * @param description The description of the event.
+     */
     public Event(User organizer, String name, String description) {
         this.organizer = organizer;
         this.name = name;
