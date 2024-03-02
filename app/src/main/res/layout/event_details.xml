@@ -147,7 +147,9 @@
         app:layout_constraintStart_toEndOf="@+id/button_your_events"
         app:layout_constraintTop_toTopOf="@+id/app_bar"
         app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@drawable/camera_icon"
+        app:tint="@color/white"
+        />
 
     <TextView
         android:id="@+id/event_description_title"
