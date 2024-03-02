@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_graph">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/profile_fragment">
+
+    <fragment
+        android:id="@+id/profile_fragment"
+        android:name="com.example.scanpal.ProfileFragment"
+        android:label="Signup Screen"
+        tools:layout="@layout/edit_profile_page">
+        <action android:id="@+id/addUserContinueAction" />
+    </fragment>
 
 </navigation>
