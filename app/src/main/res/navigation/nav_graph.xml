@@ -3,14 +3,39 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/profile_fragment">
+    app:startDestination="@id/signupFragment">
+
+    <fragment
+        android:id="@+id/signupFragment"
+        android:name="com.example.scanpal.SignupFragment"
+        android:label="Signup Screen"
+        tools:layout="@layout/signup_page">
+        <action
+            android:id="@+id/addUserContinueAction"
+            app:destination="@id/roleSelectPage" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/roleSelectPage"
+        android:name="com.example.scanpal.RoleSelectFragment"
+        android:label="fragment_role_select"
+        tools:layout="@layout/role_select">
+        <action
+            android:id="@+id/createUserCompleted"
+            app:destination="@id/eventsPage" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/eventsPage"
+        android:name="com.example.scanpal.EventPageFragment"
+        android:label="fragment_events_page"
+        tools:layout="@layout/events_page" />
 
     <fragment
         android:id="@+id/profile_fragment"
         android:name="com.example.scanpal.ProfileFragment"
-        android:label="Signup Screen"
+        android:label="Edit Profile Page"
         tools:layout="@layout/edit_profile_page">
-        <action android:id="@+id/addUserContinueAction" />
     </fragment>
-
 </navigation>
+

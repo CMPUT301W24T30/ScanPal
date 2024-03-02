@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">ScanPal</string>
+    <string name="addUsername">Enter Username</string>
+    <string name="addFirstName">Enter First Name</string>
+    <string name="addLastName">Enter Last Name</string>
+    <string name="continueButton">Continue</string>
+    <string name="addUserImage">User Image</string>
 </resources>
