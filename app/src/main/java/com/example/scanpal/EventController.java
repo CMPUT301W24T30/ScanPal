@@ -29,8 +29,8 @@ public class EventController {
      *
      * @param database The Firestore database instance used for event operations.
      */
-    public EventController(FirebaseFirestore database) {
-        this.database = database;
+    public EventController() {
+        database = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
     }
 

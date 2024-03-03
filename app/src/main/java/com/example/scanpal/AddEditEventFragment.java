@@ -31,7 +31,7 @@ public class AddEditEventFragment extends Fragment {
         View view = inflater.inflate(R.layout.add_edit_event, container, false);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         userController = new UserController(db, view.getContext());
-        eventController = new EventController(db);
+        eventController = new EventController();
         return view;
     }
 
