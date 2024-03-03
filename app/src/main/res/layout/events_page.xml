@@ -24,18 +24,14 @@
         android:id="@+id/button_scan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="177dp"
         android:layout_marginTop="668dp"
-        android:layout_marginEnd="178dp"
         android:layout_marginBottom="15dp"
         android:backgroundTint="#0018F9"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button_chat"
+        app:layout_constraintStart_toEndOf="@+id/button_your_events"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/camera_icon"
         app:tint="@color/white" />
 
@@ -146,6 +142,21 @@
         app:layout_constraintStart_toEndOf="@+id/button_go_back"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.019" />
+
+
+
+    <ListView
+        android:id="@+id/event_List"
+        android:layout_width="409dp"
+        android:layout_height="581dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
+        app:layout_constraintBottom_toTopOf="@+id/app_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_add_event" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

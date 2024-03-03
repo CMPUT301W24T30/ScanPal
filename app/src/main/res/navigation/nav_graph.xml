@@ -29,6 +29,14 @@
         android:id="@+id/eventsPage"
         android:name="com.example.scanpal.EventPageFragment"
         android:label="fragment_events_page"
-        tools:layout="@layout/events_page" />
+        tools:layout="@layout/events_page" >
+        <action
+            android:id="@+id/select_event"
+            app:destination="@id/eventDetailsPage" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventDetailsPage"
+        android:name="com.example.scanpal.EventDetailsFragment"
+        android:label="fragement_eventDetails" />
 </navigation>
 

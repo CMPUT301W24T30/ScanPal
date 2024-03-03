@@ -55,6 +55,7 @@ public class EventController {
         Map<String, Object> eventMap = new HashMap<>();
         eventMap.put("name", event.getName());
         eventMap.put("description", event.getDescription());
+        eventMap.put("location", event.getLocation());
 
         DocumentReference organizerRef = database.collection("Users").document(event.getOrganizer().getUsername());
         eventMap.put("organizer", organizerRef);
