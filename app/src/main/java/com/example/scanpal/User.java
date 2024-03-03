@@ -2,8 +2,6 @@ package com.example.scanpal;
 
 import java.io.Serializable;
 
-import java.io.File;
-
 /**
  * Initializes a user with a username, first name, and last name.
  * Implements Serializable for object serialization and deserialization.
@@ -48,12 +46,12 @@ public class User implements Serializable {
 
     /**
      * Generates a URL for the default profile image of the user
-     * 
+     *
      * @param username
      * @return
      */
     private String createProfileImage(String username) {
-        return "http://www.gravatar.com/avatar/" + username + "?s=100&d=identicon&r=PG";
+        return "https://www.gravatar.com/avatar/" + username + "?s=100&d=identicon&r=PG";
     }
 
     public String getUsername() {
