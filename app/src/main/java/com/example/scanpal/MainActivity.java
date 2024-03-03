@@ -14,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.nav_host);
 
         setupNavController();
+
     }
 
     // Sets up navigation
@@ -23,4 +24,5 @@ public class MainActivity extends AppCompatActivity {
         assert navHostFragment != null;
         NavController navController = navHostFragment.getNavController();
     }
+
 }
