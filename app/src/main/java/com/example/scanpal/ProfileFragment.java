@@ -1,6 +1,5 @@
 package com.example.scanpal;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -42,6 +42,17 @@ public class ProfileFragment extends Fragment {
 
         userController = new UserController(FirebaseFirestore.getInstance(), getContext());
 
+        String username = userController.fetchStoredUsername();
+        if (username != null) {
+            fetchUserDetails(username);
+        } else {
+            Toast.makeText(getContext(), "No username found in internal storage", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         String username = userController.fetchStoredUsername();
         if (username != null) {
             fetchUserDetails(username);
@@ -104,7 +115,9 @@ public class ProfileFragment extends Fragment {
                     addUsername.setText(user.getUsername());
                     firstName.setText(user.getFirstName());
                     lastName.setText(user.getLastName());
-                    profileImageView.setImageURI(Uri.parse(user.getPhoto()));
+                    Glide.with(ProfileFragment.this)
+                            .load(user.getPhoto())
+                            .into(profileImageView);
                 });
             }
 
