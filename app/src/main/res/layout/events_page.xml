@@ -24,14 +24,15 @@
         android:id="@+id/button_scan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="668dp"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="11dp"
         android:backgroundTint="#0018F9"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button_chat"
+        app:layout_constraintHorizontal_bias="0.517"
         app:layout_constraintStart_toEndOf="@+id/button_your_events"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/app_bar"
+        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/camera_icon"
         app:tint="@color/white" />
 
@@ -51,7 +52,7 @@
         app:tint="@color/white" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/button_go_back"
+        android:id="@+id/event_details_backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#2d3132"
@@ -139,7 +140,7 @@
         app:layout_constraintBottom_toTopOf="@+id/app_bar"
         app:layout_constraintEnd_toStartOf="@+id/button_add_event"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/button_go_back"
+        app:layout_constraintStart_toEndOf="@+id/event_details_backButton"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.019" />
 

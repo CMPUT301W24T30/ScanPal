@@ -11,15 +11,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.Collection;
 
 public class EventDetailsFragment extends Fragment {
 
@@ -48,6 +49,16 @@ public class EventDetailsFragment extends Fragment {
         fetchEventDetails();
 
         Log.d("fire", "end of onCreate");
+
+        FloatingActionButton backButton = view.findViewById(R.id.event_details_backButton);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
+                navController.navigate(R.id.eventsPage);
+            }
+        });
 
         return view;
     }
