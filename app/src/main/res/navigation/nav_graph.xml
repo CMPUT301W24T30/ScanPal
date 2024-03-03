@@ -38,5 +38,25 @@
         android:id="@+id/eventDetailsPage"
         android:name="com.example.scanpal.EventDetailsFragment"
         android:label="fragement_eventDetails" />
+
+    <fragment
+        android:id="@+id/profile_fragment"
+        android:name="com.example.scanpal.ProfileFragment"
+        android:label="User Profile Page"
+        tools:layout="@layout/user_profile_page">
+        <action
+            android:id="@+id/edit_profile"
+            app:destination="@id/edit_profile_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/edit_profile_fragment"
+        android:name="com.example.scanpal.EditProfileFragment"
+        android:label="Edit Profile Page"
+        tools:layout="@layout/edit_profile_page">
+        <action
+            android:id="@+id/save_profile_edits"
+            app:destination="@id/profile_fragment" />
+    </fragment>
 </navigation>
 
