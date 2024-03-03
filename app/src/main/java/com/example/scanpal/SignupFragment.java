@@ -48,7 +48,6 @@ public class SignupFragment extends Fragment {
                                 NavController navController = NavHostFragment.findNavController(SignupFragment.this);
                                 navController.navigate(R.id.addUserContinueAction, bundle);
                             }
-
                         }
 
                         @Override
