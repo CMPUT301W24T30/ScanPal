@@ -14,9 +14,15 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+
 import java.util.ArrayList;
 
 public class EventPageFragment extends Fragment {
+
+    FloatingActionButton addEventButton;
 
     /**
      * empty default constructor
@@ -26,7 +32,8 @@ public class EventPageFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.events_page, container, false);
 
 
@@ -52,8 +59,17 @@ public class EventPageFragment extends Fragment {
             }
         });
 
-
-
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        addEventButton = view.findViewById(R.id.button_add_event);
+
+        addEventButton.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
+            navController.navigate(R.id.addEvent);
+        });
+
     }
 }

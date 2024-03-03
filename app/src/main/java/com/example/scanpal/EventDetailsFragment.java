@@ -108,7 +108,7 @@ public class EventDetailsFragment extends Fragment {
      * and fetches all of its details(in future add one param for qr Bitmap)
      */
     void fetchEventDetails() {
-        EventController eventController = new EventController(FirebaseFirestore.getInstance());
+        EventController eventController = new EventController();
         FirebaseFirestore db = eventController.getDatabase();
 
         //once qr stuff works just add a parameter to the method with qr string

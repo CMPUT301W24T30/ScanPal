@@ -179,11 +179,10 @@ public class UserController {
     public String fetchStoredUsername() {
         try {
             FileInputStream fis = context.openFileInput("user.ser");
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader bufferedReader = new BufferedReader(isr);
-            String username = bufferedReader.readLine();
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            User user = (User) ois.readObject();
             fis.close();
-            return username;
+            return user.getUsername();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
