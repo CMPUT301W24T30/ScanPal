@@ -1,12 +1,15 @@
 package com.example.scanpal;
 
+import java.io.Serializable;
+
 /**
  * Initializes a user with a username, first name, and last name.
+ * Implements Serializable for object serialization and deserialization.
  */
-public class User {
+public class User implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final String username;
     private boolean administrator = false;
-
     private String firstName;
     private String lastName;
 

@@ -1,9 +1,18 @@
 package com.example.scanpal;
 
+import android.content.Context;
+import android.net.Uri;
+
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,14 +21,16 @@ import java.util.Map;
  */
 public class UserController {
     private final FirebaseFirestore database;
+    private final Context context;
 
     /**
      * Constructs a UserController with a reference to a Firestore database.
      *
      * @param database The Firestore database instance used for user operations.
      */
-    public UserController(FirebaseFirestore database) {
+    public UserController(FirebaseFirestore database, Context context) {
         this.database = database;
+        this.context = context;
     }
 
     /**
@@ -31,13 +42,26 @@ public class UserController {
      *                 operation.
      */
     public void addUser(User user, UserAddCallback callback) {
+        // Serialize and store user locally
+        try {
+            FileOutputStream fos = context.openFileOutput("user.ser", Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(user);
+            oos.close();
+            fos.close();
+        } catch (Exception e) {
+            callback.onError(e);
+            return;
+        }
+
+        // Add to Firestore
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("administrator", user.isAdministrator());
         userMap.put("firstName", user.getFirstName());
         userMap.put("lastName", user.getLastName());
+        userMap.put("photo", user.getPhoto());
 
         DocumentReference docRef = database.collection("Users").document(user.getUsername());
-
         docRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
@@ -62,8 +86,21 @@ public class UserController {
      *                 operation.
      */
     public void getUser(String username, UserFetchCallback callback) {
-        DocumentReference docRef = database.collection("Users").document(username);
+        // fetch user from local storage
+        try {
+            FileInputStream fis = context.openFileInput("user.ser");
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            User user = (User) ois.readObject();
+            ois.close();
+            fis.close();
+            callback.onSuccess(user);
+            return;
+        } catch (Exception e) {
+            // If local fetch fails, fetch from Firestore
+        }
 
+        // Fetch from Firestore
+        DocumentReference docRef = database.collection("Users").document(username);
         docRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
@@ -71,6 +108,7 @@ public class UserController {
                     Map<String, Object> data = document.getData();
                     if (data != null) {
                         User user = new User(username, (String) data.get("firstName"), (String) data.get("lastName"));
+                        user.setPhoto(String.valueOf((Uri) data.get("photo")));
                         callback.onSuccess(user);
                     } else {
                         callback.onError(new Exception("Failed to parse user data"));
@@ -99,4 +137,18 @@ public class UserController {
 
     }
 
+    // fetch username from internal storage
+    public String fetchStoredUsername() {
+        try {
+            FileInputStream fis = context.openFileInput("user.ser");
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            String username = bufferedReader.readLine();
+            fis.close();
+            return username;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

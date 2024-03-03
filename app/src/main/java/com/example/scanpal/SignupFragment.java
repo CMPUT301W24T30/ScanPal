@@ -22,7 +22,7 @@ public class SignupFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.signup_page, container, false);
 
         view.findViewById(R.id.addUserContinue).setOnClickListener(v -> {
@@ -36,7 +36,7 @@ public class SignupFragment extends Fragment {
             bundle.putString("firstName", firstName.getText().toString());
             bundle.putString("lastName", lastName.getText().toString());
 
-            new UserController(FirebaseFirestore.getInstance()).isUsernameTaken(username.getText().toString(),
+            new UserController(FirebaseFirestore.getInstance(), getContext()).isUsernameTaken(username.getText().toString(),
                     new UsernameCheckCallback() {
 
                         @Override
