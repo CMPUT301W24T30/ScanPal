@@ -63,6 +63,9 @@ public class EditProfileFragment extends Fragment {
         saveButton = view.findViewById(R.id.save_button);
 
         username = (TextInputEditText) ((TextInputLayout) view.findViewById(R.id.username)).getEditText();
+        if (username != null) {
+            username.setEnabled(false);
+        }
         firstName = (TextInputEditText) ((TextInputLayout) view.findViewById(R.id.first_name)).getEditText();
         lastName = (TextInputEditText) ((TextInputLayout) view.findViewById(R.id.last_name)).getEditText();
 
@@ -116,7 +119,7 @@ public class EditProfileFragment extends Fragment {
         if (imageUri != null) {
             updatedUser.setPhoto(imageUri.toString());
         }
-        userController.addUser(updatedUser, new UserAddCallback() {
+        userController.updateUser(updatedUser, new UserUpdateCallback() {
             @Override
             public void onSuccess() {
                 Toast.makeText(getContext(), "User details updated successfully", Toast.LENGTH_SHORT).show();

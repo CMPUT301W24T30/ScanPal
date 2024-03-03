@@ -78,6 +78,31 @@ public class UserController {
         });
     }
 
+    public void updateUser(User user, UserUpdateCallback callback) {
+        try {
+            FileOutputStream fos = context.openFileOutput("user.ser", Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(user);
+            oos.close();
+            fos.close();
+        } catch (Exception e) {
+            callback.onError(e);
+            return;
+        }
+
+        // Update Firestore
+        Map<String, Object> userMap = new HashMap<>();
+        userMap.put("firstName", user.getFirstName());
+        userMap.put("lastName", user.getLastName());
+        userMap.put("photo", user.getPhoto());
+
+        DocumentReference docRef = database.collection("Users").document(user.getUsername());
+        docRef.update(userMap)
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(callback::onError);
+    }
+
+
     /**
      * Retrieves a user from the Firestore database based on the username.
      *
@@ -100,7 +125,7 @@ public class UserController {
         }
 
         // Fetch from Firestore
-        DocumentReference docRef = database.collection("Users").document(username);
+        DocumentReference docRef = database.collection("Users").document(fetchStoredUsername());
         docRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
