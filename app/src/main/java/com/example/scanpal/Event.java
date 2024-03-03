@@ -11,6 +11,7 @@ public class Event {
     private String name;
     private String description;
     private User organizer;
+    private String location;
     private Attendee[] participants;
     private String signUpAddress;
     private String infoAddress;
@@ -91,5 +92,13 @@ public class Event {
 
     public void setQr(Bitmap qr) {
         this.qr = qr;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }
