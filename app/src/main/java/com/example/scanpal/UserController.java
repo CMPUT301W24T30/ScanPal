@@ -1,7 +1,6 @@
 package com.example.scanpal;
 
 import android.content.Context;
-import android.net.Uri;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -15,18 +14,21 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
- * Handles operations related to user management in a Firestore database.
+ * Manages user data interactions with a Firestore database, including adding,
+ * updating, and fetching user details.
  */
 public class UserController {
     private final FirebaseFirestore database;
     private final Context context;
 
     /**
-     * Constructs a UserController with a reference to a Firestore database.
+     * Initializes a new UserController instance.
      *
      * @param database The Firestore database instance used for user operations.
+     * @param context  The application's context, used for file operations.
      */
     public UserController(FirebaseFirestore database, Context context) {
         this.database = database;
@@ -34,15 +36,15 @@ public class UserController {
     }
 
     /**
-     * Adds a new user to the Firestore database if the username does not already
-     * exist.
+     * Adds a new user to the Firestore database and stores a local copy. If the
+     * username already exists in the database, an error is reported through the
+     * callback.
      *
-     * @param user     The user to be added to the database.
-     * @param callback The callback to be invoked upon completion of the add
-     *                 operation.
+     * @param user     The User object to add to the database.
+     * @param callback The callback to report success or failure.
      */
     public void addUser(User user, UserAddCallback callback) {
-        // Serialize and store user locally
+        // Attempt to serialize and store user locally
         try {
             FileOutputStream fos = context.openFileOutput("user.ser", Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -54,13 +56,14 @@ public class UserController {
             return;
         }
 
-        // Add to Firestore
+        // Prepare user data for Firestore
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("administrator", user.isAdministrator());
         userMap.put("firstName", user.getFirstName());
         userMap.put("lastName", user.getLastName());
         userMap.put("photo", user.getPhoto());
 
+        // Attempt to add user to Firestore
         DocumentReference docRef = database.collection("Users").document(user.getUsername());
         docRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -78,7 +81,15 @@ public class UserController {
         });
     }
 
+    /**
+     * Updates an existing user's details in the Firestore database and updates
+     * the local copy.
+     *
+     * @param user     The User object with updated details.
+     * @param callback The callback to report success or failure.
+     */
     public void updateUser(User user, UserUpdateCallback callback) {
+        // Attempt to serialize and update user locally
         try {
             FileOutputStream fos = context.openFileOutput("user.ser", Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -90,28 +101,28 @@ public class UserController {
             return;
         }
 
-        // Update Firestore
+        // Prepare updated user data for Firestore
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("firstName", user.getFirstName());
         userMap.put("lastName", user.getLastName());
         userMap.put("photo", user.getPhoto());
 
+        // Attempt to update user in Firestore
         DocumentReference docRef = database.collection("Users").document(user.getUsername());
         docRef.update(userMap)
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(callback::onError);
     }
 
-
     /**
-     * Retrieves a user from the Firestore database based on the username.
+     * Fetches a user's details from the Firestore database. If the user is not
+     * found in Firestore, attempts to retrieve a local copy.
      *
      * @param username The username of the user to fetch.
-     * @param callback The callback to be invoked upon completion of the fetch
-     *                 operation.
+     * @param callback The callback to report the fetched user or failure.
      */
     public void getUser(String username, UserFetchCallback callback) {
-        // fetch user from local storage
+        // Attempt to fetch user from local storage
         try {
             FileInputStream fis = context.openFileInput("user.ser");
             ObjectInputStream ois = new ObjectInputStream(fis);
@@ -121,11 +132,11 @@ public class UserController {
             callback.onSuccess(user);
             return;
         } catch (Exception e) {
-            // If local fetch fails, fetch from Firestore
+            // Proceed to fetch from Firestore if local fetch fails
         }
 
-        // Fetch from Firestore
-        DocumentReference docRef = database.collection("Users").document(fetchStoredUsername());
+        // Fetch user from Firestore
+        DocumentReference docRef = database.collection("Users").document(Objects.requireNonNull(fetchStoredUsername()));
         docRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
@@ -133,7 +144,7 @@ public class UserController {
                     Map<String, Object> data = document.getData();
                     if (data != null) {
                         User user = new User(username, (String) data.get("firstName"), (String) data.get("lastName"));
-                        user.setPhoto(String.valueOf((Uri) data.get("photo")));
+                        user.setPhoto(String.valueOf(data.get("photo")));
                         callback.onSuccess(user);
                     } else {
                         callback.onError(new Exception("Failed to parse user data"));
@@ -148,21 +159,23 @@ public class UserController {
     }
 
     /**
-     * Checks if a username is already taken in the Firestore database.
+     * Checks if the provided username already exists in the Firestore database.
      *
-     * @param username The username to check for availability.
-     * @param callback The callback to be invoked with the result of the check.
+     * @param username The username to check.
+     * @param callback The callback to report the result of the check.
      */
     public void isUsernameTaken(String username, UsernameCheckCallback callback) {
         DocumentReference docRef = database.collection("Users").document(username);
         docRef.get().addOnSuccessListener(task -> {
-            System.out.println(task);
             callback.onUsernameTaken(task != null && task.exists());
         }).addOnFailureListener(callback::onError);
-
     }
 
-    // fetch username from internal storage
+    /**
+     * Retrieves the stored username from internal storage.
+     *
+     * @return The stored username, or null if an error occurs.
+     */
     public String fetchStoredUsername() {
         try {
             FileInputStream fis = context.openFileInput("user.ser");

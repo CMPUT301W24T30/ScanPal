@@ -27,6 +27,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Objects;
 
+/**
+ * Fragment for editing and updating user profile information.
+ * Users can change their first name, last name, and profile image.
+ * Username cannot be edited.
+ * Changes are updated in Firestore and locally.
+ */
 public class EditProfileFragment extends Fragment {
 
     private ImageView profileImageView;
@@ -46,6 +52,9 @@ public class EditProfileFragment extends Fragment {
             });
     private UserController userController;
 
+    /**
+     * Inflates the layout for the edit profile page.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -53,6 +62,10 @@ public class EditProfileFragment extends Fragment {
         return inflater.inflate(R.layout.edit_profile_page, container, false);
     }
 
+    /**
+     * Initializes UI components, sets up button listeners, and fetches user details
+     * after the view is created.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -85,18 +98,30 @@ public class EditProfileFragment extends Fragment {
         fetchUserDetails();
     }
 
+    /**
+     * Opens the device's gallery for the user to pick a new profile image.
+     */
     private void openGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         pickImageLauncher.launch(intent);
     }
 
+
+    /**
+     * Uploads the selected image to Firebase Storage and updates the user's profile image URL.
+     *
+     * @param imageUri The URI of the image selected by the user.
+     */
     private void uploadImageToFirebase(Uri imageUri) {
         imageController.uploadImage(imageUri,
                 taskSnapshot -> Toast.makeText(getContext(), "Image Uploaded Successfully", Toast.LENGTH_SHORT).show(),
                 e -> Toast.makeText(getContext(), "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
+    /**
+     * Fetches the current details of the user from Firestore/Internal storage and displays them in the UI components.
+     */
     private void fetchUserDetails() {
         String storedUsername = userController.fetchStoredUsername();
         if (storedUsername != null) {
@@ -119,6 +144,9 @@ public class EditProfileFragment extends Fragment {
         }
     }
 
+    /**
+     * Saves the updated user details to Firestore and updates the local user serialization.
+     */
     private void saveUserDetails() {
         User updatedUser = new User(Objects.requireNonNull(username.getText()).toString(), Objects.requireNonNull(firstName.getText()).toString(), Objects.requireNonNull(lastName.getText()).toString());
         if (imageUri != null) {

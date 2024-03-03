@@ -45,10 +45,13 @@ public class User implements Serializable {
     }
 
     /**
-     * Generates a URL for the default profile image of the user
+     * Generates a URL for a default profile image based on the username. This method
+     * utilizes Gravatar's service to create a URL pointing to an identicon image,
+     * which serves as the user's default profile picture. The resulting image has
+     * a size of 100 pixels and is suitable for all audiences (rated PG).
      *
-     * @param username
-     * @return
+     * @param username The username for which the profile image URL is generated.
+     * @return A string representing the URL to the generated default profile image.
      */
     private String createProfileImage(String username) {
         return "https://www.gravatar.com/avatar/" + username + "?s=100&d=identicon&r=PG";

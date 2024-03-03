@@ -18,6 +18,12 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * Fragment for displaying and managing user profile information. This fragment allows users
+ * to view their profile details including their username, first name, last name, and profile image.
+ * Users can navigate to other parts of the application such as editing profile,
+ * and viewing events from this fragment.
+ */
 public class ProfileFragment extends Fragment {
 
     private ImageView profileImageView;
@@ -26,6 +32,9 @@ public class ProfileFragment extends Fragment {
     private TextView addUsername, firstName, lastName, homepage;
     private UserController userController;
 
+    /**
+     * Inflates the layout for the user's profile page.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -33,6 +42,10 @@ public class ProfileFragment extends Fragment {
         return inflater.inflate(R.layout.user_profile_page, container, false);
     }
 
+    /**
+     * Initializes the UI components, sets up button listeners, and fetches user details
+     * after the view is created.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -50,6 +63,9 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    /**
+     * Refreshes the user's profile details when the fragment is resumed (i.e. when navigated back to).
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -61,6 +77,11 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    /**
+     * Initializes the view components of the fragment.
+     *
+     * @param view The view returned by onCreateView.
+     */
     private void initializeViews(View view) {
         profileImageView = view.findViewById(R.id.imageView);
         buttonScan = view.findViewById(R.id.button_scan);
@@ -76,6 +97,9 @@ public class ProfileFragment extends Fragment {
         homepage = view.findViewById(R.id.homepage);
     }
 
+    /**
+     * Sets up listeners for the various buttons in the profile fragment.
+     */
     private void setupButtonListeners() {
         buttonScan.setOnClickListener(v -> {
             // TODO
@@ -107,6 +131,11 @@ public class ProfileFragment extends Fragment {
         });
     }
 
+    /**
+     * Fetches and displays the details of the user from Firebase/Internal storage.
+     *
+     * @param username The username of the user whose details are to be fetched.
+     */
     private void fetchUserDetails(String username) {
         userController.getUser(username, new UserFetchCallback() {
             @Override
