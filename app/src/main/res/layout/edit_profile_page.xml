@@ -64,6 +64,7 @@
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
+        android:textColorHint="@color/white"
         app:boxBackgroundColor="#0A0C16"
         app:layout_constraintBottom_toTopOf="@+id/first_name"
         app:layout_constraintEnd_toEndOf="parent"
@@ -73,7 +74,8 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Username" />
+            android:hint="Username"
+            android:textColor="@color/grey" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -81,6 +83,7 @@
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
+        android:textColorHint="@color/white"
         app:boxBackgroundColor="#0A0C16"
         app:layout_constraintBottom_toTopOf="@+id/last_name"
         app:layout_constraintEnd_toEndOf="parent"
@@ -90,7 +93,8 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="First Name" />
+            android:hint="First Name"
+            android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -98,6 +102,7 @@
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
+        android:textColorHint="@color/white"
         app:boxBackgroundColor="#0A0C16"
         app:layout_constraintBottom_toTopOf="@+id/about_me"
         app:layout_constraintEnd_toEndOf="parent"
@@ -107,7 +112,8 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Last Name" />
+            android:hint="Last Name"
+            android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -115,6 +121,7 @@
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
+        android:textColorHint="@color/white"
         app:boxBackgroundColor="#0A0C16"
         app:layout_constraintBottom_toTopOf="@+id/geolocation"
         app:layout_constraintEnd_toEndOf="parent"
@@ -124,7 +131,8 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="About Me" />
+            android:hint="About Me"
+            android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Switch
