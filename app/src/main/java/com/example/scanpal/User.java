@@ -49,7 +49,7 @@ public class User {
      * @return
      */
     private String createProfileImage(String username) {
-        return "http://www.gravatar.com/avatar/" + username + "?s=55&d=identicon&r=PG";
+        return "http://www.gravatar.com/avatar/" + username + "?s=100&d=identicon&r=PG";
     }
 
     public String getUsername() {
