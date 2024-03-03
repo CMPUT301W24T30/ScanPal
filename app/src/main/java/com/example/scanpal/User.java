@@ -1,5 +1,7 @@
 package com.example.scanpal;
 
+import java.io.File;
+
 /**
  * Initializes a user with a username, first name, and last name.
  */
@@ -23,6 +25,31 @@ public class User {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.photo = createProfileImage(username);
+    }
+
+    /**
+     * Constructs a user with a username, first name, and last name.
+     *
+     * @param username  The username of the user.
+     * @param firstName The first name of the user.
+     * @param lastName  The last name of the user.
+     * @param photo     The URL of the user's photo.
+     */
+    public User(String username, String firstName, String lastName, String photo) {
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.photo = photo;
+    }
+
+    /**
+     * Generates a URL for the default profile image of the user
+     * @param username
+     * @return
+     */
+    private String createProfileImage(String username) {
+        return "http://www.gravatar.com/avatar/" + username + "?s=100&d=identicon&r=PG";
     }
 
     public String getUsername() {

@@ -35,6 +35,7 @@ public class UserController {
         userMap.put("administrator", user.isAdministrator());
         userMap.put("firstName", user.getFirstName());
         userMap.put("lastName", user.getLastName());
+        userMap.put("photo", user.getPhoto());
 
         DocumentReference docRef = database.collection("Users").document(user.getUsername());
 
