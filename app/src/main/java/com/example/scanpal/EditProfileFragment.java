@@ -31,7 +31,7 @@ public class EditProfileFragment extends Fragment {
 
     private ImageView profileImageView;
     private Button saveButton;
-    private FloatingActionButton uploadButton, deleteButton;
+    private FloatingActionButton uploadButton, deleteButton, goBack;
     private TextInputEditText username, firstName, lastName;
     private ImageController imageController;
     private Uri imageUri;
@@ -61,6 +61,7 @@ public class EditProfileFragment extends Fragment {
         uploadButton = view.findViewById(R.id.upload_button);
         deleteButton = view.findViewById(R.id.delete_button);
         saveButton = view.findViewById(R.id.save_button);
+        goBack = view.findViewById(R.id.button_go_back);
 
         username = (TextInputEditText) ((TextInputLayout) view.findViewById(R.id.username)).getEditText();
         if (username != null) {
@@ -76,6 +77,10 @@ public class EditProfileFragment extends Fragment {
         deleteButton.setOnClickListener(v -> profileImageView.setImageDrawable(null));
 
         saveButton.setOnClickListener(v -> saveUserDetails());
+        goBack.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(EditProfileFragment.this);
+            navController.navigate(R.id.save_profile_edits);
+        });
 
         fetchUserDetails();
     }
