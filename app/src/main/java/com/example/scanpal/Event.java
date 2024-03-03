@@ -11,6 +11,7 @@ public class Event {
     private String name;
     private String description;
     private User organizer;
+    private String location;
     private Attendee[] participants;
     private String signUpAddress;
     private String infoAddress;
@@ -93,6 +94,15 @@ public class Event {
     public void setQrToEvent(Bitmap qrToEvent) {
         this.qrToEvent = qrToEvent;
     }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+}
 
     public Bitmap getQrToCheckIn() {
         return qrToCheckIn;

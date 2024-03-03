@@ -8,45 +8,41 @@
 
 
     <TextView
-        android:id="@+id/event_details_description"
+        android:id="@+id/event_description"
         android:layout_width="295dp"
         android:layout_height="89dp"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="70dp"
+        android:layout_marginEnd="72dp"
         android:text="You will meet us in the back alley of CSC no further questions asked. A tall slender man will provide pizza for you and those you came with. He will appear through the wall and return within 2 minutes of dropping off the pizza"
         android:textColor="#C1BABA"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.642" />
+        app:layout_constraintTop_toBottomOf="@+id/event_share" />
 
     <ImageView
         android:id="@+id/imageView7"
         android:layout_width="410dp"
         android:layout_height="274dp"
+        android:layout_marginEnd="1dp"
         android:scaleType="fitXY"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-
-        app:layout_constraintVertical_bias="0.0"
         tools:srcCompat="@drawable/ic_launcher_background" />
 
     <Button
-        android:id="@+id/button7"
+        android:id="@+id/event_joinButton"
         android:layout_width="182dp"
         android:layout_height="49dp"
         android:layout_marginStart="114dp"
+        android:layout_marginTop="25dp"
         android:layout_marginEnd="115dp"
-        android:layout_marginBottom="116dp"
         android:backgroundTint="#0D6EFD"
         android:text="Join Now"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/app_bar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/event_description" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/app_bar"
@@ -63,7 +59,7 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/button_go_back"
+        android:id="@+id/event_details_backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#2d3132"
@@ -141,129 +137,116 @@
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="177dp"
-        android:layout_marginEnd="178dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="11dp"
         android:clickable="true"
         app:backgroundTint="#0D6EFD"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.995"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:layout_constraintEnd_toStartOf="@+id/button_chat"
+        app:layout_constraintHorizontal_bias="0.517"
+        app:layout_constraintStart_toEndOf="@+id/button_your_events"
+        app:layout_constraintTop_toTopOf="@+id/app_bar"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/camera_icon"
+        app:tint="@color/white" />
 
     <TextView
-        android:id="@+id/event_detail_about"
+        android:id="@+id/event_description_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="30dp"
         android:text="About Event"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.148"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.55" />
+        app:layout_constraintTop_toBottomOf="@+id/event_OrgProfilePic" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton2"
+        android:id="@+id/event_shareButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="39dp"
+        android:layout_marginEnd="31dp"
         android:clickable="true"
         app:backgroundTint="#0D6EFD"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.954"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.471"
+        app:layout_constraintTop_toBottomOf="@+id/event_Title"
         app:srcCompat="@android:drawable/ic_menu_share" />
 
     <TextView
-        android:id="@+id/event_details_share"
+        android:id="@+id/event_share"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="58dp"
+        android:layout_marginEnd="8dp"
         android:text="Share"
         android:textColor="@color/white"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.748"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.473" />
+        app:layout_constraintEnd_toStartOf="@+id/event_shareButton"
+        app:layout_constraintTop_toBottomOf="@+id/event_Title" />
 
     <ImageView
-        android:id="@+id/imageView8"
+        android:id="@+id/event_OrgProfilePic"
         android:layout_width="37dp"
         android:layout_height="39dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.155"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="48dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.462"
+        app:layout_constraintTop_toBottomOf="@+id/event_Title"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/event_detail_attendee"
+        android:id="@+id/event_orgName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="34dp"
         android:text="Mr. OnPhone"
         android:textColor="@color/white"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.347"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.452" />
+        app:layout_constraintStart_toEndOf="@+id/event_OrgProfilePic"
+        app:layout_constraintTop_toBottomOf="@+id/event_Location" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton3"
+        android:id="@+id/event_editButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="23dp"
         android:clickable="true"
         app:backgroundTint="#0D6EFD"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.954"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.019"
         app:srcCompat="@android:drawable/ic_menu_edit" />
 
     <TextView
-        android:id="@+id/event_name_event_details"
+        android:id="@+id/event_Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="79dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="79dp"
         android:text="Back Alley CSC Meetup"
         android:textColor="@color/white"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.390
-" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView7" />
 
     <TextView
-        android:id="@+id/event_location_event_details"
+        android:id="@+id/event_Location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="153dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="159dp"
         android:text="CSC, Edmonton"
         android:textColor="#A09B9B"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.340
-" />
+        app:layout_constraintTop_toBottomOf="@+id/event_Title" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
