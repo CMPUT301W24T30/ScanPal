@@ -19,8 +19,10 @@
         app:layout_constraintVertical_bias="0.3">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/event_location_edittext"
             android:layout_width="match_parent"
             android:layout_height="52dp"
+            android:textColor="@color/white"
             android:hint="Enter Event Location" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -212,8 +214,10 @@
         app:layout_constraintVertical_bias="0.266">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/event_name_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/white"
             android:hint="Enter Event Name" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -229,8 +233,10 @@
         app:layout_constraintTop_toBottomOf="@+id/event_description_title">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/event_description_edittext"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:textColor="@color/white"
             android:hint="Event Description Goes Here" />
     </com.google.android.material.textfield.TextInputLayout>
 
