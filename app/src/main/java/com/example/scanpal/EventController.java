@@ -1,10 +1,22 @@
 package com.example.scanpal;
 
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -131,6 +143,126 @@ public class EventController {
 
 
 
+
+    }
+
+    /**
+     *
+     * @return A list of events created by the Current Instance User
+     *
+     */
+    public void getEventsByUser(View view, EventFetchByUserCallback callback) {
+        //eventually a clause for admins to return all existing events
+
+        ArrayList<Event> userEvents = new ArrayList<>();
+
+        UserController userController = new UserController(FirebaseFirestore.getInstance(),view.getContext());
+        userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
+            @Override
+            public void onSuccess(User user) {
+                Log.d("LISTENER","IN COMPLETE LISTENER");
+                Log.d("USERNAME", "/Users/" + user.getUsername());
+
+                DocumentReference userRef = FirebaseFirestore.getInstance().collection("Users").document(user.getUsername());
+
+                database.collection("Events").whereEqualTo("organizer",userRef )
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                if(task.isSuccessful()) {
+                                    Log.d("EVENTTRACKING", "PRELOOP");
+                                    //Log.d("RESULT", task.getResult().)
+
+                                    for(QueryDocumentSnapshot document : task.getResult()) {
+                                        //loop through all events to get events that match
+                                        //DocumentReference userRef;
+                                        Log.d("E ORGANIZER", document.get("name").toString() );
+
+                                        getEventById(document.getId().toString(), user, new EventFetchCallback() {
+                                            @Override
+                                            public void onSuccess(Event event) {
+                                                userEvents.add(event);
+                                                Log.d("INGETBYID CALLBACK", event.getName() );
+                                                Log.d("eventSIZE", Integer.toString(userEvents.size()));
+                                                callback.onSuccess(userEvents);
+                                            }
+
+                                            @Override
+                                            public void onError(Exception e) {
+                                                Log.d("INGETBYID", "ERROR");
+                                            }
+                                        });
+
+                                        //userEventsIDs.add( getEventfromDB(document.getId().toString()), user );
+
+
+
+                                        Log.d("EVENTTRACKING", document.getId().toString());
+                                        //DocumentReference eventref = (DocumentReference) document.get("organizer");
+                                        //userRef.getId();
+
+
+                                    }
+                                } else {
+                                    Log.d("EVENTTRACKING","NOT SUCCESSFUL");
+                                    Log.d("EVENTTRACKING",task.getException().getMessage());
+                                    //resolve errors
+                                }
+                                //callback.onSuccess(userEvents);
+                                Log.d("EVENTTRACKING", "POSTLOOP");
+                            }
+                        });
+            }
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(view.getContext(), "Failed to fetch User", Toast.LENGTH_LONG).show();
+                Log.d("USERERROR", "NO FETCH");
+            }
+        });
+
+    }
+
+    /**
+     *
+     * Returns an event from database given its ID
+     * @param EventID the events document D
+     * @param user the specific user
+     */
+    private void getEventById(String EventID,User user, EventFetchCallback callback) {
+
+        //Event event;
+
+        database.collection("Events").document(EventID)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        Log.d("GETBYEID", "IN ON COMPLETE");
+                        if(task.isSuccessful()) {
+                            DocumentSnapshot eventDoc = task.getResult();
+                            if (eventDoc.exists()) {
+                                // Document exists, retrieve its data
+                                Log.d("GETBYEID", "Document found with ID: " + EventID);
+                                // Access the data using eventDoc.getData() or convert it to an object
+
+                                 Event event = new Event(user,eventDoc.get("name").toString(),eventDoc.get("description").toString());// eventDoc.toObject(Event.class);
+                                event.setId(EventID);
+
+                                //Log.d("GETBYEID",event.getName());
+
+                                callback.onSuccess(event);
+                            } else {
+                                // Document does not exist
+                                Log.d("GETBYEID", "No document found with ID: " + EventID);
+                            }
+                        } else {
+                            // Error occurred while fetching document
+                            Log.d("GETBYEID", "Error getting document with ID: " + EventID, task.getException());
+                        }
+                    }
+                });
 
     }
 
