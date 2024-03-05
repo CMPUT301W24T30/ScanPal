@@ -14,6 +14,7 @@ public class Event {
     private String description;
     private User organizer;
     private String location;
+    private int maximumAttendees;
     private ArrayList<Attendee> participants;
     private String signUpAddress;
     private String infoAddress;
@@ -106,6 +107,13 @@ public class Event {
         this.location = location;
     }
 
+    public int getMaximumAttendees() {
+        return maximumAttendees;
+    }
+
+    public void setMaximumAttendees(int maximumAttendees) {
+        this.maximumAttendees = maximumAttendees;
+    }
 
     public Bitmap getQrToCheckIn() {
         return qrToCheckIn;

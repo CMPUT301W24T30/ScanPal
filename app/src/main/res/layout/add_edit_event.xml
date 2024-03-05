@@ -19,7 +19,7 @@
         app:layout_constraintVertical_bias="0.3">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/event_location_edittext"
+            android:id="@+id/add_edit_event_Location"
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:textColor="@color/white"
@@ -42,20 +42,20 @@
     <Button
         android:id="@+id/edit_image_button"
         style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="108dp"
-        android:layout_height="36dp"
-        android:layout_marginTop="136dp"
+        android:layout_width="120dp"
+        android:layout_height="41dp"
+        android:layout_marginTop="144dp"
         android:text="Edit Image"
         android:textColor="@color/white"
         app:iconTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.37"
+        app:layout_constraintHorizontal_bias="0.295"
         app:layout_constraintStart_toEndOf="@+id/imageView9"
         app:layout_constraintTop_toTopOf="parent"
         app:strokeColor="#3580FF" />
 
     <Button
-        android:id="@+id/save_button"
+        android:id="@+id/add_edit_save_button"
         style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -73,8 +73,9 @@
         app:iconTint="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/edit_image_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView10"
+        app:layout_constraintStart_toEndOf="@+id/add_edit_event_Header"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.36"
         app:strokeWidth="0dp" />
 
     <Button
@@ -90,7 +91,7 @@
         android:textSize="10sp"
         app:iconTint="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
-        app:layout_constraintEnd_toStartOf="@+id/editTextText"
+        app:layout_constraintEnd_toStartOf="@+id/add_edit_event_Attendees"
         app:layout_constraintStart_toEndOf="@+id/imageView9"
         app:layout_constraintTop_toBottomOf="@+id/edit_image_button"
         app:layout_constraintVertical_bias="0.48"
@@ -140,24 +141,28 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout3" />
 
     <EditText
-        android:id="@+id/editTextText"
+        android:id="@+id/add_edit_event_Attendees"
         android:layout_width="45dp"
         android:layout_height="31dp"
         android:layout_marginTop="132dp"
         android:layout_marginBottom="131dp"
-        android:backgroundTint="#3580FF"
+        android:background="#0A0C16"
+        android:backgroundTint="#0A0C16"
         android:ems="10"
-        android:inputType="text"
+        android:hint=" 1 >= "
+        android:inputType="number"
         android:textColor="@color/white"
+        app:boxBackgroundMode="outline"
         app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/max_attendees"
-        app:layout_constraintTop_toBottomOf="@+id/save_button"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/add_edit_save_button"
+        app:layout_constraintVertical_bias="0.0"
+        app:strokeColor="#3580FF" />
 
     <TextView
-        android:id="@+id/textView10"
-        android:layout_width="113dp"
+        android:id="@+id/add_edit_event_Header"
+        android:layout_width="140dp"
         android:layout_height="29dp"
         android:layout_marginTop="35dp"
         android:layout_marginEnd="45dp"
@@ -167,7 +172,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/imageView9"
-        app:layout_constraintEnd_toStartOf="@+id/save_button"
+        app:layout_constraintEnd_toStartOf="@+id/add_edit_save_button"
         app:layout_constraintStart_toEndOf="@+id/floatingActionButton4"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -182,7 +187,7 @@
         android:backgroundTint="#0A0C16"
         android:clickable="true"
         app:layout_constraintBottom_toTopOf="@+id/imageView9"
-        app:layout_constraintEnd_toStartOf="@+id/textView10"
+        app:layout_constraintEnd_toStartOf="@+id/add_edit_event_Header"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/arrow_back"
@@ -190,8 +195,8 @@
 
     <Button
         android:id="@+id/button8"
-        android:layout_width="305dp"
-        android:layout_height="51dp"
+        android:layout_width="278dp"
+        android:layout_height="38dp"
         android:backgroundTint="#AB2222"
         android:text="Delete Event"
         android:textStyle="bold"
@@ -214,30 +219,32 @@
         app:layout_constraintVertical_bias="0.266">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/event_name_edittext"
+            android:id="@+id/add_edit_event_Name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:hint="Enter Event Name" />
+            android:hint="Enter Event Name"
+            android:textColor="@color/white" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout2"
         android:layout_width="350dp"
-        android:layout_height="150dp"
+        android:layout_height="140dp"
+        android:layout_marginBottom="50dp"
         app:boxBackgroundColor="#0A0C16"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.459"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_description_title">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/event_description_edittext"
+            android:id="@+id/add_edit_event_description"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textColor="@color/white"
-            android:hint="Event Description Goes Here" />
+            android:layout_height="134dp"
+            android:hint="Event Description Goes Here"
+            android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

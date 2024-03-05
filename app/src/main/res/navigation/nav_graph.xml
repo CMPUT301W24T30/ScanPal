@@ -46,7 +46,7 @@
 
     <fragment
         android:id="@+id/addEditEvent"
-        android:name="com.example.scanpal.AddEditEventFragment"
+        android:name="com.example.scanpal.AddEventFragment"
         android:label="fragment_add_edit_event"
         tools:layout="@layout/add_edit_event"
         >

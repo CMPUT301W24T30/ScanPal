@@ -46,7 +46,10 @@ public class EventDetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.event_details, null, false);
 
         //retrieves all the info about specific event from database
-        fetchEventDetails();
+        String eventID =  getArguments().getString("0");
+        Log.d("DETAILID", eventID);
+
+        fetchEventDetails(eventID);
 
         Log.d("fire", "end of onCreate");
 
@@ -107,14 +110,15 @@ public class EventDetailsFragment extends Fragment {
      * for now takes the hardcoded string which links to an event in the database
      * and fetches all of its details(in future add one param for qr Bitmap)
      */
-    void fetchEventDetails() {
+    void fetchEventDetails(String EventID) {
         EventController eventController = new EventController();
         FirebaseFirestore db = eventController.getDatabase();
 
         //once qr stuff works just add a parameter to the method with qr string
         //for now test with hardcoded string linking to CSC meet up event
         CollectionReference eventCollection = db.collection("Events");
-        DocumentReference EventDocument = eventCollection.document("oudHiTAO4dN9G86RVF2U");//remove later
+
+        DocumentReference EventDocument = eventCollection.document(EventID);//remove later
 
         EventDocument.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -156,7 +160,7 @@ public class EventDetailsFragment extends Fragment {
                         //System.out.println("Error exist");
                         //eventName = "DOESNT EXIST";
                         // Document does not exist
-                        Toast.makeText(getView().getContext(), "Event Doesn't exit ", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getView().getContext(), "Event Doesn't exist ", Toast.LENGTH_LONG).show();
                     }
                 } else {
                     // Error getting document
