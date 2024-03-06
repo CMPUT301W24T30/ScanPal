@@ -26,6 +26,12 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ *
+ * This is the fragment related to handling operations involving
+ * Editing existing events in the database
+ *
+ */
 public class EditEventFragment extends Fragment {
 
     Button saveButton;
