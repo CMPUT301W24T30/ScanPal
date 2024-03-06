@@ -268,8 +268,8 @@ public class EventController {
                                         eventDoc.get("description").toString());
 
                                 event.setLocation( eventDoc.get("location").toString() );
-                                event.setInfoAddress( eventDoc.get("eventQRCodeURL").toString() );//assuming address to the info?
-                                event.setSignUpAddress( eventDoc.get("checkInQRCodeURL").toString() );//address to qrcheck in?
+                                //event.setInfoAddress( eventDoc.get("eventQRCodeURL").toString() );//assuming address to the info?
+                                //event.setSignUpAddress( eventDoc.get("checkInQRCodeURL").toString() );//address to qrcheck in?
                                 event.setMaximumAttendees(  (long)eventDoc.get("capacity") );
 
                                 //if event doesn't have an image this will cause a crash

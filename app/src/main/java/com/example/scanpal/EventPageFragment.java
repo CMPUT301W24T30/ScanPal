@@ -48,7 +48,7 @@ public class EventPageFragment extends Fragment {
 
         //just for testing linking to details page
 
-        /*
+
 
         ListView eventList = view.findViewById(R.id.event_List);
         testList = new ArrayList<>();
@@ -113,7 +113,7 @@ public class EventPageFragment extends Fragment {
             }
         });
 
-        */
+
 
 
 
@@ -123,7 +123,44 @@ public class EventPageFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         //could probably just remove this method unless someone needs it
-        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         /*
         addEventButton = view.findViewById(R.id.button_add_event);
 
