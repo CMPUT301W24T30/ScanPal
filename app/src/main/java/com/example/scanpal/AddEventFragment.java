@@ -25,6 +25,10 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * This is the fragment related to handling operations involving
+ * Adding new events to the database
+ */
 public class AddEventFragment extends Fragment {
     Button saveButton;
     FloatingActionButton backButton;
