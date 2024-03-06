@@ -120,7 +120,8 @@ public class AddEventFragment extends Fragment {
                 if(eventNameForm.getText().toString().equals("") ||
                     eventLocationForm.getText().toString().equals("") ||
                     eventDescriptionForm.getText().toString().equals("") ||
-                    attendeesForm.getText().toString().equals("") ) {
+                    attendeesForm.getText().toString().equals("") ||
+                    null == imageUri ) {
 
                     Toast.makeText(view.getContext(), "Please input all Information", Toast.LENGTH_LONG).show();
 
