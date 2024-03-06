@@ -36,7 +36,7 @@ public class AddEditEventFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {/*
         eventNameEditText = view.findViewById(R.id.event_name_edittext);
         eventDescriptionEditText = view.findViewById(R.id.event_description_edittext);
         saveButton = view.findViewById(R.id.save_button);
@@ -74,6 +74,6 @@ public class AddEditEventFragment extends Fragment {
             });
         });
 
-
+*/
     }
 }
