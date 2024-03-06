@@ -57,7 +57,11 @@
     <fragment
         android:id="@+id/eventDetailsPage"
         android:name="com.example.scanpal.EventDetailsFragment"
-        android:label="fragement_eventDetails" />
+        android:label="fragement_eventDetails" >
+        <action
+            android:id="@+id/edit_existing_event"
+            app:destination="@id/editEventFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/profile_fragment"
@@ -77,6 +81,14 @@
         <action
             android:id="@+id/save_profile_edits"
             app:destination="@id/profile_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editEventFragment"
+        android:name="com.example.scanpal.EditEventFragment"
+        android:label="EditEventFragment" >
+        <action
+            android:id="@+id/done_editingEvent"
+            app:destination="@id/eventDetailsPage" />
     </fragment>
 
 

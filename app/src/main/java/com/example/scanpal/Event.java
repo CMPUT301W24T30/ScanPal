@@ -1,6 +1,7 @@
 package com.example.scanpal;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 import java.util.ArrayList;
 
@@ -17,6 +18,8 @@ public class Event {
     private int maximumAttendees;
     private ArrayList<Attendee> participants;
     private String signUpAddress;
+    private Uri posterURI;
+    private String posterID;//because image controller stores using system time
     private String infoAddress;
     private Bitmap qrToEvent;
     private Bitmap qrToCheckIn;
@@ -121,5 +124,21 @@ public class Event {
 
     public void setQrToCheckIn(Bitmap qrToCheckIn) {
         this.qrToCheckIn = qrToCheckIn;
+    }
+
+    public void setPosterURI(Uri posterURI) {
+        this.posterURI = posterURI;
+    }
+
+    public Uri getPosterURI() {
+        return posterURI;
+    }
+
+    public void setPosterID(String posterID) {
+        this.posterID = posterID;
+    }
+
+    public String getPosterID() {
+        return posterID;
     }
 }
