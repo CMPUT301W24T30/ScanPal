@@ -30,7 +30,6 @@ public class EditEventFragment extends Fragment {
 
     Button saveButton;
     FloatingActionButton backButton;
-    Button deleteButton;
     Button editImageButton;
     EditText attendeesForm;
     EditText eventNameForm;
@@ -39,7 +38,6 @@ public class EditEventFragment extends Fragment {
     Event newEvent;
     EventController eventController;
     UserController userController;
-
     User Organizer;
     private Uri imageUri;
     private ImageView profileImageView;
@@ -58,10 +56,7 @@ public class EditEventFragment extends Fragment {
 
     public EditEventFragment() {
 
-
     }
-
-
 
     @Nullable
     @Override
@@ -77,11 +72,6 @@ public class EditEventFragment extends Fragment {
         userController = new UserController(FirebaseFirestore.getInstance(), view.getContext());
         eventController = new EventController();
 
-        //TODO: Remove the delete button from page when creating event
-        //this.deleteButton = view.findViewById(R.id.add_edit_deleteButton);
-        //this.deleteButton.setVisibility(View.GONE); // no need for delete button when creating an event
-
-
         this.saveButton = view.findViewById(R.id.add_edit_save_button);
         this.backButton = view.findViewById(R.id.add_edit_backButton);
         this.editImageButton = view.findViewById(R.id.add_edit_event_imageButton);
@@ -95,8 +85,8 @@ public class EditEventFragment extends Fragment {
 
         String eventID =  getArguments().getString("0");
 
-
         /*
+        FOR REFERENCE:
         bundle.putString("0", eventID);
         bundle.putString("1", eventName);
         bundle.putString("2", eventLocation);
@@ -111,10 +101,6 @@ public class EditEventFragment extends Fragment {
 
         //incase user decides to not change image
         this.imageUri = Uri.parse(getArguments().getString("4").toString() );
-
-        //profileImageView.setImageURI();
-
-
 
         userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
             @Override
@@ -168,11 +154,8 @@ public class EditEventFragment extends Fragment {
                     newEvent.setMaximumAttendees( Integer.parseInt(attendeesForm.getText().toString()));
                     newEvent.setPosterURI(imageUri);
 
-                    //TODO: stuff with adding/uploading photos and QR
 
-                    //now add the new event to the database
-                    //TODO: Some type of edit event method
-                    //eventController.addEvent(newEvent);
+                    //edits the event in the db
                     eventController.editEventById(eventID,newEvent);
 
                     Bundle bundle = new Bundle();
@@ -181,7 +164,6 @@ public class EditEventFragment extends Fragment {
                     NavController navController = NavHostFragment.findNavController(EditEventFragment.this);
                     navController.navigate(R.id.done_editingEvent, bundle);
                 }
-
             }
         });
 

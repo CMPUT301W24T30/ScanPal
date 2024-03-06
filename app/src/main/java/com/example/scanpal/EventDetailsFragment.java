@@ -39,10 +39,10 @@ public class EventDetailsFragment extends Fragment {
     private ImageView eventPoster;
     private String ImageURI;
 
-    //private Collection<DocumentReference> eventAttendees; not really needed
+    //private Collection<DocumentReference> eventAttendees; not really needed?
 
-    //TODO: future field here for organizer profile picture
-    //TODO: future field here for event poster/banner
+    //TODO: future field here for organizer profile picture?
+    //TODO: future field here for event poster/banner?
 
     /**
      * Empty Constructor
@@ -58,15 +58,9 @@ public class EventDetailsFragment extends Fragment {
 
         //retrieves all the info about specific event from database
         String eventID =  getArguments().getString("0");
-
-        //Log.d("DETAILID", eventID);
-
         fetchEventDetails(eventID);
 
-        //Log.d("fire", "end of onCreate");
-
         backButton = view.findViewById(R.id.event_details_backButton);
-
         eventPoster = view.findViewById(R.id.event_detail_imageView);
 
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -77,10 +71,8 @@ public class EventDetailsFragment extends Fragment {
             }
         });
 
-
         //Implement Editing Event Details
         eventEditButton = view.findViewById(R.id.event_editButton);
-
         eventEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,7 +111,6 @@ public class EventDetailsFragment extends Fragment {
                     bundle.putString("4", ImageURI);
 
                     navController.navigate(R.id.edit_existing_event, bundle);//navigate to edit this event
-
 
                 }
                 else {
@@ -185,7 +176,6 @@ public class EventDetailsFragment extends Fragment {
         FirebaseFirestore db = eventController.getDatabase();
 
         CollectionReference eventCollection = db.collection("Events");
-
         DocumentReference EventDocument = eventCollection.document(EventID);
 
         EventDocument.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -201,7 +191,6 @@ public class EventDetailsFragment extends Fragment {
                         eventDescription = document.getString("description");
                         eventLocation = document.getString("location");
                         ImageURI = document.getString("photo");
-
 
                         //since user technically another document
                         fetchOrganizer(document.getDocumentReference("organizer"));

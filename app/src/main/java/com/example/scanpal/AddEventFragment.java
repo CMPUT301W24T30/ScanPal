@@ -37,12 +37,10 @@ public class AddEventFragment extends Fragment {
     Event newEvent;
     EventController eventController;
     UserController userController;
-
     User Organizer;
     private Uri imageUri;
     private ImageView profileImageView;
     private ImageController imageController;
-
 
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -102,7 +100,7 @@ public class AddEventFragment extends Fragment {
             public void onError(Exception e) {
                 Toast.makeText(view.getContext(), "Failed to fetch User Data", Toast.LENGTH_LONG).show();
 
-                //TODO: probably should navigate back to the events page then
+                //TODO: probably should navigate back to the events page on failure?
 
             }
         });
@@ -112,7 +110,6 @@ public class AddEventFragment extends Fragment {
 
         //log test getting name
         Log.d("STORAGE", userController.fetchStoredUsername());
-
 
         //Implementing the Save button
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -137,8 +134,6 @@ public class AddEventFragment extends Fragment {
                     newEvent.setDescription(eventDescriptionForm.getText().toString());
                     newEvent.setMaximumAttendees( Integer.parseInt(attendeesForm.getText().toString()));
                     newEvent.setPosterURI(imageUri);
-
-                    //TODO: stuff with adding/uploading photos and QR
 
                     //now add the new event to the database
                     eventController.addEvent(newEvent);
