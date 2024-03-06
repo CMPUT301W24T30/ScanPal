@@ -109,6 +109,9 @@ public class EditEventFragment extends Fragment {
         this.eventLocationForm.setText(getArguments().getString("2"));
         this.eventDescriptionForm.setText(getArguments().getString("3"));
 
+        //incase user decides to not change image
+        this.imageUri = Uri.parse(getArguments().getString("4").toString() );
+
         //profileImageView.setImageURI();
 
 
@@ -128,7 +131,7 @@ public class EditEventFragment extends Fragment {
             }
         });
 
-        eventController.getEventById(eventID, Organizer, new EventFetchCallback() {
+        eventController.getEventById(eventID, new EventFetchCallback() {
             @Override
             public void onSuccess(Event event) {
                 if (event.getPosterURI() != null) {
