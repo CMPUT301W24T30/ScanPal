@@ -3,6 +3,6 @@
     <item
         android:width="100dp"
         android:height="100dp"
-        android:drawable="@mipmap/logo_splash_round"
+        android:drawable="@mipmap/onphone"
         android:gravity="center" />
 </layer-list>
