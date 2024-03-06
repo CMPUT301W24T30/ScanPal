@@ -24,22 +24,6 @@ public class RoleSelectFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.role_select, container, false);
 
-        UserController userController1 = new UserController(FirebaseFirestore.getInstance(),view.getContext());
-        userController1.getUser(userController1.fetchStoredUsername(), new UserFetchCallback() {
-            @Override
-            public void onSuccess(User user) {
-                //Organizer = user;
-                //log\
-                NavController navController = NavHostFragment.findNavController(RoleSelectFragment.this);
-                navController.navigate(R.id.createUserCompleted);
-            }
-
-            @Override
-            public void onError(Exception e) {
-                Toast.makeText(view.getContext(), "Failed to fetch User", Toast.LENGTH_LONG).show();
-            }
-        });
-
         assert getArguments() != null;
         String username = getArguments().getString("username", "");
         String firstName = getArguments().getString("firstName", "");
