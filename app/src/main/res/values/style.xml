@@ -3,12 +3,9 @@
     <style name="Theme.App" parent="Theme.Material3.DayNight.NoActionBar" />
 
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
-        <!-- Set the splash screen background to black -->
         <item name="windowSplashScreenBackground">@android:color/black</item>
-        <!-- Use windowSplashScreenAnimatedIcon to add a drawable or an animated
-             drawable. -->
         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_screen</item>
-        <!-- Set the theme of the Activity that follows your splash screen. -->
+
         <item name="postSplashScreenTheme">@style/Theme.App</item>
     </style>
 </resources>
