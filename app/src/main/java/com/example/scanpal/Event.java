@@ -15,11 +15,10 @@ public class Event {
     private String description;
     private User organizer;
     private String location;
-    private int maximumAttendees;
+    private long maximumAttendees;
     private ArrayList<Attendee> participants;
     private String signUpAddress;
     private Uri posterURI;
-    private String posterID;//because image controller stores using system time
     private String infoAddress;
     private Bitmap qrToEvent;
     private Bitmap qrToCheckIn;
@@ -110,11 +109,11 @@ public class Event {
         this.location = location;
     }
 
-    public int getMaximumAttendees() {
+    public long getMaximumAttendees() {
         return maximumAttendees;
     }
 
-    public void setMaximumAttendees(int maximumAttendees) {
+    public void setMaximumAttendees(long maximumAttendees) {
         this.maximumAttendees = maximumAttendees;
     }
 
@@ -134,11 +133,4 @@ public class Event {
         return posterURI;
     }
 
-    public void setPosterID(String posterID) {
-        this.posterID = posterID;
-    }
-
-    public String getPosterID() {
-        return posterID;
-    }
 }
