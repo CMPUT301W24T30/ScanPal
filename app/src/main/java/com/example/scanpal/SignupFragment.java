@@ -27,25 +27,6 @@ public class SignupFragment extends Fragment {
 
         view.findViewById(R.id.addUserContinue).setOnClickListener(v -> {
 
-            UserController userController = new UserController(FirebaseFirestore.getInstance(),view.getContext());
-            userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
-                @Override
-                public void onSuccess(User user) {
-                    //Organizer = user;
-                    //log\
-                    NavController navController = NavHostFragment.findNavController(SignupFragment.this);
-                    Bundle bundle = new Bundle();
-                    navController.navigate(R.id.addUserContinueAction, bundle);
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    Toast.makeText(view.getContext(), "Failed to fetch User", Toast.LENGTH_LONG).show();
-                }
-            });
-
-            /*
-
             TextView username = view.findViewById(R.id.addUsername);
             TextView firstName = view.findViewById(R.id.addFirstName);
             TextView lastName = view.findViewById(R.id.addLastName);
@@ -74,7 +55,7 @@ public class SignupFragment extends Fragment {
                             Toast.makeText(view.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                         }
 
-                    });*/
+                    });
 
         });
 
