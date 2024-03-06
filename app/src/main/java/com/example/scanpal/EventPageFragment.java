@@ -43,18 +43,18 @@ public class EventPageFragment extends Fragment {
         View view = inflater.inflate(R.layout.events_page, container, false);
 
 
+
+
+
         //just for testing linking to details page
+
+        /*
 
         ListView eventList = view.findViewById(R.id.event_List);
         testList = new ArrayList<>();
         EventIDs = new ArrayList<>();
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(view.getContext(),R.layout.list_layout,R.id.textView_event,testList);//ArrayAdapter<>(this,,testList) ;
-
-        //hardcoded for testing
-        //testList.add("test item 1");
-        //testList.add("test item  2");
-
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(view.getContext(),R.layout.list_layout,R.id.textView_event,testList);
 
         EventController eventController = new EventController();
         ArrayList<Event> eventsList1;// = eventController.getEventsByUser(view);
@@ -79,8 +79,6 @@ public class EventPageFragment extends Fragment {
 
                 eventList.setAdapter(adapter);
 
-
-
             }
 
             @Override
@@ -90,16 +88,7 @@ public class EventPageFragment extends Fragment {
             }
         });
 
-        //testList.add( eventsList.get(0).getName() );
-        //testList.add( eventsList.get(1).getName() );
-
-
-        //eventList.setAdapter(adapter);
-
-       // listEvents(view);
         Log.d("EVENTPAGE", "RETURNED");
-
-
 
         eventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -113,11 +102,8 @@ public class EventPageFragment extends Fragment {
             }
         });
 
-
-
         //stuff for adding an event
         addEventButton = view.findViewById(R.id.button_add_event);
-
 
         addEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,6 +113,8 @@ public class EventPageFragment extends Fragment {
             }
         });
 
+        */
+
 
 
         return view;
@@ -134,6 +122,8 @@ public class EventPageFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        //could probably just remove this method unless someone needs it
+        
         /*
         addEventButton = view.findViewById(R.id.button_add_event);
 
