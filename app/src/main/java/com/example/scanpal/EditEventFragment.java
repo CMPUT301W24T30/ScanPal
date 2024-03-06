@@ -22,10 +22,12 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class AddEventFragment extends Fragment {
+public class EditEventFragment extends Fragment {
+
     Button saveButton;
     FloatingActionButton backButton;
     Button deleteButton;
@@ -43,7 +45,6 @@ public class AddEventFragment extends Fragment {
     private ImageView profileImageView;
     private ImageController imageController;
 
-
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -55,10 +56,12 @@ public class AddEventFragment extends Fragment {
                 }
             });
 
+    public EditEventFragment() {
 
-    public AddEventFragment() {
 
     }
+
+
 
     @Nullable
     @Override
@@ -67,30 +70,48 @@ public class AddEventFragment extends Fragment {
 
         //Fragment UI
         TextView pageHeader = view.findViewById(R.id.add_edit_event_Header);
-        pageHeader.setText("Create Event");
-        Log.d("Creating New Event", "Enter Details");
+        pageHeader.setText("Edit Event");
+        Log.d("Editing Existing Event", "Edit Details");
 
+        //getting an instance of the currentUser
+        userController = new UserController(FirebaseFirestore.getInstance(), view.getContext());
+        eventController = new EventController();
 
         //TODO: Remove the delete button from page when creating event
-        this.deleteButton = view.findViewById(R.id.add_edit_deleteButton);
-        this.deleteButton.setVisibility(View.GONE); // no need for delete button when creating an event
+        //this.deleteButton = view.findViewById(R.id.add_edit_deleteButton);
+        //this.deleteButton.setVisibility(View.GONE); // no need for delete button when creating an event
 
 
-         this.saveButton = view.findViewById(R.id.add_edit_save_button);
-         this.backButton = view.findViewById(R.id.add_edit_backButton);
-         this.editImageButton = view.findViewById(R.id.add_edit_event_imageButton);
-         this.attendeesForm = view.findViewById(R.id.add_edit_event_Attendees);
-         this.eventNameForm = view.findViewById(R.id.add_edit_event_Name);
-         this.eventLocationForm = view.findViewById(R.id.add_edit_event_Location);
-         this.eventDescriptionForm = view.findViewById(R.id.add_edit_event_description);
+        this.saveButton = view.findViewById(R.id.add_edit_save_button);
+        this.backButton = view.findViewById(R.id.add_edit_backButton);
+        this.editImageButton = view.findViewById(R.id.add_edit_event_imageButton);
+        this.attendeesForm = view.findViewById(R.id.add_edit_event_Attendees);
+        this.eventNameForm = view.findViewById(R.id.add_edit_event_Name);
+        this.eventLocationForm = view.findViewById(R.id.add_edit_event_Location);
+        this.eventDescriptionForm = view.findViewById(R.id.add_edit_event_description);
         this.profileImageView = view.findViewById(R.id.add_edit_event_ImageView);
 
         imageController = new ImageController();
 
+        String eventID =  getArguments().getString("0");
 
-         //getting an instance of the currentUser
-         userController = new UserController(FirebaseFirestore.getInstance(), view.getContext());
-         eventController = new EventController();
+
+        /*
+        bundle.putString("0", eventID);
+        bundle.putString("1", eventName);
+        bundle.putString("2", eventLocation);
+        bundle.putString("3", eventDescription);
+        bundle.putString("4", ImageURI);
+        */
+
+        //prefill forms with existing data
+        this.eventNameForm.setText(getArguments().getString("1"));
+        this.eventLocationForm.setText(getArguments().getString("2"));
+        this.eventDescriptionForm.setText(getArguments().getString("3"));
+
+        //profileImageView.setImageURI();
+
+
 
         userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
             @Override
@@ -107,23 +128,29 @@ public class AddEventFragment extends Fragment {
             }
         });
 
-        this.newEvent = new Event(this.Organizer,"","");//blank event for now until user clicks 'save'
+        eventController.getEventById(eventID, Organizer, new EventFetchCallback() {
+            @Override
+            public void onSuccess(Event event) {
+                if (event.getPosterURI() != null) {
+                    Glide.with(EditEventFragment.this).load(event.getPosterURI()).into(profileImageView);
+                }
+            }
 
+            @Override
+            public void onError(Exception e) {
 
-        //log test getting name
-        Log.d("STORAGE", userController.fetchStoredUsername());
+            }
+        });
 
-
-        //Implementing the Save button
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 //checking for valid input
                 if(eventNameForm.getText().toString().equals("") ||
-                    eventLocationForm.getText().toString().equals("") ||
-                    eventDescriptionForm.getText().toString().equals("") ||
-                    attendeesForm.getText().toString().equals("") ) {
+                        eventLocationForm.getText().toString().equals("") ||
+                        eventDescriptionForm.getText().toString().equals("") ||
+                        attendeesForm.getText().toString().equals("") ) {
 
                     Toast.makeText(view.getContext(), "Please input all Information", Toast.LENGTH_LONG).show();
 
@@ -141,24 +168,29 @@ public class AddEventFragment extends Fragment {
                     //TODO: stuff with adding/uploading photos and QR
 
                     //now add the new event to the database
-                    eventController.addEvent(newEvent);
+                    //TODO: Some type of edit event method
+                    //eventController.addEvent(newEvent);
+                    eventController.editEventById(eventID,newEvent);
 
-                    NavController navController = NavHostFragment.findNavController(AddEventFragment.this);
-                    navController.navigate(R.id.addEditEventComplete);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("0",eventID);
+
+                    NavController navController = NavHostFragment.findNavController(EditEventFragment.this);
+                    navController.navigate(R.id.done_editingEvent, bundle);
                 }
 
             }
         });
 
-
-        //Implementing the Back button to return to Events Page
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 //just go back to the previous screen without doing anything
-                NavController navController = NavHostFragment.findNavController(AddEventFragment.this);
-                navController.navigate(R.id.addEditEventComplete);
+                Bundle bundle = new Bundle();
+                bundle.putString("0",eventID);
+                NavController navController = NavHostFragment.findNavController(EditEventFragment.this);
+                navController.navigate(R.id.done_editingEvent,bundle);
             }
         });
 
@@ -169,6 +201,8 @@ public class AddEventFragment extends Fragment {
                 openGallery();
             }
         });
+
+        this.newEvent = new Event(this.Organizer,"","");//blank event for now until user clicks 'save'
 
         return view;
     }
@@ -192,5 +226,4 @@ public class AddEventFragment extends Fragment {
                 taskSnapshot -> Toast.makeText(getContext(), "Image Uploaded Successfully", Toast.LENGTH_SHORT).show(),
                 e -> Toast.makeText(getContext(), "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
-
 }

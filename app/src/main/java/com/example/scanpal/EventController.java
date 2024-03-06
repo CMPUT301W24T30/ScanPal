@@ -1,6 +1,7 @@
 package com.example.scanpal;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +12,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -72,6 +75,7 @@ public class EventController {
         eventMap.put("name", event.getName());
         eventMap.put("description", event.getDescription());
         eventMap.put("location", event.getLocation());
+        eventMap.put("photo", event.getPosterURI());
 
         DocumentReference organizerRef = database.collection("Users").document(event.getOrganizer().getUsername());
         eventMap.put("organizer", organizerRef);
@@ -110,6 +114,7 @@ public class EventController {
                     Log.d("EventController", "Event added successfully!");
                     StorageReference checkInQRCodeRef = storageRef.child("qr-codes/" + event.getId() + "-check-in.png");
                     StorageReference eventQRCodeRef = storageRef.child("qr-codes/" + event.getId() + "-event.png");
+                    //StorageReference eventPosterRef = storageRef.child("/" + event.getId() + "-poster.jpg");//TODO: checking img types?
                     UploadTask uploadTask = checkInQRCodeRef.putBytes(imageDataCheckin, metadata);
                     uploadTask
                             .addOnFailureListener(exception -> Log.e("FirebaseStorage", "Failed to upload check in qr code: " + exception.getMessage()))
@@ -140,6 +145,31 @@ public class EventController {
                 .addOnFailureListener(e -> Log.d("EventController", "Error adding event: " + e.getMessage()));
 
 
+            StorageReference eventPosterRef = storageRef.child("/" + event.getId() + "-poster.jpg");//TODO: checking img types?
+            UploadTask uploadPhotoTask = eventPosterRef.putFile(event.getPosterURI());
+
+            uploadPhotoTask = eventPosterRef.putFile(event.getPosterURI());
+
+        uploadPhotoTask.addOnSuccessListener(taskSnapshot -> {
+            // Photo is uploaded to the storage; get download URL
+            taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(uri -> {
+                // Update eventMap with the photo URL
+                eventMap.put("photo", uri.toString());
+
+                // Update the event document in Firestore with the photo URL
+                eventRef.update("photo", uri.toString())
+                        .addOnSuccessListener(aVoid -> {
+                            Log.d("EventController", "Photo URL added successfully!");
+                        })
+                        .addOnFailureListener(exception -> {
+                            Log.e("EventController", "Failed to update photo URL: " + exception.getMessage());
+                        });
+            }).addOnFailureListener(exception -> {
+                Log.e("FirebaseStorage", "Failed to get download URL for event photo: " + exception.getMessage());
+            });
+        }).addOnFailureListener(exception -> {
+            Log.e("FirebaseStorage", "Failed to upload event photo: " + exception.getMessage());
+        });
 
 
 
@@ -230,7 +260,7 @@ public class EventController {
      * @param EventID the events document D
      * @param user the specific user
      */
-    private void getEventById(String EventID,User user, EventFetchCallback callback) {
+    public void getEventById(String EventID,User user, EventFetchCallback callback) {
 
         //Event event;
 
@@ -248,6 +278,10 @@ public class EventController {
                                 // Access the data using eventDoc.getData() or convert it to an object
 
                                  Event event = new Event(user,eventDoc.get("name").toString(),eventDoc.get("description").toString());// eventDoc.toObject(Event.class);
+
+                                //if event doesn't have an image this will cause a crash
+                                Uri imageURI = Uri.parse(eventDoc.get("photo").toString());
+                                event.setPosterURI( imageURI);
                                 event.setId(EventID);
 
                                 //Log.d("GETBYEID",event.getName());
@@ -261,6 +295,40 @@ public class EventController {
                             // Error occurred while fetching document
                             Log.d("GETBYEID", "Error getting document with ID: " + EventID, task.getException());
                         }
+                    }
+                });
+
+    }
+
+    /**
+     *
+     * edits an event in database given its ID
+     * @param EventID the event to edit
+     * @param event the new details for the existing event
+     */
+    public void editEventById(String EventID, Event event) {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("name", event.getName());
+        updates.put("location", event.getLocation());
+        updates.put("description", event.getDescription());
+        updates.put("photo", event.getPosterURI().toString());
+
+        //updates.put("location", "new_value2"); MAX ATTENDEES
+
+        //Event event;
+
+        database.collection("Events").document(EventID)
+                .update(updates)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("DB", "Document successfully updated!");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("DB ERROR", "Error updating document", e);
+
                     }
                 });
 

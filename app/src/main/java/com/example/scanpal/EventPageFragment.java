@@ -67,7 +67,7 @@ public class EventPageFragment extends Fragment {
                 EventIDs.clear();
 
                 for(int i = 0; i < eventsList.size(); i++) {
-                    testList.add( eventsList.get(i).getName().toString());
+                    testList.add( eventsList.get(i).getName().toString());//gets listed by recent access
                     EventIDs.add( eventsList.get(i).getId() );
 
                     Log.d("EVENTPAGENAMES", eventsList.get(i).getName().toString());
@@ -114,8 +114,9 @@ public class EventPageFragment extends Fragment {
         });
 
 
+
         //stuff for adding an event
-        FloatingActionButton addEventButton = view.findViewById(R.id.button_add_event);
+        addEventButton = view.findViewById(R.id.button_add_event);
 
 
         addEventButton.setOnClickListener(new View.OnClickListener() {
@@ -140,20 +141,6 @@ public class EventPageFragment extends Fragment {
             NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
             navController.navigate(R.id.addEvent);
         });*/
-
-    }
-
-    /**
-     * list events created by user
-     *
-     */
-    public void listEvents(View view) {
-        //EventController eventController = new EventController();
-        //eventController.getEventsByUser(view);
-
-
-
-
 
     }
 
