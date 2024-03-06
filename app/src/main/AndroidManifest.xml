@@ -30,6 +30,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Capture"
+            android:screenOrientation="portrait"
+            android:theme="@style/zxing_CaptureTheme">
+        </activity>
     </application>
 
 </manifest>

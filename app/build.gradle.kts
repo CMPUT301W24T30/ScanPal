@@ -65,5 +65,5 @@ dependencies {
 
     implementation("com.google.zxing:core:3.4.0") // for qr code generation
     implementation("com.google.zxing:javase:3.4.0")
-    implementation("com.journeyapps:zxing-android-embedded:4.2.0")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 }
