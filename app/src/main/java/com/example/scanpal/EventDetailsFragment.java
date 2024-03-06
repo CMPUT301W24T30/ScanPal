@@ -26,6 +26,12 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * This is the fragment related to displaying
+ * the details of an event given its id
+ * when switching to this fragment it is assumed
+ * you have the eventID in the incoming bundle
+ */
 public class EventDetailsFragment extends Fragment {
 
     private String eventName;
