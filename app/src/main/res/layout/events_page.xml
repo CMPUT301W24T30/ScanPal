@@ -24,6 +24,7 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_scan"
+        android:theme="@style/Theme.AppCompat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="11dp"
@@ -43,6 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#0018F9"
+        android:theme="@style/Theme.AppCompat"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -57,6 +59,7 @@
         android:id="@+id/event_page_backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:theme="@style/Theme.AppCompat"
         android:backgroundTint="#2d3132"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -73,6 +76,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/black"
+        android:theme="@style/Theme.AppCompat"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -88,6 +92,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/black"
+        android:theme="@style/Theme.AppCompat"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -102,6 +107,7 @@
         android:id="@+id/button_your_events"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:theme="@style/Theme.AppCompat"
         android:backgroundTint="@color/black"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -117,6 +123,7 @@
         android:id="@+id/button_homepage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:theme="@style/Theme.AppCompat"
         android:backgroundTint="@color/black"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -129,7 +136,7 @@
         app:tint="#7f7f7f" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/events_page_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="88dp"
@@ -142,7 +149,7 @@
         app:layout_constraintBottom_toTopOf="@+id/app_bar"
         app:layout_constraintEnd_toStartOf="@+id/button_add_event"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/event_details_backButton"
+        app:layout_constraintStart_toEndOf="@+id/event_page_backButton"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.019" />
 
