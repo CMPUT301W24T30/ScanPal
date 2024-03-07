@@ -1,8 +1,8 @@
 package com.example.scanpal;
 
 import androidx.fragment.app.testing.FragmentScenario;
+import androidx.lifecycle.Lifecycle;
 import androidx.test.espresso.Espresso;
-import androidx.test.espresso.IdlingPolicies;
 import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -11,22 +11,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.concurrent.TimeUnit;
-
 @RunWith(AndroidJUnit4.class)
 public class EventDetailsFragmentTest {
 
     @Before
     public void setUp() {
-        FragmentScenario.launchInContainer(EventDetailsFragment.class);
-
-        // add time before testing to allow the view to load in
-        IdlingPolicies.setMasterPolicyTimeout(5, TimeUnit.SECONDS);
-        IdlingPolicies.setIdlingResourceTimeout(5, TimeUnit.SECONDS);
+        FragmentScenario<EventDetailsFragment> scenario = FragmentScenario.launchInContainer(EventDetailsFragment.class);
+        scenario.moveToState(Lifecycle.State.STARTED);
     }
 
     /**
-     * Tests the UI components' visibility in the EventPageFragment.
+     * Tests the UI components' visibility in the EventDetailsFragment.
      */
     @Test
     public void testUIVisibility() {

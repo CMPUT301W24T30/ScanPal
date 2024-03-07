@@ -8,4 +8,8 @@
 
         <item name="postSplashScreenTheme">@style/Theme.App</item>
     </style>
+
+    <style name="Theme.App.TextInput" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:background">#0A0C16</item>
+    </style>
 </resources>
