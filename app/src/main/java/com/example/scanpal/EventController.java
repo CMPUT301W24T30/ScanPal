@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -42,6 +43,29 @@ public class EventController {
     public FirebaseFirestore getDatabase() {
         return this.database;
     }
+
+    // Callback interface for delivering the fetched events
+    public interface EventFetchListener {
+        void onEventFetched(List<Event> eventList);
+        void onError(Exception e);
+    }
+
+    // Method to fetch events
+    public void fetchEvents(EventFetchListener listener) {
+        database.collection("Events").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                List<Event> eventList = new ArrayList<>();
+                for (DocumentSnapshot document : task.getResult()) {
+                    Event event = document.toObject(Event.class);
+                    eventList.add(event);
+                }
+                listener.onEventFetched(eventList);
+            } else {
+                listener.onError(task.getException());
+            }
+        });
+    }
+
 
     /**
      * Adds a new event to the Firestore database.
