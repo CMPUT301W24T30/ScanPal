@@ -19,6 +19,7 @@ public class Event {
     private String infoAddress;
     private Bitmap qrToEvent;
     private Bitmap qrToCheckIn;
+    private String imageUrl;
 
     /**
      * Constructs an event with an organizer, name, and description.
@@ -26,11 +27,13 @@ public class Event {
      * @param organizer   The user who organized the event.
      * @param name        The name of the event.
      * @param description The description of the event.
+     * @param imageUrl    The url to the firebase stored image.
      */
-    public Event(User organizer, String name, String description) {
+    public Event(User organizer, String name, String description, String imageUrl) {
         this.organizer = organizer;
         this.name = name;
         this.description = description;
+        this.imageUrl = imageUrl;
         participants = new ArrayList<>();
     }
 
@@ -113,5 +116,13 @@ public class Event {
 
     public void setQrToCheckIn(Bitmap qrToCheckIn) {
         this.qrToCheckIn = qrToCheckIn;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
