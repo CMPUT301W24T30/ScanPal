@@ -7,6 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+
 import android.widget.GridView;
 import java.util.List;
 import androidx.fragment.app.Fragment;
@@ -14,6 +18,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.annotation.NonNull;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -31,6 +37,9 @@ public class EventPageFragment extends Fragment {
     private EventController eventController;
 
     FloatingActionButton addEventButton;
+    ArrayList<String> testList;
+    ArrayList<String> EventIDs;
+
 
     public EventPageFragment() {
         // Required empty public constructor
@@ -80,6 +89,21 @@ public class EventPageFragment extends Fragment {
             }
         });
 
+        //stuff for adding an event
+        addEventButton = view.findViewById(R.id.button_add_event);
+
+        addEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
+                navController.navigate(R.id.addEvent);
+            }
+        });
+
+
+
+
+
         return view;
     }
 
@@ -87,6 +111,46 @@ public class EventPageFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        //could probably just remove this method unless someone needs it
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*
         addEventButton = view.findViewById(R.id.button_add_event);
 
         addEventButton.setOnClickListener(v -> {
@@ -94,5 +158,6 @@ public class EventPageFragment extends Fragment {
             navController.navigate(R.id.addEvent);
         });
     }
+
 }
 

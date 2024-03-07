@@ -1,6 +1,7 @@
 package com.example.scanpal;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 import java.util.ArrayList;
 
@@ -14,8 +15,10 @@ public class Event {
     private String description;
     private User organizer;
     private String location;
+    private long maximumAttendees;
     private ArrayList<Attendee> participants;
     private String signUpAddress;
+    private Uri posterURI;
     private String infoAddress;
     private Bitmap qrToEvent;
     private Bitmap qrToCheckIn;
@@ -109,6 +112,13 @@ public class Event {
         this.location = location;
     }
 
+    public long getMaximumAttendees() {
+        return maximumAttendees;
+    }
+
+    public void setMaximumAttendees(long maximumAttendees) {
+        this.maximumAttendees = maximumAttendees;
+    }
 
     public Bitmap getQrToCheckIn() {
         return qrToCheckIn;
@@ -125,4 +135,13 @@ public class Event {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    public void setPosterURI(Uri posterURI) {
+        this.posterURI = posterURI;
+    }
+
+    public Uri getPosterURI() {
+        return posterURI;
+    }
+
 }
