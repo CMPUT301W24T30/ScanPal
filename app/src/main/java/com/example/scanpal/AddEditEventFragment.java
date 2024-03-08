@@ -1,13 +1,12 @@
 package com.example.scanpal;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -36,7 +35,7 @@ public class AddEditEventFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {/*
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {/*
         eventNameEditText = view.findViewById(R.id.event_name_edittext);
         eventDescriptionEditText = view.findViewById(R.id.event_description_edittext);
         saveButton = view.findViewById(R.id.save_button);

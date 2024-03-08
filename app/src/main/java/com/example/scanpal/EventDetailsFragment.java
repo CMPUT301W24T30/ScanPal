@@ -32,20 +32,23 @@ import com.journeyapps.barcodescanner.ScanOptions;
 import java.util.Objects;
 
 /**
- * This is the fragment related to displaying
- * the details of an event given its id
- * when switching to this fragment it is assumed
- * you have the eventID in the incoming bundle
+ * Fragment for displaying event details. It expects an event ID as an argument
+ * and uses it to fetch and display event details from a Firestore database.
  */
 public class EventDetailsFragment extends Fragment {
 
-    public User userDetails; // current user
+    // User details of the current user
+    public User userDetails;
+    // The attendee of the event
     public User user;
     public Attendee attendee;
+    // Attendee ID, constructed from user's username and eventID
     public String attendeeId;
     public AttendeeController attendeeController;
+    // ActivityResultLauncher for QR code scanner
     ActivityResultLauncher<ScanOptions> qrCodeScanner;
     private QrScannerController qrScannerController;
+    // Event details
     private String eventName;
     private String eventDescription;
     private String eventOrganizer;
@@ -55,20 +58,18 @@ public class EventDetailsFragment extends Fragment {
     private String ImageURI;
     private Button joinButton;
     private ImageView organizerImage;
-    private FloatingActionButton scanQR;
-
-
-    // private Collection<DocumentReference> eventAttendees; not really needed?
 
     /**
-     * Empty Constructor
+     * Default constructor for EventDetailsFragment.
      */
     public EventDetailsFragment() {
+        // Required empty public constructor
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        // Check if userDetails is not null and arguments are provided
         if (userDetails != null && getArguments() != null) {
             String eventID = getArguments().getString("0");
             if (eventID != null) {
@@ -88,31 +89,32 @@ public class EventDetailsFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.event_details, null, false);
 
-        // retrieves all the info about specific event from database
+        // Retrieve and display event details
         assert getArguments() != null;
         String eventID = getArguments().getString("0");
         fetchEventDetails(eventID);
 
+        // Initialize UI components and setup event handlers
         FloatingActionButton backButton = view.findViewById(R.id.event_details_backButton);
         eventPoster = view.findViewById(R.id.event_detail_imageView);
         joinButton = view.findViewById(R.id.join_button);
         FloatingActionButton eventEditButton = view.findViewById(R.id.event_editButton);
         organizerImage = view.findViewById(R.id.organizer_image);
-        scanQR = view.findViewById(R.id.scan_code);
+        FloatingActionButton scanQR = view.findViewById(R.id.scan_code);
         FloatingActionButton profileButton = view.findViewById(R.id.button_profile);
 
-
+        // Setup user and attendee controllers
         UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
         attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), getContext());
         qrScannerController = new QrScannerController(attendeeController);
 
+        // Fetch and setup current user details
         userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
             @Override
             public void onSuccess(User user) {
                 userDetails = user;
                 attendeeId = userDetails.getUsername() + eventID;
                 attendeeController.fetchAttendee(attendeeId, new AttendeeFetchCallback() {
-
                     @Override
                     public void onSuccess(Attendee existingAttendee) {
                         Log.d("EventDetailsFragment", "Attendee already exists. No need to add a new one.");
@@ -136,7 +138,6 @@ public class EventDetailsFragment extends Fragment {
                                 @Override
                                 public void onError(Exception e) {
                                     Toast.makeText(view.getContext(), "Failed to add attendee", Toast.LENGTH_LONG).show();
-
                                 }
                             });
                         }
@@ -150,6 +151,7 @@ public class EventDetailsFragment extends Fragment {
             }
         });
 
+        // Setup QR code scanner
         qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
             if (result.getContents() != null) {
                 String username = userController.fetchStoredUsername();
@@ -160,53 +162,43 @@ public class EventDetailsFragment extends Fragment {
         });
         scanQR.setOnClickListener(v -> qrCodeScanner.launch(QrScannerController.getOptions()));
 
+        // Navigate back to the events page
         backButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
             navController.navigate(R.id.eventsPage);
         });
 
+        // Navigate to the user profile page
         profileButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
             navController.navigate(R.id.event_details_to_profile);
         });
 
-        // Implement Editing Event Details
+        // Implement event edit functionality
         eventEditButton.setOnClickListener(v -> {
-            // check if the user is the organizer of this event, if not send toast and do
-            // nothing
-
+            // Check if the current user is the organizer or an admin
             if (userDetails.getUsername().equals(getEventOrganizerUserName) ||
                     userDetails.isAdministrator()) {
-                // Allow editing of this events details here
+                // Navigate to the event edit page with necessary details
                 NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
 
-                // navigate with a bundle containing the eventID,max attendees,
-                // name,location,desc,and imgURI
-                // TODO: get maxAttendees
-
                 Bundle bundle = new Bundle();
-
                 bundle.putString("0", eventID);
                 bundle.putString("1", eventName);
                 bundle.putString("2", eventLocation);
                 bundle.putString("3", eventDescription);
                 bundle.putString("4", ImageURI);
 
-                navController.navigate(R.id.edit_existing_event, bundle); // navigate to edit this event
-
+                navController.navigate(R.id.edit_existing_event, bundle);
             } else {
                 Toast.makeText(view.getContext(), "You Cannot Edit This Event", Toast.LENGTH_LONG).show();
-
             }
-
         });
 
+        // Implement join button functionality
         joinButton.setOnClickListener(v -> {
-
             if (attendee != null) {
                 attendee.setRsvp(!attendee.isRsvp());
-
-                // Update attendee's RSVP status
                 attendeeController.updateAttendee(attendee, new AttendeeUpdateCallback() {
                     @Override
                     public void onSuccess() {
@@ -218,8 +210,11 @@ public class EventDetailsFragment extends Fragment {
                         Toast.makeText(view.getContext(), "Failed to update RSVP status", Toast.LENGTH_LONG).show();
                     }
                 });
+            } else {
+                Log.e("EventDetailsFragment", "Join button clicked but attendee is null.");
             }
         });
+
         return view;
     }
 
@@ -246,6 +241,7 @@ public class EventDetailsFragment extends Fragment {
                     eventOrganizer = organizerName;
                     Glide.with(EventDetailsFragment.this)
                             .load(profileImage)
+                            .apply(new RequestOptions().circleCrop())
                             .into(organizerImage);
 
                     // 'isAdded' is necessary for async task purposes
@@ -266,23 +262,22 @@ public class EventDetailsFragment extends Fragment {
     }
 
     /**
-     * takes an eventID which links to an event in the database
-     * and fetches all of its details
+     * Fetch and display event details from Firestore using the provided event ID.
+     *
+     * @param eventID The ID of the event.
      */
-    void fetchEventDetails(String EventID) {
+    void fetchEventDetails(String eventID) {
         EventController eventController = new EventController();
         FirebaseFirestore db = eventController.getDatabase();
 
         CollectionReference eventCollection = db.collection("Events");
-        DocumentReference EventDocument = eventCollection.document(EventID);
+        DocumentReference EventDocument = eventCollection.document(eventID);
 
         EventDocument.get().addOnCompleteListener(task -> {
 
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
-
-                    // Get the actual name from the document
                     eventName = document.getString("name");
                     eventDescription = document.getString("description");
                     eventLocation = document.getString("location");
@@ -331,31 +326,36 @@ public class EventDetailsFragment extends Fragment {
         });
     }
 
+    /**
+     * Updates the UI based on the attendee's RSVP status.
+     */
+    private void setJoinButton() {
+        if (attendee != null && attendee.isRsvp()) {
+            joinButton.setText("Cancel RSVP");
+            joinButton.setBackgroundColor(Color.RED);
+        } else {
+            joinButton.setText("Join Event");
+            joinButton.setBackgroundColor(Color.GREEN);
+        }
+    }
+
+    /**
+     * Update UI elements based on attendee information.
+     *
+     * @param attendeeId The ID of the attendee.
+     */
     private void UpdateUI(String attendeeId) {
         attendeeController.fetchAttendee(attendeeId, new AttendeeFetchCallback() {
             @Override
-            public void onSuccess(Attendee fetchedAttendee) {
-                attendee = fetchedAttendee;
+            public void onSuccess(Attendee existingAttendee) {
+                attendee = existingAttendee;
                 setJoinButton();
             }
 
             @Override
             public void onError(Exception e) {
-                Log.e("EventDetailsFragment", "Failed to fetch attendee details: " + e.getMessage());
+                Log.e("EventDetailsFragment", "Failed to fetch attendee: ", e);
             }
-        });
-    }
-
-    private void setJoinButton() {
-        requireActivity().runOnUiThread(() -> {
-            if (attendee != null && attendee.isRsvp()) {
-                joinButton.setBackgroundColor(Color.parseColor("#204916"));
-                joinButton.setText("RSVP'd");
-            } else {
-                joinButton.setBackgroundColor(Color.parseColor("#0D6EFD"));
-                joinButton.setText("Join Now");
-            }
-            joinButton.setEnabled(true);
         });
     }
 }

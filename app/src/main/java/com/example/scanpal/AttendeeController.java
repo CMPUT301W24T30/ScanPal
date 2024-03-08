@@ -1,7 +1,6 @@
 package com.example.scanpal;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -14,12 +13,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Handles operations related to attendee management in a Firestore database.
+ * Manages operations related to attendee management within a Firestore database. This class
+ * provides functionality to add, fetch, and update attendee records in Firestore, facilitating
+ * the tracking and management of event participants. It leverages Firebase Firestore and
+ * device Internal Storage for persistent storage and retrieval of attendee data.
  */
 public class AttendeeController {
-    private final FirebaseFirestore database; // instance of the database
+    private final FirebaseFirestore database;
     private final Context context;
 
+    /**
+     * Constructs an AttendeeController with a specified Firestore database instance and
+     * application context. This constructor initializes the controller ready for attendee
+     * data management operations.
+     *
+     * @param database The Firestore database instance for operations.
+     * @param context  The application context used for file operations.
+     */
     public AttendeeController(FirebaseFirestore database, Context context) {
         this.database = database;
         this.context = context;
@@ -29,14 +39,13 @@ public class AttendeeController {
         return this.database;
     }
 
-    public void test(String attendeeId) {
-        Log.wtf("TESTIES", attendeeId);
-    }
-
     /**
-     * Adds a new attendee to the Firestore database.
+     * Adds a new attendee record to the Firestore database and optionally to local storage.
+     * This method serializes the {@link Attendee} object and saves it, then updates the Firestore
+     * database with attendee details including location, RSVP status, and event association.
      *
      * @param attendee The attendee to be added to the database.
+     * @param callback An {@link AttendeeAddCallback} to handle success or error outcomes.
      */
     public void addAttendee(Attendee attendee, AttendeeAddCallback callback) {
 
@@ -50,7 +59,6 @@ public class AttendeeController {
             callback.onError(e);
         }
 
-        // will be responsible for add all user types to the database
         Map<String, Object> attendeeMap = new HashMap<>();
         attendeeMap.put("location", attendee.getLocation());
         attendeeMap.put("checkedIn", attendee.isCheckedIn());
@@ -62,17 +70,18 @@ public class AttendeeController {
         DocumentReference eventRef = database.collection("Events").document(attendee.getEventID());
         attendeeMap.put("eventID", eventRef);
 
-        // Save to database
         database.collection("Attendees").document(attendee.getId()).set(attendeeMap)
                 .addOnSuccessListener(aVoid -> System.out.println("Attendee added successfully!"))
                 .addOnFailureListener(e -> System.out.println("Error adding attendee: " + e.getMessage()));
     }
 
     /**
-     * Fetches an attendee's details from the Firestore database.
+     * Fetches an attendee's details from the Firestore database or local storage if available.
+     * This method attempts to retrieve the attendee details based on the attendee ID, providing
+     * an async callback with the result.
      *
-     * @param attendeeId The ID of the attendee to fetch.
-     * @param callback   A callback interface to handle the response.
+     * @param attendeeId The unique ID of the attendee to fetch.
+     * @param callback   An {@link AttendeeFetchCallback} to handle the fetched data or errors.
      */
     public void fetchAttendee(String attendeeId, AttendeeFetchCallback callback) {
 
@@ -85,7 +94,7 @@ public class AttendeeController {
             callback.onSuccess(attendee);
             return;
         } catch (Exception e) {
-            // Proceed to fetch from Firestore if local fetch fails
+            callback.onError(e);
         }
 
         database.collection("Attendees").document(attendeeId).get()
@@ -110,10 +119,12 @@ public class AttendeeController {
 
 
     /**
-     * Updates the RSVP status of an attendee in the Firestore database.
+     * Updates an existing attendee's information in the Firestore database and local storage.
+     * This method allows updating fields such as RSVP status and checked-in status, ensuring
+     * the attendee record is current.
      *
-     * @param attendee The attendee object to be updated.
-     * @param callback The callback to report success or failure.
+     * @param attendee The {@link Attendee} object with updated details to be saved.
+     * @param callback An {@link AttendeeUpdateCallback} to handle success or error outcomes.
      */
     public void updateAttendee(Attendee attendee, AttendeeUpdateCallback callback) {
 

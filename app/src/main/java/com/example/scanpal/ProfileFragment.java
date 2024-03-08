@@ -15,6 +15,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -40,7 +41,7 @@ public class ProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState) {
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.user_profile_page, container, false);
     }
 
@@ -151,6 +152,7 @@ public class ProfileFragment extends Fragment {
                     lastName.setText(user.getLastName());
                     Glide.with(ProfileFragment.this)
                             .load(user.getPhoto())
+                            .apply(new RequestOptions().circleCrop())
                             .into(profileImageView);
                 });
             }

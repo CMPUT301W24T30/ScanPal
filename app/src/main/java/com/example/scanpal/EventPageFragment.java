@@ -21,30 +21,32 @@ import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.ArrayList;
 
+/**
+ * Fragment for displaying a list of events. Allows users to navigate to event details,
+ * add new events, and scan QR codes for event-related actions.
+ */
 public class EventPageFragment extends Fragment {
 
-    FloatingActionButton addEventButton, profileButton;
-    ArrayList<String> testList;
-    ArrayList<String> EventIDs;
-    ActivityResultLauncher<ScanOptions> qrCodeScanner;
+    private ArrayList<String> testList;
+    private ArrayList<String> EventIDs;
+    private ActivityResultLauncher<ScanOptions> qrCodeScanner;
     private QrScannerController qrScannerController;
 
     /**
-     * empty default constructor
+     * Default constructor for EventPageFragment.
      */
     public EventPageFragment() {
-
+        // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.events_page, container, false);
 
         AttendeeController attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), getContext());
         qrScannerController = new QrScannerController(attendeeController);
 
-        // Initialize QR Code Scanner
+        // Initialize QR Code Scanner and set up scan button.
         qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
             if (result.getContents() != null) {
                 UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
@@ -58,13 +60,12 @@ public class EventPageFragment extends Fragment {
         FloatingActionButton scan = view.findViewById(R.id.button_scan);
         scan.setOnClickListener(v -> qrCodeScanner.launch(QrScannerController.getOptions()));
 
-        // Event List setup
+        // Set up event list and fetch events to display.
         ListView eventList = view.findViewById(R.id.event_List);
         testList = new ArrayList<>();
         EventIDs = new ArrayList<>();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(view.getContext(), R.layout.list_layout, R.id.textView_event, testList);
 
-        // Fetch events
         EventController eventController = new EventController();
         eventController.getEventsByUser(view, new EventFetchByUserCallback() {
             @Override
@@ -84,7 +85,7 @@ public class EventPageFragment extends Fragment {
             }
         });
 
-        // Event click listener
+        // Handle event list item clicks to navigate to event details.
         eventList.setOnItemClickListener((parent, item, position, id) -> {
             NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
             Bundle bundle = new Bundle();
@@ -92,18 +93,20 @@ public class EventPageFragment extends Fragment {
             navController.navigate(R.id.select_event, bundle);
         });
 
-        // Add Event button setup
-        addEventButton = view.findViewById(R.id.button_add_event);
+        // Set up button to add new events.
+        FloatingActionButton addEventButton = view.findViewById(R.id.button_add_event);
         addEventButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
             navController.navigate(R.id.addEvent);
         });
 
-        profileButton = view.findViewById(R.id.button_profile);
+        // Set up button to navigate to user profile.
+        FloatingActionButton profileButton = view.findViewById(R.id.button_profile);
         profileButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
             navController.navigate(R.id.events_to_profile);
         });
+
         return view;
     }
 }
