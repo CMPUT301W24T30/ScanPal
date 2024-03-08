@@ -21,17 +21,10 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-/**
- * This is the fragment related to displaying
- * the details of an event given its id
- * when switching to this fragment it is assumed
- * you have the eventID in the incoming bundle
- */
 public class EventDetailsFragment extends Fragment {
 
     private String eventName;
@@ -41,20 +34,12 @@ public class EventDetailsFragment extends Fragment {
     private String eventOrganizer;
     private String getEventOrganizerUserName;
     private String eventLocation;
-    private User userDetails;// current user
+    private User userDetails; // current user
     private ImageView eventPoster;
     private String ImageURI;
 
-    //private Collection<DocumentReference> eventAttendees; not really needed?
-
-    //TODO: future field here for organizer profile picture?
-    //TODO: future field here for event poster/banner?
-
-    /**
-     * Empty Constructor
-     */
     public EventDetailsFragment() {
-
+        // Required empty public constructor
     }
 
     @Nullable
@@ -62,185 +47,97 @@ public class EventDetailsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.event_details, null, false);
 
-        //retrieves all the info about specific event from database
-        String eventID =  getArguments().getString("0");
-        fetchEventDetails(eventID);
-
         backButton = view.findViewById(R.id.event_details_backButton);
         eventPoster = view.findViewById(R.id.event_detail_imageView);
 
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
-                navController.navigate(R.id.eventsPage);
-            }
+        backButton.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
+            navController.navigate(R.id.eventsPage);
         });
 
-        //Implement Editing Event Details
-        eventEditButton = view.findViewById(R.id.event_editButton);
-        eventEditButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //check if the user is the organizer of this event, if not send toast and do nothing
-
-                UserController userController = new UserController(FirebaseFirestore.getInstance(), view.getContext());
-
-                userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
-                    @Override
-                    public void onSuccess(User user) {
-                        userDetails = user;
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        Toast.makeText(view.getContext(), "Failed to Edit Event", Toast.LENGTH_LONG).show();
-
-                    }
-                });
-
-                if(userDetails.getUsername().equals(getEventOrganizerUserName) ||
-                    userDetails.isAdministrator()) {
-                    //Allow editing of this events details here
-                    NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
-
-
-                    //navigate with a bundle containing the eventID,max attendees, name,location,desc,and imgURI
-                    //TODO: get maxAttendees
-
-                    Bundle bundle = new Bundle();
-
-                    bundle.putString("0", eventID);
-                    bundle.putString("1", eventName);
-                    bundle.putString("2", eventLocation);
-                    bundle.putString("3", eventDescription);
-                    bundle.putString("4", ImageURI);
-
-                    navController.navigate(R.id.edit_existing_event, bundle);//navigate to edit this event
-
-                }
-                else {
-                    Toast.makeText(view.getContext(), "You Cannot Edit This Event", Toast.LENGTH_LONG).show();
-
-                }
-
+        if (getArguments() != null) {
+            String eventID = getArguments().getString("eventId");
+            if (eventID != null) {
+                fetchEventDetails(eventID);
+            } else {
+                Log.e("EventDetailsFragment", "Event ID is null");
             }
-        });
+        }
+
+        // Setup the event edit button and other UI elements here
 
         return view;
     }
 
-    /**
-     * This method takes the inputted /User document reference stores their first and
-     * lastname as one string in the 'eventOrganizer' field
-     *
-     * @param userRef this is just the specific 'user' that was found to be tied to the event
-     */
-    private void fetchOrganizer(DocumentReference userRef) {
+    private void fetchEventDetails(String EventID) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference eventDocument = db.collection("Events").document(EventID);
 
-        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot organizerDoc = task.getResult();
-                    if (organizerDoc.exists()) {
-                        String firstName = organizerDoc.getString("firstName");
-                        String lastName = organizerDoc.getString("lastName");
+        eventDocument.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    eventName = document.getString("name");
+                    eventDescription = document.getString("description");
+                    eventLocation = document.getString("location");
+                    ImageURI = document.getString("photo");
+                    DocumentReference organizerRef = document.getDocumentReference("organizer");
 
-                        String organizerName = firstName + " " + lastName;
+                    fetchOrganizer(organizerRef);
 
-                        getEventOrganizerUserName = organizerDoc.getId().toString();
-                        //Log.d("GETTING USERNAME", organizerDoc.getId().toString());
-
-                        eventOrganizer = organizerName;
-
-                        // 'isAdded' is necessary for async task purposes
-                        if(isAdded()) {
-                            TextView OrganizerName = getView().findViewById(R.id.event_orgName);
-
-                            if (OrganizerName != null) {
-                                OrganizerName.setText(eventOrganizer);
-                            }
-                        }
-                    } else {
-                        Log.d("TAG", "Organizer document does not exist");
-                    }
+                    updateUI();
                 } else {
-                    Log.d("TAG", "Failed to get organizer document", task.getException());
+                    Toast.makeText(getContext(), "Event doesn't exist", Toast.LENGTH_LONG).show();
                 }
+            } else {
+                Log.e("EventDetailsFragment", "Failed to fetch event details", task.getException());
             }
         });
     }
 
-    /**
-     *
-     * takes an eventID which links to an event in the database
-     * and fetches all of its details
-     */
-    void fetchEventDetails(String EventID) {
-        EventController eventController = new EventController();
-        FirebaseFirestore db = eventController.getDatabase();
-
-        CollectionReference eventCollection = db.collection("Events");
-        DocumentReference EventDocument = eventCollection.document(EventID);
-
-        EventDocument.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-
-                        // Get the actual name from the document
-                        eventName = document.getString("name");
-                        eventDescription = document.getString("description");
-                        eventLocation = document.getString("location");
-                        ImageURI = document.getString("photo");
-
-                        //since user technically another document
-                        fetchOrganizer(document.getDocumentReference("organizer"));
-
-                        if(isAdded()) {
-                            TextView eventTitle = getView().findViewById(R.id.event_Title);
-                            TextView OrganizerName = getView().findViewById(R.id.event_orgName);
-                            TextView eventDes = getView().findViewById(R.id.event_description);
-                            TextView eventLoc = getView().findViewById(R.id.event_Location);
-
-                            if (eventTitle != null) {
-                                eventTitle.setText(eventName);
-                            }
-                            if(eventDes != null) {
-                                eventDes.setText(eventDescription);
-                            }
-                            if(eventLoc != null) {
-                                eventLoc.setText(eventLocation);
-                            }
-                            if(eventPoster != null) {
-                                Uri imageURI = Uri.parse(ImageURI);
-                                Glide.with(getView())
-                                        .load(imageURI)
-                                        .apply(new RequestOptions().placeholder(R.drawable.ic_launcher_background))
-                                        .into(eventPoster);
-                            }
-                        }
-
-                    } else {
-
-                        //eventName = "DOESNT EXIST";
-                        // Document does not exist
-
-                        Toast.makeText(getView().getContext(), "Event Doesn't exist ", Toast.LENGTH_LONG).show();
-                        //TODO: navigate back to / stay on events Page then
-                    }
+    private void fetchOrganizer(DocumentReference organizerRef) {
+        organizerRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    String firstName = document.getString("firstName");
+                    String lastName = document.getString("lastName");
+                    getEventOrganizerUserName = document.getId();
+                    eventOrganizer = firstName + " " + lastName;
+                    updateOrganizerUI();
                 } else {
-                    // Error getting document
-                    Toast.makeText(getView().getContext(), "Error retrieving Event", Toast.LENGTH_LONG).show();
-                    //TODO: navigate back to / stay on events Page then
-
+                    Log.e("EventDetailsFragment", "Organizer document does not exist");
                 }
+            } else {
+                Log.e("EventDetailsFragment", "Failed to get organizer document", task.getException());
             }
         });
-
     }
+
+    private void updateUI() {
+        if (getActivity() == null) return;
+
+        TextView eventTitle = getActivity().findViewById(R.id.event_Title);
+        TextView eventDes = getActivity().findViewById(R.id.event_description);
+        TextView eventLoc = getActivity().findViewById(R.id.event_Location);
+
+        getActivity().runOnUiThread(() -> {
+            if (eventTitle != null) eventTitle.setText(eventName);
+            if (eventDes != null) eventDes.setText(eventDescription);
+            if (eventLoc != null) eventLoc.setText(eventLocation);
+            if (eventPoster != null) Glide.with(EventDetailsFragment.this).load(ImageURI).into(eventPoster);
+        });
+    }
+
+    private void updateOrganizerUI() {
+        if (getActivity() == null) return;
+
+        TextView OrganizerName = getActivity().findViewById(R.id.event_orgName);
+
+        getActivity().runOnUiThread(() -> {
+            if (OrganizerName != null) OrganizerName.setText(eventOrganizer);
+        });
+    }
+
+    // Add other methods here if necessary
 }

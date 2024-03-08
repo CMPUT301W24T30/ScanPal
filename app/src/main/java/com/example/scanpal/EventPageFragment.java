@@ -62,9 +62,13 @@ public class EventPageFragment extends Fragment {
                 if (task.isSuccessful()) {
                     events.clear(); // Clear existing events
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        // Assuming Event class has a constructor that accepts a Firestore document.
-                        // You might need to adjust this based on your Event class's constructor
-                        Event event = new Event(document.getId(), document.getString("name"));
+                        String name = document.getString("name");
+                        String imageUrl = document.getString("imageUrl");
+                        String description = document.getString("description") != null ? document.getString("description") : "No description"; // Use actual description if available
+
+                        // Pass 'null' for the User if it's not required for event display
+                        Event event = new Event(null, name, description, imageUrl);
+                        event.setId(document.getId()); // Set the document ID as the event ID
                         events.add(event);
                     }
                     // Notify the adapter that the dataset has changed so the GridView will update
@@ -101,63 +105,6 @@ public class EventPageFragment extends Fragment {
         });
 
 
-
-
-
         return view;
     }
-
-
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        //could probably just remove this method unless someone needs it
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /*
-        addEventButton = view.findViewById(R.id.button_add_event);
-
-        addEventButton.setOnClickListener(v -> {
-            NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
-            navController.navigate(R.id.addEvent);
-        });
-    }
-
 }
-

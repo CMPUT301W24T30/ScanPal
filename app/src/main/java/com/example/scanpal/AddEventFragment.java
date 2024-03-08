@@ -109,7 +109,7 @@ public class AddEventFragment extends Fragment {
             }
         });
 
-        this.newEvent = new Event(this.Organizer,"","");//blank event for now until user clicks 'save'
+        this.newEvent = new Event(this.Organizer,"","", "");//blank event for now until user clicks 'save'
 
 
         //log test getting name

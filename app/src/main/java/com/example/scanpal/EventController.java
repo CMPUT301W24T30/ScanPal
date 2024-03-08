@@ -288,8 +288,12 @@ public class EventController {
                                 Log.d("GETBYEID", "Document found with ID: " + EventID);
 
                                 //null user is set a few lines later
-                                Event event = new Event(null,eventDoc.get("name").toString(),
-                                        eventDoc.get("description").toString());
+                                Event event = new Event(
+                                        null, // Since you're using a temporary or null User object
+                                        eventDoc.get("name").toString(),
+                                        eventDoc.get("description").toString(),
+                                        eventDoc.contains("imageUrl") ? eventDoc.get("imageUrl").toString() : "defaultImageUrl" // Replace "defaultImageUrl" with an actual URL or keep it as a placeholder
+                                );
 
                                 event.setLocation( eventDoc.get("location").toString() );
                                 //event.setInfoAddress( eventDoc.get("eventQRCodeURL").toString() );//assuming address to the info?
