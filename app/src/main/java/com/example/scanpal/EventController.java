@@ -87,15 +87,15 @@ public class EventController {
         eventMap.put("participants", participantRefs);
 
         // Creating bitmap for qrcode and add it to event
-        Bitmap qr_to_event = QrCodeController.generate(event.getId());
-        event.setQrToEvent(qr_to_event); // setting bitmap in event to generated qr code
+        Bitmap qr_to_event = QrCodeController.generate("E" + event.getId());
+        event.setQrToEvent(qr_to_event);  // setting bitmap in event to generated qr code
 
         // Storing the bitmap into firebase by converting into byte array
         byte[] imageDataEvent = QrCodeController.bitmapToByteArray(qr_to_event);
 
         // Creating bitmap for qrcode checkin
-        Bitmap qr_to_checkin = QrCodeController.generate(event.getId());
-        event.setQrToCheckIn(qr_to_checkin); // setting bitmap in event to generated qr code
+        Bitmap qr_to_checkin = QrCodeController.generate("C"+ event.getId());
+        event.setQrToCheckIn(qr_to_checkin);  // setting bitmap in event to generated qr code
 
         // Storing the bitmap into firebase by converting into byte array
         byte[] imageDataCheckin = QrCodeController.bitmapToByteArray(qr_to_checkin);
