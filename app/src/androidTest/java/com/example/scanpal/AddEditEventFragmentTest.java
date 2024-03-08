@@ -2,6 +2,8 @@ package com.example.scanpal;
 
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.pressBack;
+import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
@@ -11,6 +13,7 @@ import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 
@@ -18,19 +21,14 @@ import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
 import android.net.Uri;
-import android.provider.MediaStore;
-import android.util.Log;
 
-import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import org.junit.After;
 import org.junit.Before;
@@ -49,6 +47,8 @@ public class AddEditEventFragmentTest {
 
     @Before
     public void setUp() {
+        init();
+
         onView(withId(R.id.addUsername)).perform(typeText(testUser.getUsername()), closeSoftKeyboard());
         onView(withId(R.id.addFirstName)).perform(typeText(testUser.getFirstName()), closeSoftKeyboard());
         onView(withId(R.id.addLastName)).perform(typeText(testUser.getLastName()), closeSoftKeyboard());
@@ -80,18 +80,41 @@ public class AddEditEventFragmentTest {
 
     @Test
     public void testAddEvent() {
-        init();
+        onView(withId(R.id.button_add_event)).perform(click());
+
+        addEvent("Test Event 1", "Test Location", "Test Description", 100);
+        onData(is(instanceOf(String.class))).inAdapterView(withId(R.id.event_List)).atPosition(0).check(matches(withText("Test Event 1")));
+    }
+
+    @Test
+    public void testEditEvent() {
+        onView(withId(R.id.button_add_event)).perform(click());
+
+        addEvent("Test Event 1", "Test Location", "Test Description", 100);
+        onData(anything()).inAdapterView(withId(R.id.event_List)).atPosition(0).perform(click());
+        onView(withId(R.id.event_editButton)).perform(click());
+        editEvent("Test Event 2", "Updated test Location", "Updated test description", 200);
+        onView(withId(R.id.event_details_backButton)).perform(click());
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        onData(is(instanceOf(String.class))).inAdapterView(withId(R.id.event_List)).atPosition(0).check(matches(withText("Test Event 2")));
+
+    }
+
+    private void addEvent(String name, String loc, String desc, int maxAttendee) {
         Intent resultData = new Intent();
         resultData.setData(Uri.parse("android.resource://com.example.scanpal/" + R.raw.test_image));
         Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData);
         Intents.intending(hasAction(Intent.ACTION_PICK)).respondWith(result);
 
-        onView(withId(R.id.button_add_event)).perform(click());
-        onView(withId(R.id.add_edit_event_Name)).perform(typeText("Test Event 1"), closeSoftKeyboard());
+        onView(withId(R.id.add_edit_event_Name)).perform(typeText(name), closeSoftKeyboard());
         // TODO change the location data to valid one
-        onView(withId(R.id.add_edit_event_Location)).perform(typeText("Test Location"), closeSoftKeyboard());
-        onView(withId(R.id.add_edit_event_description)).perform(typeText("Test Description"), closeSoftKeyboard());
-        onView(withId(R.id.add_edit_event_Attendees)).perform(typeText("100"), closeSoftKeyboard());
+        onView(withId(R.id.add_edit_event_Location)).perform(typeText(loc), closeSoftKeyboard());
+        onView(withId(R.id.add_edit_event_description)).perform(typeText(desc), closeSoftKeyboard());
+        onView(withId(R.id.add_edit_event_Attendees)).perform(typeText(String.valueOf(maxAttendee)), closeSoftKeyboard());
         onView(withId(R.id.add_edit_event_imageButton)).perform(click());
 
         onView(withId(R.id.add_edit_save_button)).perform(click());
@@ -101,10 +124,29 @@ public class AddEditEventFragmentTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        onData(is(instanceOf(String.class))).inAdapterView(withId(R.id.event_List)).atPosition(0).check(matches(withText("Test Event 1")));
     }
 
-    /**
+    private void editEvent(String name, String loc, String desc, int maxAttendee) {
+        Intent resultData = new Intent();
+        resultData.setData(Uri.parse("android.resource://com.example.scanpal/" + R.raw.test_image));
+        Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData);
+        Intents.intending(hasAction(Intent.ACTION_PICK)).respondWith(result);
+
+        onView(withId(R.id.add_edit_event_Name)).perform(clearText(), typeText(name), closeSoftKeyboard());
+        // TODO change the location data to valid one
+        onView(withId(R.id.add_edit_event_Location)).perform(clearText(), typeText(loc), closeSoftKeyboard());
+        onView(withId(R.id.add_edit_event_description)).perform(clearText(), typeText(desc), closeSoftKeyboard());
+        onView(withId(R.id.add_edit_event_Attendees)).perform(clearText(), typeText(String.valueOf(maxAttendee)), closeSoftKeyboard());
+        onView(withId(R.id.add_edit_event_imageButton)).perform(click());
+
+        onView(withId(R.id.add_edit_save_button)).perform(click());
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }    /**
      * Tests the UI components' visibility in the AddEditEventFragment.
      */
     @Test
