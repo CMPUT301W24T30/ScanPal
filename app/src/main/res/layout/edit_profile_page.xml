@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#2d3132"
+        android:theme="@style/Theme.AppCompat"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -66,6 +67,7 @@
         android:layout_marginBottom="16dp"
         android:textColorHint="@color/white"
         app:boxBackgroundColor="#0A0C16"
+        android:theme="@style/Theme.App.TextInput"
         app:layout_constraintBottom_toTopOf="@+id/first_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.508"
@@ -83,6 +85,7 @@
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
+        android:theme="@style/Theme.App.TextInput"
         android:textColorHint="@color/white"
         app:boxBackgroundColor="#0A0C16"
         app:layout_constraintBottom_toTopOf="@+id/last_name"
@@ -91,6 +94,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/first_name_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="First Name"
@@ -104,12 +108,14 @@
         android:layout_marginBottom="16dp"
         android:textColorHint="@color/white"
         app:boxBackgroundColor="#0A0C16"
+        android:theme="@style/Theme.App.TextInput"
         app:layout_constraintBottom_toTopOf="@+id/about_me"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/last_name_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Last Name"
@@ -123,12 +129,14 @@
         android:layout_marginBottom="16dp"
         android:textColorHint="@color/white"
         app:boxBackgroundColor="#0A0C16"
+        android:theme="@style/Theme.App.TextInput"
         app:layout_constraintBottom_toTopOf="@+id/geolocation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/about_me_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="About Me"
@@ -154,6 +162,7 @@
         android:id="@+id/upload_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:theme="@style/Theme.AppCompat"
         android:clickable="true"
         app:backgroundTint="#3580FF"
         app:layout_constraintBottom_toTopOf="@+id/username"
@@ -168,6 +177,7 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         app:backgroundTint="#3580FF"
+        android:theme="@style/Theme.AppCompat"
         app:layout_constraintBottom_toTopOf="@+id/username"
         app:layout_constraintEnd_toStartOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="parent"

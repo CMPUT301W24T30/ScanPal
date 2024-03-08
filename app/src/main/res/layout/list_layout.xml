@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!-- this file just has an elementary list view layout just for testing can remove later -->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/textView_event"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/textView_event"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:padding="10dp"/>
+    android:layout_height="wrap_content"
+    android:textSize="18sp"
+    android:padding="10dp"/>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
