@@ -32,7 +32,7 @@
         tools:srcCompat="@drawable/ic_launcher_background" />
 
     <Button
-        android:id="@+id/event_joinButton"
+        android:id="@+id/join_button"
         android:layout_width="182dp"
         android:layout_height="49dp"
         android:layout_marginStart="114dp"
@@ -40,6 +40,7 @@
         android:layout_marginEnd="115dp"
         android:backgroundTint="#0D6EFD"
         android:text="Join Now"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_description" />
@@ -49,7 +50,6 @@
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_marginTop="660dp"
-        android:layout_marginBottom="6dp"
         android:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -103,7 +103,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.983"
-        app:srcCompat="@android:drawable/ic_input_get"
+        app:srcCompat="@drawable/profile_icon"
         app:tint="#7f7f7f" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -139,7 +139,7 @@
         app:tint="#7f7f7f" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+        android:id="@+id/scan_code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="11dp"
@@ -148,7 +148,6 @@
         app:backgroundTint="#0D6EFD"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button_chat"
-        app:layout_constraintHorizontal_bias="0.517"
         app:layout_constraintStart_toEndOf="@+id/button_your_events"
         app:layout_constraintTop_toTopOf="@+id/app_bar"
         app:layout_constraintVertical_bias="1.0"
@@ -166,7 +165,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_OrgProfilePic" />
+        app:layout_constraintTop_toBottomOf="@+id/organizer_image" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/event_shareButton"
@@ -179,7 +178,7 @@
         app:backgroundTint="#0D6EFD"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_Title"
-        app:srcCompat="@android:drawable/ic_menu_share" />
+        app:srcCompat="@drawable/share_icon" />
 
     <TextView
         android:id="@+id/event_share"
@@ -194,11 +193,11 @@
         app:layout_constraintTop_toBottomOf="@+id/event_Title" />
 
     <ImageView
-        android:id="@+id/event_OrgProfilePic"
+        android:id="@+id/organizer_image"
         android:layout_width="37dp"
         android:layout_height="39dp"
-        android:layout_marginStart="44dp"
         android:layout_marginTop="48dp"
+        app:layout_constraintEnd_toStartOf="@+id/event_orgName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_Title"
         tools:srcCompat="@tools:sample/avatars" />
@@ -207,13 +206,16 @@
         android:id="@+id/event_orgName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
         android:layout_marginTop="34dp"
+        android:layout_marginEnd="8dp"
         android:text="Mr. OnPhone"
         android:textColor="@color/white"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/event_OrgProfilePic"
-        app:layout_constraintTop_toBottomOf="@+id/event_Location" />
+        app:layout_constraintBottom_toTopOf="@+id/event_description_title"
+        app:layout_constraintEnd_toStartOf="@+id/event_share"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/event_Location"
+        app:layout_constraintVertical_bias="0.0" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/event_editButton"
@@ -226,7 +228,7 @@
         android:theme="@style/Theme.AppCompat"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_edit" />
+        app:srcCompat="@drawable/edit_icon" />
 
     <TextView
         android:id="@+id/event_Title"

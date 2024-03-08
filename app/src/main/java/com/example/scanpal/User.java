@@ -8,11 +8,10 @@ import java.io.Serializable;
  */
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
-    private final String username;
+    private String username;
     private boolean administrator = false;
     private String firstName;
     private String lastName;
-
     private String photo; // Profile Photo of the User
 
     /**
@@ -42,6 +41,10 @@ public class User implements Serializable {
         this.firstName = firstName;
         this.lastName = lastName;
         this.photo = photo;
+    }
+
+    public User() {
+
     }
 
     /**

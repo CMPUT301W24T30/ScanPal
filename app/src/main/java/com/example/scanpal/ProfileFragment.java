@@ -19,8 +19,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
- * Fragment for displaying and managing user profile information. This fragment allows users
- * to view their profile details including their username, first name, last name, and profile image.
+ * Fragment for displaying and managing user profile information. This fragment
+ * allows users
+ * to view their profile details including their username, first name, last
+ * name, and profile image.
  * Users can navigate to other parts of the application such as editing profile,
  * and viewing events from this fragment.
  */
@@ -38,12 +40,13 @@ public class ProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+            @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.user_profile_page, container, false);
     }
 
     /**
-     * Initializes the UI components, sets up button listeners, and fetches user details
+     * Initializes the UI components, sets up button listeners, and fetches user
+     * details
      * after the view is created.
      */
     @Override
@@ -64,7 +67,8 @@ public class ProfileFragment extends Fragment {
     }
 
     /**
-     * Refreshes the user's profile details when the fragment is resumed (i.e. when navigated back to).
+     * Refreshes the user's profile details when the fragment is resumed (i.e. when
+     * navigated back to).
      */
     @Override
     public void onResume() {
@@ -106,7 +110,8 @@ public class ProfileFragment extends Fragment {
         });
 
         buttonGoBack.setOnClickListener(v -> {
-            // TODO
+            NavController navController = NavHostFragment.findNavController(ProfileFragment.this);
+            navController.navigate(R.id.profile_to_events);
         });
 
         buttonChat.setOnClickListener(v -> {
