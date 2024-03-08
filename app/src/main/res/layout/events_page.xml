@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:name="androidx.navigation.fragment.NavHostFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
 
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="#16181F">
 
     <androidx.appcompat.widget.Toolbar
@@ -13,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_marginTop="660dp"
-        android:layout_marginBottom="6dp"
         android:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -27,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="11dp"
-        android:backgroundTint="#0018F9"
+        android:backgroundTint="#0D6EFD"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button_chat"
@@ -42,15 +40,15 @@
         android:id="@+id/button_add_event"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="#0018F9"
+        android:backgroundTint="#0D6EFD"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.954"
+        app:layout_constraintHorizontal_bias="0.96"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023"
-        app:srcCompat="@android:drawable/ic_input_add"
+        app:layout_constraintVertical_bias="0.02"
+        app:srcCompat="@drawable/add_button"
         app:tint="@color/white" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -61,10 +59,10 @@
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.045"
+        app:layout_constraintHorizontal_bias="0.04"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023"
+        app:layout_constraintVertical_bias="0.02"
         app:srcCompat="@drawable/arrow_back"
         app:tint="@color/white" />
 
@@ -111,7 +109,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.983"
         app:srcCompat="@drawable/menu_fill"
-        app:tint="#7f7f7f"/>
+        app:tint="#7f7f7f" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_homepage"
@@ -132,30 +130,25 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="88dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="89dp"
-        android:layout_marginBottom="586dp"
         android:text="Events"
         android:textColor="@color/white"
         android:textSize="30dp"
-        app:layout_constraintBottom_toTopOf="@+id/app_bar"
+        app:layout_constraintBottom_toBottomOf="@+id/app_bar"
         app:layout_constraintEnd_toStartOf="@+id/button_add_event"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/event_details_backButton"
+        app:layout_constraintStart_toEndOf="@+id/event_page_backButton"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.019" />
-
+        app:layout_constraintVertical_bias="0.03" />
 
 
     <ListView
         android:id="@+id/event_List"
-        android:layout_width="409dp"
+        android:layout_width="0dp"
         android:layout_height="581dp"
         android:layout_marginStart="1dp"
         android:layout_marginTop="1dp"
         android:layout_marginEnd="1dp"
         android:layout_marginBottom="1dp"
+        android:paddingLeft="10dp"
         app:layout_constraintBottom_toTopOf="@+id/app_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
