@@ -94,6 +94,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/first_name_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="First Name"
@@ -114,6 +115,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/last_name_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Last Name"
@@ -134,6 +136,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/about_me_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="About Me"
