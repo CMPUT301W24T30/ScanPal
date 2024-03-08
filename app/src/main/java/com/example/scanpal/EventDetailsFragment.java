@@ -53,8 +53,6 @@ public class EventDetailsFragment extends Fragment {
 
     // private Collection<DocumentReference> eventAttendees; not really needed?
 
-    // TODO: future field here for event poster/banner?
-
     /**
      * Empty Constructor
      */
@@ -121,7 +119,7 @@ public class EventDetailsFragment extends Fragment {
                             attendeeController.addAttendee(attendee, new AttendeeAddCallback() {
                                 @Override
                                 public void onSuccess(Attendee attendee) {
-                                    Log.wtf("added", attendeeId);
+                                    Log.d("EventDetailsFragment", "New attendee added");
                                 }
 
                                 @Override
@@ -216,7 +214,6 @@ public class EventDetailsFragment extends Fragment {
                     String firstName = organizerDoc.getString("firstName");
                     String lastName = organizerDoc.getString("lastName");
                     String profileImage = organizerDoc.getString("photo");
-                    Log.wtf("IMAGE", profileImage);
 
                     String organizerName = firstName + " " + lastName;
                     getEventOrganizerUserName = organizerDoc.getId();
@@ -326,7 +323,7 @@ public class EventDetailsFragment extends Fragment {
     private void setJoinButton() {
         requireActivity().runOnUiThread(() -> {
             if (attendee != null && attendee.isRsvp()) {
-                joinButton.setBackgroundColor(Color.parseColor("#1B5E20"));
+                joinButton.setBackgroundColor(Color.parseColor("#204916"));
                 joinButton.setText("RSVP'd");
             } else {
                 joinButton.setBackgroundColor(Color.parseColor("#D32F2F"));
