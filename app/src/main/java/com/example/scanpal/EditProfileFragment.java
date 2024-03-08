@@ -20,6 +20,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -36,8 +37,6 @@ import java.util.Objects;
 public class EditProfileFragment extends Fragment {
 
     private ImageView profileImageView;
-    private Button saveButton;
-    private FloatingActionButton uploadButton, deleteButton, goBack;
     private TextInputEditText username, firstName, lastName;
     private ImageController imageController;
     private Uri imageUri;
@@ -71,10 +70,10 @@ public class EditProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         profileImageView = view.findViewById(R.id.imageView);
-        uploadButton = view.findViewById(R.id.upload_button);
-        deleteButton = view.findViewById(R.id.delete_button);
-        saveButton = view.findViewById(R.id.save_button);
-        goBack = view.findViewById(R.id.button_go_back);
+        FloatingActionButton uploadButton = view.findViewById(R.id.upload_button);
+        FloatingActionButton deleteButton = view.findViewById(R.id.delete_button);
+        Button saveButton = view.findViewById(R.id.save_button);
+        FloatingActionButton goBack = view.findViewById(R.id.button_go_back);
 
         username = (TextInputEditText) ((TextInputLayout) view.findViewById(R.id.username)).getEditText();
         if (username != null) {
@@ -133,7 +132,10 @@ public class EditProfileFragment extends Fragment {
                     lastName.setText(user.getLastName());
 
                     if (user.getPhoto() != null) {
-                        Glide.with(EditProfileFragment.this).load(user.getPhoto()).into(profileImageView);
+                        Glide.with(EditProfileFragment.this)
+                                .load(user.getPhoto())
+                                .apply(new RequestOptions().circleCrop())
+                                .into(profileImageView);
                     }
                 }
 

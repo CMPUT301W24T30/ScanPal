@@ -27,10 +27,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
- *
  * This is the fragment related to handling operations involving
  * Editing existing events in the database
- *
  */
 public class EditEventFragment extends Fragment {
 
@@ -55,7 +53,6 @@ public class EditEventFragment extends Fragment {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                     imageUri = result.getData().getData();
                     profileImageView.setImageURI(imageUri);
-                    Log.d("IMAGEURI", imageUri.toString());
                     uploadImageToFirebase(imageUri);
                 }
             });
@@ -89,7 +86,7 @@ public class EditEventFragment extends Fragment {
 
         imageController = new ImageController();
 
-        String eventID =  getArguments().getString("0");
+        String eventID = requireArguments().getString("0");
 
         /*
         FOR REFERENCE:
@@ -101,12 +98,12 @@ public class EditEventFragment extends Fragment {
         */
 
         //prefill forms with existing data
-        this.eventNameForm.setText(getArguments().getString("1"));
-        this.eventLocationForm.setText(getArguments().getString("2"));
-        this.eventDescriptionForm.setText(getArguments().getString("3"));
+        this.eventNameForm.setText(requireArguments().getString("1"));
+        this.eventLocationForm.setText(requireArguments().getString("2"));
+        this.eventDescriptionForm.setText(requireArguments().getString("3"));
 
-        //incase user decides to not change image
-        this.imageUri = Uri.parse(getArguments().getString("4").toString() );
+        //in case user decides to not change image
+        this.imageUri = Uri.parse(requireArguments().getString("4"));
 
         userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
             @Override
@@ -137,63 +134,52 @@ public class EditEventFragment extends Fragment {
             }
         });
 
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        saveButton.setOnClickListener(v -> {
 
-                //checking for valid input
-                if(eventNameForm.getText().toString().equals("") ||
-                        eventLocationForm.getText().toString().equals("") ||
-                        eventDescriptionForm.getText().toString().equals("") ||
-                        attendeesForm.getText().toString().equals("") ) {
+            //checking for valid input
+            if (eventNameForm.getText().toString().isEmpty() ||
+                    eventLocationForm.getText().toString().isEmpty() ||
+                    eventDescriptionForm.getText().toString().isEmpty() ||
+                    attendeesForm.getText().toString().isEmpty()) {
 
-                    Toast.makeText(view.getContext(), "Please input all Information", Toast.LENGTH_LONG).show();
+                Toast.makeText(view.getContext(), "Please input all Information", Toast.LENGTH_LONG).show();
 
-                }
-                else if( Integer.parseInt( attendeesForm.getText().toString()) < 1 )  {
-                    Toast.makeText(view.getContext(), "Please allow at least 1 Attendee", Toast.LENGTH_LONG).show();
-                }
-                else {
-                    newEvent.setName(eventNameForm.getText().toString());
-                    newEvent.setLocation(eventLocationForm.getText().toString());
-                    newEvent.setDescription(eventDescriptionForm.getText().toString());
-                    newEvent.setMaximumAttendees( Integer.parseInt(attendeesForm.getText().toString()));
-                    newEvent.setPosterURI(imageUri);
+            } else if (Integer.parseInt(attendeesForm.getText().toString()) < 1) {
+                Toast.makeText(view.getContext(), "Please allow at least 1 Attendee", Toast.LENGTH_LONG).show();
+            } else {
+                newEvent.setName(eventNameForm.getText().toString());
+                newEvent.setLocation(eventLocationForm.getText().toString());
+                newEvent.setDescription(eventDescriptionForm.getText().toString());
+                newEvent.setMaximumAttendees(Integer.parseInt(attendeesForm.getText().toString()));
+                newEvent.setPosterURI(imageUri);
 
 
-                    //edits the event in the db
-                    eventController.editEventById(eventID,newEvent);
+                //edits the event in the db
+                eventController.editEventById(eventID, newEvent);
 
-                    Bundle bundle = new Bundle();
-                    bundle.putString("0",eventID);
-
-                    NavController navController = NavHostFragment.findNavController(EditEventFragment.this);
-                    navController.navigate(R.id.done_editingEvent, bundle);
-                }
-            }
-        });
-
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                //just go back to the previous screen without doing anything
                 Bundle bundle = new Bundle();
-                bundle.putString("0",eventID);
+                bundle.putString("0", eventID);
+
                 NavController navController = NavHostFragment.findNavController(EditEventFragment.this);
-                navController.navigate(R.id.done_editingEvent,bundle);
+                navController.navigate(R.id.done_editingEvent, bundle);
             }
         });
 
-        editImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // what to do when trying to edit image
-                openGallery();
-            }
+        backButton.setOnClickListener(v -> {
+
+            //just go back to the previous screen without doing anything
+            Bundle bundle = new Bundle();
+            bundle.putString("0", eventID);
+            NavController navController = NavHostFragment.findNavController(EditEventFragment.this);
+            navController.navigate(R.id.done_editingEvent, bundle);
         });
 
-        this.newEvent = new Event(this.Organizer,"","");//blank event for now until user clicks 'save'
+        editImageButton.setOnClickListener(v -> {
+            // what to do when trying to edit image
+            openGallery();
+        });
+
+        this.newEvent = new Event(this.Organizer, "", "");//blank event for now until user clicks 'save'
 
         return view;
     }
