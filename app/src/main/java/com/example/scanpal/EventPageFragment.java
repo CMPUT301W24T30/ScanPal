@@ -15,6 +15,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -22,10 +23,11 @@ import java.util.ArrayList;
 
 public class EventPageFragment extends Fragment {
 
-    FloatingActionButton addEventButton;
+    FloatingActionButton addEventButton, profileButton;
     ArrayList<String> testList;
     ArrayList<String> EventIDs;
     ActivityResultLauncher<ScanOptions> qrCodeScanner;
+    private QrScannerController qrScannerController;
 
     /**
      * empty default constructor
@@ -36,31 +38,31 @@ public class EventPageFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.events_page, container, false);
 
-        // QR Code Scanner initialization
+        AttendeeController attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), getContext());
+        qrScannerController = new QrScannerController(attendeeController);
+
+        // Initialize QR Code Scanner
         qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
             if (result.getContents() != null) {
-                QrScannerController.handleResult(result.getContents());
+                UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
+                String username = userController.fetchStoredUsername();
+                qrScannerController.handleResult(result.getContents(), username);
             } else {
                 Toast.makeText(getContext(), "Invalid QR Code", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // QR Code Scan button setup
         FloatingActionButton scan = view.findViewById(R.id.button_scan);
-        scan.setOnClickListener(v -> {
-            ScanOptions options = QrScannerController.getOptions();
-            qrCodeScanner.launch(options);
-        });
+        scan.setOnClickListener(v -> qrCodeScanner.launch(QrScannerController.getOptions()));
 
         // Event List setup
         ListView eventList = view.findViewById(R.id.event_List);
         testList = new ArrayList<>();
         EventIDs = new ArrayList<>();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(view.getContext(), R.layout.list_layout, R.id.textView_event,
-                testList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(view.getContext(), R.layout.list_layout, R.id.textView_event, testList);
 
         // Fetch events
         EventController eventController = new EventController();
@@ -70,17 +72,15 @@ public class EventPageFragment extends Fragment {
                 testList.clear();
                 EventIDs.clear();
                 for (int i = 0; i < eventsList.size(); i++) {
-                    testList.add(eventsList.get(i).getName().toString());
+                    testList.add(eventsList.get(i).getName());
                     EventIDs.add(eventsList.get(i).getId());
-                    Log.d("EVENTPAGENAMES", eventsList.get(i).getName().toString());
                 }
-                Log.d("eventSIZEPAGE", Integer.toString(testList.size()));
                 eventList.setAdapter(adapter);
             }
 
             @Override
             public void onError(Exception e) {
-                Log.d("EVENTPAGENAMES", "ERROR");
+                Log.d("EVENT PAGE NAMES", "ERROR");
             }
         });
 
@@ -89,7 +89,6 @@ public class EventPageFragment extends Fragment {
             NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
             Bundle bundle = new Bundle();
             bundle.putString("0", EventIDs.get(position));
-            Log.d("BUNDLEVAL", EventIDs.get(position));
             navController.navigate(R.id.select_event, bundle);
         });
 
@@ -100,11 +99,11 @@ public class EventPageFragment extends Fragment {
             navController.navigate(R.id.addEvent);
         });
 
+        profileButton = view.findViewById(R.id.button_profile);
+        profileButton.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
+            navController.navigate(R.id.events_to_profile);
+        });
         return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        // No additional setup needed here
     }
 }
