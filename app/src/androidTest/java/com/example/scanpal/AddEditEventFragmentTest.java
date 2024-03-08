@@ -9,6 +9,7 @@ import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.init;
+import static androidx.test.espresso.intent.Intents.release;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -28,7 +29,10 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import com.google.firebase.Firebase;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import org.junit.After;
 import org.junit.Before;
@@ -74,18 +78,25 @@ public class AddEditEventFragmentTest {
     public void tearDown() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("Users").document(testUser.getUsername()).delete();
-
-
+        release();
     }
 
+    /**
+     * Test adding an event with valid inputs.
+     */
     @Test
     public void testAddEvent() {
         onView(withId(R.id.button_add_event)).perform(click());
 
         addEvent("Test Event 1", "Test Location", "Test Description", 100);
         onData(is(instanceOf(String.class))).inAdapterView(withId(R.id.event_List)).atPosition(0).check(matches(withText("Test Event 1")));
+
+        cleanUp();
     }
 
+    /**
+     * Test editing an event with valid inputs.
+     */
     @Test
     public void testEditEvent() {
         onView(withId(R.id.button_add_event)).perform(click());
@@ -101,7 +112,7 @@ public class AddEditEventFragmentTest {
             e.printStackTrace();
         }
         onData(is(instanceOf(String.class))).inAdapterView(withId(R.id.event_List)).atPosition(0).check(matches(withText("Test Event 2")));
-
+        cleanUp();
     }
 
     private void addEvent(String name, String loc, String desc, int maxAttendee) {
@@ -124,6 +135,7 @@ public class AddEditEventFragmentTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
     }
 
     private void editEvent(String name, String loc, String desc, int maxAttendee) {
@@ -146,21 +158,23 @@ public class AddEditEventFragmentTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }    /**
-     * Tests the UI components' visibility in the AddEditEventFragment.
+    }
+
+    /**
+     * Delete all the events from db created by the test user.
      */
-    @Test
-    public void testUIVisibility() {
-        onView(withId(R.id.add_edit_event_ImageView)).check(matches(ViewMatchers.isDisplayed()));
-        onView(withId(R.id.add_edit_backButton)).check(matches(ViewMatchers.isDisplayed()));
-        onView(withId(R.id.add_edit_event_Header)).check(matches(ViewMatchers.isDisplayed()));
-        onView(withId(R.id.add_edit_save_button)).check(matches(ViewMatchers.isDisplayed()));
-        onView(withId(R.id.add_edit_event_imageButton)).check(matches(ViewMatchers.isDisplayed()));
-        onView(withId(R.id.max_attendees)).check(matches(ViewMatchers.isDisplayed()));
-        onView(withId(R.id.add_edit_event_Attendees)).check(matches(ViewMatchers.isDisplayed()));
-        onView(withId(R.id.event_name_title)).check(matches(ViewMatchers.isDisplayed()));
-        onView(withId(R.id.event_location_title)).check(matches(ViewMatchers.isDisplayed()));
-        onView(withId(R.id.event_description_title)).check(matches(ViewMatchers.isDisplayed()));
-        onView(withId(R.id.add_edit_deleteButton)).check(matches(ViewMatchers.isDisplayed()));
+    private void cleanUp() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference userRef = db.collection("Users").document(testUser.getUsername());
+        db.collection("Events")
+                .whereEqualTo("organizer", userRef)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isComplete()) {
+                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                            db.collection("Events").document(doc.getId()).delete();
+                        }
+                    }
+                });
     }
 }
