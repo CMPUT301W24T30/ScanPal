@@ -35,7 +35,7 @@ public class AttendeeController {
 
     /**
      * Adds a new attendee to the Firestore database.
-     * 
+     *
      * @param attendee The attendee to be added to the database.
      */
     public void addAttendee(Attendee attendee, AttendeeAddCallback callback) {
@@ -72,7 +72,7 @@ public class AttendeeController {
      * Fetches an attendee's details from the Firestore database.
      *
      * @param attendeeId The ID of the attendee to fetch.
-     * @param callback A callback interface to handle the response.
+     * @param callback   A callback interface to handle the response.
      */
     public void fetchAttendee(String attendeeId, AttendeeFetchCallback callback) {
 

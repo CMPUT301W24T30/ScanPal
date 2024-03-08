@@ -7,11 +7,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -25,6 +26,8 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.Objects;
 
@@ -36,20 +39,24 @@ import java.util.Objects;
  */
 public class EventDetailsFragment extends Fragment {
 
+    public User userDetails; // current user
+    public User user;
+    public Attendee attendee;
+    public String attendeeId;
+    public AttendeeController attendeeController;
+    ActivityResultLauncher<ScanOptions> qrCodeScanner;
+    private QrScannerController qrScannerController;
     private String eventName;
     private String eventDescription;
     private String eventOrganizer;
     private String getEventOrganizerUserName;
     private String eventLocation;
-    public User userDetails; // current user
     private ImageView eventPoster;
     private String ImageURI;
     private Button joinButton;
-    public User user;
-    public Attendee attendee;
-    public String attendeeId;
-    public AttendeeController attendeeController;
     private ImageView organizerImage;
+    private FloatingActionButton scanQR;
+
 
     // private Collection<DocumentReference> eventAttendees; not really needed?
 
@@ -91,11 +98,14 @@ public class EventDetailsFragment extends Fragment {
         joinButton = view.findViewById(R.id.join_button);
         FloatingActionButton eventEditButton = view.findViewById(R.id.event_editButton);
         organizerImage = view.findViewById(R.id.organizer_image);
+        scanQR = view.findViewById(R.id.scan_code);
 
         joinButton.setEnabled(false);
 
         UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
         attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), getContext());
+        qrScannerController = new QrScannerController(attendeeController);
+
         userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
             @Override
             public void onSuccess(User user) {
@@ -138,6 +148,16 @@ public class EventDetailsFragment extends Fragment {
                 Toast.makeText(view.getContext(), "Failed to load user details", Toast.LENGTH_LONG).show();
             }
         });
+
+        qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
+            if (result.getContents() != null) {
+                String username = userController.fetchStoredUsername();
+                qrScannerController.handleResult(result.getContents(), username);
+            } else {
+                Toast.makeText(getContext(), "Invalid QR Code", Toast.LENGTH_SHORT).show();
+            }
+        });
+        scanQR.setOnClickListener(v -> qrCodeScanner.launch(QrScannerController.getOptions()));
 
         backButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
@@ -240,7 +260,6 @@ public class EventDetailsFragment extends Fragment {
     }
 
     /**
-     *
      * takes an eventID which links to an event in the database
      * and fetches all of its details
      */
@@ -266,7 +285,7 @@ public class EventDetailsFragment extends Fragment {
                     //since user technically another document
                     fetchOrganizer(Objects.requireNonNull(document.getDocumentReference("organizer")));
 
-                    if(isAdded()) {
+                    if (isAdded()) {
                         TextView eventTitle = requireView().findViewById(R.id.event_Title);
                         TextView OrganizerName = requireView().findViewById(R.id.event_orgName);
                         TextView eventDes = requireView().findViewById(R.id.event_description);
@@ -275,13 +294,13 @@ public class EventDetailsFragment extends Fragment {
                         if (eventTitle != null) {
                             eventTitle.setText(eventName);
                         }
-                        if(eventDes != null) {
+                        if (eventDes != null) {
                             eventDes.setText(eventDescription);
                         }
-                        if(eventLoc != null) {
+                        if (eventLoc != null) {
                             eventLoc.setText(eventLocation);
                         }
-                        if(eventPoster != null) {
+                        if (eventPoster != null) {
                             Uri imageURI = Uri.parse(ImageURI);
                             Glide.with(requireView())
                                     .load(imageURI)
@@ -313,6 +332,7 @@ public class EventDetailsFragment extends Fragment {
                 attendee = fetchedAttendee;
                 setJoinButton();
             }
+
             @Override
             public void onError(Exception e) {
                 Log.e("EventDetailsFragment", "Failed to fetch attendee details: " + e.getMessage());
