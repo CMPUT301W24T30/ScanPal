@@ -131,6 +131,7 @@ public class EditProfileFragment extends Fragment {
                     username.setText(user.getUsername());
                     firstName.setText(user.getFirstName());
                     lastName.setText(user.getLastName());
+
                     if (user.getPhoto() != null) {
                         Glide.with(EditProfileFragment.this).load(user.getPhoto()).into(profileImageView);
                     }

@@ -1,17 +1,14 @@
 ---
-name: Custom issue template
-about: New Issue
+name: Feature request
+about: New Feature or Issue
 title: ''
 labels: ''
 assignees: ''
 
 ---
 
-### User Story
-If Applicable, paste User Story here
-
 ### Issue Description
-Add more details here if needed.
+Describe the feature here
 
 ### Acceptance Criteria: 
 - Foo completes action X

@@ -1,10 +1,12 @@
 package com.example.scanpal;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +16,8 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -22,16 +26,29 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * This is the fragment related to displaying
+ * the details of an event given its id
+ * when switching to this fragment it is assumed
+ * you have the eventID in the incoming bundle
+ */
 public class EventDetailsFragment extends Fragment {
 
     private String eventName;
+    private FloatingActionButton eventEditButton;
+    FloatingActionButton backButton;
     private String eventDescription;
     private String eventOrganizer;
+    private String getEventOrganizerUserName;
     private String eventLocation;
-    //private Collection<DocumentReference> eventAttendees; not really needed
+    private User userDetails;// current user
+    private ImageView eventPoster;
+    private String ImageURI;
 
-    //future field here for profile picture
-    //future field here for event poster/banner
+    //private Collection<DocumentReference> eventAttendees; not really needed?
+
+    //TODO: future field here for organizer profile picture?
+    //TODO: future field here for event poster/banner?
 
     /**
      * Empty Constructor
@@ -46,17 +63,67 @@ public class EventDetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.event_details, null, false);
 
         //retrieves all the info about specific event from database
-        fetchEventDetails();
+        String eventID =  getArguments().getString("0");
+        fetchEventDetails(eventID);
 
-        Log.d("fire", "end of onCreate");
-
-        FloatingActionButton backButton = view.findViewById(R.id.event_details_backButton);
+        backButton = view.findViewById(R.id.event_details_backButton);
+        eventPoster = view.findViewById(R.id.event_detail_imageView);
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
                 navController.navigate(R.id.eventsPage);
+            }
+        });
+
+        //Implement Editing Event Details
+        eventEditButton = view.findViewById(R.id.event_editButton);
+        eventEditButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //check if the user is the organizer of this event, if not send toast and do nothing
+
+                UserController userController = new UserController(FirebaseFirestore.getInstance(), view.getContext());
+
+                userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
+                    @Override
+                    public void onSuccess(User user) {
+                        userDetails = user;
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(view.getContext(), "Failed to Edit Event", Toast.LENGTH_LONG).show();
+
+                    }
+                });
+
+                if(userDetails.getUsername().equals(getEventOrganizerUserName) ||
+                    userDetails.isAdministrator()) {
+                    //Allow editing of this events details here
+                    NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
+
+
+                    //navigate with a bundle containing the eventID,max attendees, name,location,desc,and imgURI
+                    //TODO: get maxAttendees
+
+                    Bundle bundle = new Bundle();
+
+                    bundle.putString("0", eventID);
+                    bundle.putString("1", eventName);
+                    bundle.putString("2", eventLocation);
+                    bundle.putString("3", eventDescription);
+                    bundle.putString("4", ImageURI);
+
+                    navController.navigate(R.id.edit_existing_event, bundle);//navigate to edit this event
+
+                }
+                else {
+                    Toast.makeText(view.getContext(), "You Cannot Edit This Event", Toast.LENGTH_LONG).show();
+
+                }
+
             }
         });
 
@@ -82,6 +149,9 @@ public class EventDetailsFragment extends Fragment {
 
                         String organizerName = firstName + " " + lastName;
 
+                        getEventOrganizerUserName = organizerDoc.getId().toString();
+                        //Log.d("GETTING USERNAME", organizerDoc.getId().toString());
+
                         eventOrganizer = organizerName;
 
                         // 'isAdded' is necessary for async task purposes
@@ -104,17 +174,15 @@ public class EventDetailsFragment extends Fragment {
 
     /**
      *
-     * for now takes the hardcoded string which links to an event in the database
-     * and fetches all of its details(in future add one param for qr Bitmap)
+     * takes an eventID which links to an event in the database
+     * and fetches all of its details
      */
-    void fetchEventDetails() {
+    void fetchEventDetails(String EventID) {
         EventController eventController = new EventController();
         FirebaseFirestore db = eventController.getDatabase();
 
-        //once qr stuff works just add a parameter to the method with qr string
-        //for now test with hardcoded string linking to CSC meet up event
         CollectionReference eventCollection = db.collection("Events");
-        DocumentReference EventDocument = eventCollection.document("oudHiTAO4dN9G86RVF2U");//remove later
+        DocumentReference EventDocument = eventCollection.document(EventID);
 
         EventDocument.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -128,7 +196,7 @@ public class EventDetailsFragment extends Fragment {
                         eventName = document.getString("name");
                         eventDescription = document.getString("description");
                         eventLocation = document.getString("location");
-
+                        ImageURI = document.getString("photo");
 
                         //since user technically another document
                         fetchOrganizer(document.getDocumentReference("organizer"));
@@ -148,20 +216,27 @@ public class EventDetailsFragment extends Fragment {
                             if(eventLoc != null) {
                                 eventLoc.setText(eventLocation);
                             }
+                            if(eventPoster != null) {
+                                Uri imageURI = Uri.parse(ImageURI);
+                                Glide.with(getView())
+                                        .load(imageURI)
+                                        .apply(new RequestOptions().placeholder(R.drawable.ic_launcher_background))
+                                        .into(eventPoster);
+                            }
                         }
 
-                        Log.d("fire", eventName);
-
                     } else {
-                        //System.out.println("Error exist");
+
                         //eventName = "DOESNT EXIST";
                         // Document does not exist
-                        Toast.makeText(getView().getContext(), "Event Doesn't exit ", Toast.LENGTH_LONG).show();
+
+                        Toast.makeText(getView().getContext(), "Event Doesn't exist ", Toast.LENGTH_LONG).show();
+                        //TODO: navigate back to / stay on events Page then
                     }
                 } else {
                     // Error getting document
-                    //System.out.println("Error getting");
                     Toast.makeText(getView().getContext(), "Error retrieving Event", Toast.LENGTH_LONG).show();
+                    //TODO: navigate back to / stay on events Page then
 
                 }
             }

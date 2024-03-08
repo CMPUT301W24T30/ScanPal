@@ -66,4 +66,5 @@ dependencies {
     implementation("com.google.zxing:core:3.4.0") // for qr code generation
     implementation("com.google.zxing:javase:3.4.0")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation("androidx.core:core-splashscreen:1.1.0-alpha02")
 }
