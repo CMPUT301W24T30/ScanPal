@@ -71,6 +71,9 @@
         <action
             android:id="@+id/edit_profile"
             app:destination="@id/edit_profile_fragment" />
+        <action
+            android:id="@+id/profile_to_events"
+            app:destination="@id/eventsPage" />
     </fragment>
 
     <fragment
