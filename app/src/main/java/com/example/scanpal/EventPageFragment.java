@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 public class EventPageFragment extends Fragment {
 
-    FloatingActionButton addEventButton;
+    FloatingActionButton addEventButton, profileButton;
     ArrayList<String> testList;
     ArrayList<String> EventIDs;
     ActivityResultLauncher<ScanOptions> qrCodeScanner;
@@ -97,6 +97,12 @@ public class EventPageFragment extends Fragment {
         addEventButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
             navController.navigate(R.id.addEvent);
+        });
+
+        profileButton = view.findViewById(R.id.button_profile);
+        profileButton.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
+            navController.navigate(R.id.events_to_profile);
         });
         return view;
     }

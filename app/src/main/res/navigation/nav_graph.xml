@@ -35,12 +35,13 @@
             app:destination="@id/addEditEvent" />
         <action
             android:id="@+id/editEvent"
-            app:destination="@+id/addEditEvent">
-
-        </action>
+            app:destination="@+id/addEditEvent" />
         <action
             android:id="@+id/select_event"
             app:destination="@id/eventDetailsPage" />
+        <action
+            android:id="@+id/events_to_profile"
+            app:destination="@id/profile_fragment" />
     </fragment>
 
 
@@ -48,16 +49,15 @@
         android:id="@+id/addEditEvent"
         android:name="com.example.scanpal.AddEventFragment"
         android:label="fragment_add_edit_event"
-        tools:layout="@layout/add_edit_event"
-        >
+        tools:layout="@layout/add_edit_event">
         <action
             android:id="@+id/addEditEventComplete"
-            app:destination="@id/eventsPage"/>
+            app:destination="@id/eventsPage" />
     </fragment>
     <fragment
         android:id="@+id/eventDetailsPage"
         android:name="com.example.scanpal.EventDetailsFragment"
-        android:label="fragement_eventDetails" >
+        android:label="fragement_eventDetails">
         <action
             android:id="@+id/edit_existing_event"
             app:destination="@id/editEventFragment" />
@@ -88,7 +88,7 @@
     <fragment
         android:id="@+id/editEventFragment"
         android:name="com.example.scanpal.EditEventFragment"
-        android:label="EditEventFragment" >
+        android:label="EditEventFragment">
         <action
             android:id="@+id/done_editingEvent"
             app:destination="@id/eventDetailsPage" />
