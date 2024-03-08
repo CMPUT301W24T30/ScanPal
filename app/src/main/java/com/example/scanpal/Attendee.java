@@ -3,14 +3,15 @@ package com.example.scanpal;
 import java.io.Serializable;
 
 /**
- * When a user joins an event, it creates an attendee instance for them. This will contain
- * information about that user's data for this specific event
+ * Represents an attendee of an event. This class encapsulates the data related to a user's
+ * participation in an event, including their RSVP status and whether they have checked in.
+ * Instances of this class are used to manage and track event attendees' interactions.
  */
 public class Attendee implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /*
-    ID is a combo of username + eventID
+    Attendee ID is a combination of username and eventID
      */
     private String id;
     private User user;
@@ -41,7 +42,7 @@ public class Attendee implements Serializable {
         return eventID;
     }
 
-    public void setEvent(String eventID) {
+    public void setEventID(String eventID) {
         this.eventID = eventID;
     }
 

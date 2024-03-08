@@ -63,7 +63,7 @@ public class QrScannerController {
                 }
             });
         } else if (qrId.startsWith("E")) {
-            // TODO
+            // TODO: handle event check-in?
         }
     }
 }

@@ -6,10 +6,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
@@ -53,7 +51,6 @@ public class UserController {
             fos.close();
         } catch (Exception e) {
             callback.onError(e);
-            return;
         }
 
         // Prepare user data for Firestore
@@ -98,7 +95,6 @@ public class UserController {
             fos.close();
         } catch (Exception e) {
             callback.onError(e);
-            return;
         }
 
         // Prepare updated user data for Firestore
@@ -131,8 +127,7 @@ public class UserController {
             fis.close();
             callback.onSuccess(user);
             return;
-        } catch (Exception e) {
-            // Proceed to fetch from Firestore if local fetch fails
+        } catch (Exception ignored) {
         }
 
         // Fetch user from Firestore
@@ -166,9 +161,7 @@ public class UserController {
      */
     public void isUsernameTaken(String username, UsernameCheckCallback callback) {
         DocumentReference docRef = database.collection("Users").document(username);
-        docRef.get().addOnSuccessListener(task -> {
-            callback.onUsernameTaken(task != null && task.exists());
-        }).addOnFailureListener(callback::onError);
+        docRef.get().addOnSuccessListener(task -> callback.onUsernameTaken(task != null && task.exists())).addOnFailureListener(callback::onError);
     }
 
     /**
@@ -184,7 +177,6 @@ public class UserController {
             fis.close();
             return user.getUsername();
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }
