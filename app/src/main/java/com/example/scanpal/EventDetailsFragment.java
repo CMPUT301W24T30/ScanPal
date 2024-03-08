@@ -99,8 +99,8 @@ public class EventDetailsFragment extends Fragment {
         FloatingActionButton eventEditButton = view.findViewById(R.id.event_editButton);
         organizerImage = view.findViewById(R.id.organizer_image);
         scanQR = view.findViewById(R.id.scan_code);
+        FloatingActionButton profileButton = view.findViewById(R.id.button_profile);
 
-        joinButton.setEnabled(false);
 
         UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
         attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), getContext());
@@ -130,6 +130,7 @@ public class EventDetailsFragment extends Fragment {
                                 @Override
                                 public void onSuccess(Attendee attendee) {
                                     Log.d("EventDetailsFragment", "New attendee added");
+                                    onResume();
                                 }
 
                                 @Override
@@ -162,6 +163,11 @@ public class EventDetailsFragment extends Fragment {
         backButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
             navController.navigate(R.id.eventsPage);
+        });
+
+        profileButton.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
+            navController.navigate(R.id.event_details_to_profile);
         });
 
         // Implement Editing Event Details
@@ -346,8 +352,8 @@ public class EventDetailsFragment extends Fragment {
                 joinButton.setBackgroundColor(Color.parseColor("#204916"));
                 joinButton.setText("RSVP'd");
             } else {
-                joinButton.setBackgroundColor(Color.parseColor("#D32F2F"));
-                joinButton.setText("Join");
+                joinButton.setBackgroundColor(Color.parseColor("#0D6EFD"));
+                joinButton.setText("Join Now");
             }
             joinButton.setEnabled(true);
         });
