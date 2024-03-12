@@ -47,8 +47,6 @@ public class EventPageFragment extends Fragment {
     private EventController eventController;
 
     FloatingActionButton addEventButton;
-    ArrayList<String> testList;
-    ArrayList<String> EventIDs;
     /**
      * empty default constructor
      */
