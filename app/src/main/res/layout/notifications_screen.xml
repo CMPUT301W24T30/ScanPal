@@ -125,7 +125,7 @@
         app:tint="#7f7f7f" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/events_page_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="48dp"

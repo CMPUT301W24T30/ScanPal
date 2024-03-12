@@ -1,46 +1,156 @@
 package com.example.scanpal;
 
+import android.content.Context;
+
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Handles operations related to attendee management in a Firestore database.
+ * Manages operations related to attendee management within a Firestore database. This class
+ * provides functionality to add, fetch, and update attendee records in Firestore, facilitating
+ * the tracking and management of event participants. It leverages Firebase Firestore and
+ * device Internal Storage for persistent storage and retrieval of attendee data.
  */
 public class AttendeeController {
-    private final FirebaseFirestore database; // instance of the database
+    private final FirebaseFirestore database;
+    private final Context context;
 
-    public AttendeeController(FirebaseFirestore database) {
+    /**
+     * Constructs an AttendeeController with a specified Firestore database instance and
+     * application context. This constructor initializes the controller ready for attendee
+     * data management operations.
+     *
+     * @param database The Firestore database instance for operations.
+     * @param context  The application context used for file operations.
+     */
+    public AttendeeController(FirebaseFirestore database, Context context) {
         this.database = database;
+        this.context = context;
     }
 
     public FirebaseFirestore getDatabase() {
         return this.database;
     }
 
-    /*
-     * Adds a new attendee to the Firestore database.
-     * 
+    /**
+     * Adds a new attendee record to the Firestore database and optionally to local storage.
+     * This method serializes the {@link Attendee} object and saves it, then updates the Firestore
+     * database with attendee details including location, RSVP status, and event association.
+     *
      * @param attendee The attendee to be added to the database.
+     * @param callback An {@link AttendeeAddCallback} to handle success or error outcomes.
      */
-    public void addAttendee(Attendee attendee) {
-        // will be responsible for add all user types to the database
+    public void addAttendee(Attendee attendee, AttendeeAddCallback callback) {
+
+        try {
+            FileOutputStream fos = context.openFileOutput(attendee.getId() + ".ser", Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(attendee);
+            oos.close();
+            fos.close();
+        } catch (Exception e) {
+            callback.onError(e);
+        }
+
         Map<String, Object> attendeeMap = new HashMap<>();
         attendeeMap.put("location", attendee.getLocation());
-
         attendeeMap.put("checkedIn", attendee.isCheckedIn());
+        attendeeMap.put("rsvp", attendee.isRsvp());
 
         DocumentReference userRef = database.collection("Users").document(attendee.getUser().getUsername());
         attendeeMap.put("user", userRef);
 
-        DocumentReference eventRef = database.collection("Events").document(attendee.getEvent().getId());
-        attendeeMap.put("event", eventRef);
+        DocumentReference eventRef = database.collection("Events").document(attendee.getEventID());
+        attendeeMap.put("eventID", eventRef);
 
-        // Save to database
         database.collection("Attendees").document(attendee.getId()).set(attendeeMap)
                 .addOnSuccessListener(aVoid -> System.out.println("Attendee added successfully!"))
                 .addOnFailureListener(e -> System.out.println("Error adding attendee: " + e.getMessage()));
+    }
+
+    /**
+     * Fetches an attendee's details from the Firestore database or local storage if available.
+     * This method attempts to retrieve the attendee details based on the attendee ID, providing
+     * an async callback with the result.
+     *
+     * @param attendeeId The unique ID of the attendee to fetch.
+     * @param callback   An {@link AttendeeFetchCallback} to handle the fetched data or errors.
+     */
+    public void fetchAttendee(String attendeeId, AttendeeFetchCallback callback) {
+
+        try {
+            FileInputStream fis = context.openFileInput(attendeeId + ".ser");
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            Attendee attendee = (Attendee) ois.readObject();
+            ois.close();
+            fis.close();
+            callback.onSuccess(attendee);
+            return;
+        } catch (Exception e) {
+            callback.onError(e);
+        }
+
+        database.collection("Attendees").document(attendeeId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        try {
+                            String location = documentSnapshot.getString("location");
+                            boolean checkedIn = Boolean.TRUE.equals(documentSnapshot.getBoolean("checkedIn"));
+                            boolean rsvp = Boolean.TRUE.equals(documentSnapshot.getBoolean("rsvp"));
+                            DocumentReference userRef = documentSnapshot.getDocumentReference("user");
+                            String eventID = documentSnapshot.getString("eventID");
+
+                        } catch (Exception e) {
+                            callback.onError(e);
+                        }
+                    } else {
+                        callback.onError(new Exception("Attendee not found"));
+                    }
+                })
+                .addOnFailureListener(callback::onError);
+    }
+
+
+    /**
+     * Updates an existing attendee's information in the Firestore database and local storage.
+     * This method allows updating fields such as RSVP status and checked-in status, ensuring
+     * the attendee record is current.
+     *
+     * @param attendee The {@link Attendee} object with updated details to be saved.
+     * @param callback An {@link AttendeeUpdateCallback} to handle success or error outcomes.
+     */
+    public void updateAttendee(Attendee attendee, AttendeeUpdateCallback callback) {
+
+        try {
+            FileOutputStream fos = context.openFileOutput(attendee.getId() + ".ser", Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(attendee);
+            oos.close();
+            fos.close();
+        } catch (Exception e) {
+            callback.onError(e);
+        }
+        Map<String, Object> updated = new HashMap<>();
+        updated.put("location", attendee.getLocation());
+        updated.put("checkedIn", attendee.isCheckedIn());
+        updated.put("rsvp", attendee.isRsvp());
+
+        DocumentReference userRef = database.collection("Users").document(attendee.getUser().getUsername());
+        updated.put("user", userRef);
+
+        DocumentReference eventRef = database.collection("Events").document(attendee.getEventID());
+        updated.put("eventID", eventRef);
+
+        database.collection("Attendees").document(attendee.getId())
+                .update(updated)
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(callback::onError);
     }
 }

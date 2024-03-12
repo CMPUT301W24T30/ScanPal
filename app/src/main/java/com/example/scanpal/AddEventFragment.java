@@ -26,8 +26,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
- * This is the fragment related to handling operations involving
- * Adding new events to the database
+ * A Fragment for adding new events to the Firestore database. It allows users to input
+ * details about a new event and save it. This class manages the UI for creating an event
+ * and interacts with Firestore through {@link EventController} to store the event data.
  */
 public class AddEventFragment extends Fragment {
     Button saveButton;
@@ -52,13 +53,13 @@ public class AddEventFragment extends Fragment {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                     imageUri = result.getData().getData();
                     profileImageView.setImageURI(imageUri);
-                    Log.d("IMAGEURI", imageUri.toString());
                     uploadImageToFirebase(imageUri);
                 }
             });
 
 
     public AddEventFragment() {
+        // Required empty public constructor
 
     }
 
@@ -70,29 +71,27 @@ public class AddEventFragment extends Fragment {
         //Fragment UI
         TextView pageHeader = view.findViewById(R.id.add_edit_event_Header);
         pageHeader.setText("Create Event");
-        Log.d("Creating New Event", "Enter Details");
-
 
         //TODO: Remove the delete button from page when creating event
         this.deleteButton = view.findViewById(R.id.add_edit_deleteButton);
         this.deleteButton.setVisibility(View.GONE); // no need for delete button when creating an event
 
 
-         this.saveButton = view.findViewById(R.id.add_edit_save_button);
-         this.backButton = view.findViewById(R.id.add_edit_backButton);
-         this.editImageButton = view.findViewById(R.id.add_edit_event_imageButton);
-         this.attendeesForm = view.findViewById(R.id.add_edit_event_Attendees);
-         this.eventNameForm = view.findViewById(R.id.add_edit_event_Name);
-         this.eventLocationForm = view.findViewById(R.id.add_edit_event_Location);
-         this.eventDescriptionForm = view.findViewById(R.id.add_edit_event_description);
+        this.saveButton = view.findViewById(R.id.add_edit_save_button);
+        this.backButton = view.findViewById(R.id.add_edit_backButton);
+        this.editImageButton = view.findViewById(R.id.add_edit_event_imageButton);
+        this.attendeesForm = view.findViewById(R.id.add_edit_event_Attendees);
+        this.eventNameForm = view.findViewById(R.id.add_edit_event_Name);
+        this.eventLocationForm = view.findViewById(R.id.add_edit_event_Location);
+        this.eventDescriptionForm = view.findViewById(R.id.add_edit_event_description);
         this.profileImageView = view.findViewById(R.id.add_edit_event_ImageView);
 
         imageController = new ImageController();
 
 
-         //getting an instance of the currentUser
-         userController = new UserController(FirebaseFirestore.getInstance(), view.getContext());
-         eventController = new EventController();
+        //getting an instance of the currentUser
+        userController = new UserController(FirebaseFirestore.getInstance(), view.getContext());
+        eventController = new EventController();
 
         userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
             @Override
@@ -116,58 +115,47 @@ public class AddEventFragment extends Fragment {
         Log.d("STORAGE", userController.fetchStoredUsername());
 
         //Implementing the Save button
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        saveButton.setOnClickListener(v -> {
 
-                //checking for valid input
-                if(eventNameForm.getText().toString().equals("") ||
-                    eventLocationForm.getText().toString().equals("") ||
-                    eventDescriptionForm.getText().toString().equals("") ||
-                    attendeesForm.getText().toString().equals("") ||
-                    null == imageUri ) {
+            //checking for valid input
+            if (eventNameForm.getText().toString().isEmpty() ||
+                    eventLocationForm.getText().toString().isEmpty() ||
+                    eventDescriptionForm.getText().toString().isEmpty() ||
+                    attendeesForm.getText().toString().isEmpty() ||
+                    null == imageUri) {
 
-                    Toast.makeText(view.getContext(), "Please input all Information", Toast.LENGTH_LONG).show();
+                Toast.makeText(view.getContext(), "Please input all Information", Toast.LENGTH_LONG).show();
 
-                }
-                else if( Integer.parseInt( attendeesForm.getText().toString()) < 1 )  {
-                    Toast.makeText(view.getContext(), "Please allow at least 1 Attendee", Toast.LENGTH_LONG).show();
-                }
-                else {
-                    newEvent.setName(eventNameForm.getText().toString());
-                    newEvent.setLocation(eventLocationForm.getText().toString());
-                    newEvent.setDescription(eventDescriptionForm.getText().toString());
-                    newEvent.setMaximumAttendees( Integer.parseInt(attendeesForm.getText().toString()));
-                    newEvent.setPosterURI(imageUri);
+            } else if (Integer.parseInt(attendeesForm.getText().toString()) < 1) {
+                Toast.makeText(view.getContext(), "Please allow at least 1 Attendee", Toast.LENGTH_LONG).show();
+            } else {
+                newEvent.setName(eventNameForm.getText().toString());
+                newEvent.setLocation(eventLocationForm.getText().toString());
+                newEvent.setDescription(eventDescriptionForm.getText().toString());
+                newEvent.setMaximumAttendees(Integer.parseInt(attendeesForm.getText().toString()));
+                newEvent.setPosterURI(imageUri);
 
-                    //now add the new event to the database
-                    eventController.addEvent(newEvent);
+                //now add the new event to the database
+                eventController.addEvent(newEvent);
 
-                    NavController navController = NavHostFragment.findNavController(AddEventFragment.this);
-                    navController.navigate(R.id.addEditEventComplete);
-                }
-
+                NavController navController = NavHostFragment.findNavController(AddEventFragment.this);
+                navController.navigate(R.id.addEditEventComplete);
             }
+
         });
 
 
         //Implementing the Back button to return to Events Page
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        backButton.setOnClickListener(v -> {
 
-                //just go back to the previous screen without doing anything
-                NavController navController = NavHostFragment.findNavController(AddEventFragment.this);
-                navController.navigate(R.id.addEditEventComplete);
-            }
+            //just go back to the previous screen without doing anything
+            NavController navController = NavHostFragment.findNavController(AddEventFragment.this);
+            navController.navigate(R.id.addEditEventComplete);
         });
 
-        editImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // what to do when trying to edit image
-                openGallery();
-            }
+        editImageButton.setOnClickListener(v -> {
+            // what to do when trying to edit image
+            openGallery();
         });
 
         return view;
