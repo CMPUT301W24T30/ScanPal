@@ -1,13 +1,11 @@
 package com.example.scanpal;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Callback interface for event fetch (by user) operations.
  */
 public interface EventFetchByUserCallback {
-
-    void onSuccess(ArrayList<Event> eventList);
-
+    void onSuccess(List<Event> events); // Correctly expect a List<Event>
     void onError(Exception e);
 }
