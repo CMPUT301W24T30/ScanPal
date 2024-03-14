@@ -2,7 +2,6 @@ package com.example.scanpal;
 
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
@@ -12,7 +11,6 @@ import static androidx.test.espresso.intent.Intents.release;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-
 import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -22,12 +20,7 @@ import android.app.Instrumentation;
 import android.content.Intent;
 import android.net.Uri;
 
-import androidx.fragment.app.testing.FragmentScenario;
-import androidx.lifecycle.Lifecycle;
-import androidx.test.espresso.Espresso;
-import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.intent.Intents;
-import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -44,10 +37,9 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 public class EventDetailsFragmentTest {
 
+    private final User testUser = new User("test1", "Test1", "Testuser");
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<>(MainActivity.class);
-
-    private final User testUser = new User("test1", "Test1", "Testuser");
 
     @Before
     public void setUp() {
@@ -70,7 +62,6 @@ public class EventDetailsFragmentTest {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
-            return;
         }
     }
 
@@ -93,9 +84,9 @@ public class EventDetailsFragmentTest {
         String desc = "Test Description";
         int maxAttendee = 100;
         addEvent(name, loc, desc, maxAttendee);
-        onData(is(instanceOf(String.class))).inAdapterView(withId(R.id.event_List)).atPosition(0).check(matches(withText("Test Event 1")));
+        onData(is(instanceOf(String.class))).inAdapterView(withId(R.id.event_grid)).atPosition(0).check(matches(withText("Test Event 1")));
 
-        onData(anything()).inAdapterView(withId(R.id.event_List)).atPosition(0).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.event_grid)).atPosition(0).perform(click());
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {

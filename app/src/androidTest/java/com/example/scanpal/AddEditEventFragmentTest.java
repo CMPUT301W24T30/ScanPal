@@ -2,7 +2,6 @@ package com.example.scanpal;
 
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
@@ -13,7 +12,6 @@ import static androidx.test.espresso.intent.Intents.release;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-
 import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -24,12 +22,10 @@ import android.content.Intent;
 import android.net.Uri;
 
 import androidx.test.espresso.intent.Intents;
-import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
-import com.google.firebase.Firebase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -44,10 +40,9 @@ import org.junit.runner.RunWith;
 @LargeTest
 public class AddEditEventFragmentTest {
 
+    private final User testUser = new User("test1", "Test1", "Testuser");
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<>(MainActivity.class);
-
-    private final User testUser = new User("test1", "Test1", "Testuser");
 
     @Before
     public void setUp() {
@@ -70,7 +65,6 @@ public class AddEditEventFragmentTest {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
-            return;
         }
     }
 
@@ -89,7 +83,7 @@ public class AddEditEventFragmentTest {
         onView(withId(R.id.button_add_event)).perform(click());
 
         addEvent("Test Event 1", "Test Location", "Test Description", 100);
-        onData(is(instanceOf(String.class))).inAdapterView(withId(R.id.event_List)).atPosition(0).check(matches(withText("Test Event 1")));
+        onData(is(instanceOf(String.class))).inAdapterView(withId(R.id.event_grid)).atPosition(0).check(matches(withText("Test Event 1")));
 
         cleanUp();
     }
@@ -102,7 +96,7 @@ public class AddEditEventFragmentTest {
         onView(withId(R.id.button_add_event)).perform(click());
 
         addEvent("Test Event 1", "Test Location", "Test Description", 100);
-        onData(anything()).inAdapterView(withId(R.id.event_List)).atPosition(0).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.event_grid)).atPosition(0).perform(click());
         onView(withId(R.id.event_editButton)).perform(click());
         editEvent("Test Event 2", "Updated test Location", "Updated test description", 200);
         onView(withId(R.id.event_details_backButton)).perform(click());
@@ -111,7 +105,7 @@ public class AddEditEventFragmentTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        onData(is(instanceOf(String.class))).inAdapterView(withId(R.id.event_List)).atPosition(0).check(matches(withText("Test Event 2")));
+        onData(is(instanceOf(String.class))).inAdapterView(withId(R.id.event_grid)).atPosition(0).check(matches(withText("Test Event 2")));
         cleanUp();
     }
 
