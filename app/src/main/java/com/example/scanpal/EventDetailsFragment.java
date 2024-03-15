@@ -91,8 +91,23 @@ public class EventDetailsFragment extends Fragment {
 
         // Retrieve and display event details
         assert getArguments() != null;
-        String eventID = getArguments().getString("0");
+        String eventID = getArguments().getString("event_id");
         fetchEventDetails(eventID);
+
+        // Retrieve and display event details
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            if (eventID != null) {
+                fetchEventDetails(eventID);
+            } else {
+                Log.e("EventDetailsFragment", "Event ID is null.");
+                Toast.makeText(getContext(), "Error: Event details cannot be loaded.", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Log.e("EventDetailsFragment", "Arguments are null.");
+            // Handling the null case
+            Toast.makeText(getContext(), "Error: Event details cannot be loaded.", Toast.LENGTH_LONG).show();
+        }
 
         // Initialize UI components and setup event handlers
         FloatingActionButton backButton = view.findViewById(R.id.event_details_backButton);
