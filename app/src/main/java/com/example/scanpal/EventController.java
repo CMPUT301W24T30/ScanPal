@@ -147,6 +147,52 @@ public class EventController {
         }).addOnFailureListener(exception -> Log.e("FirebaseStorage", "Failed to get download URL for event photo: " + exception.getMessage()))).addOnFailureListener(exception -> Log.e("FirebaseStorage", "Failed to upload event photo: " + exception.getMessage()));
     }
 
+    public void fetchAllEvents(final EventsFetchCallback callback) {
+        database.collection("Events")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<Event> eventsList = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            // Manually map the document fields to the Event object
+                            String id = document.getId();
+                            String name = document.getString("name");
+                            String description = document.getString("description");
+                            String location = document.getString("location");
+                            String photoUrlString = document.getString("photo");
+                            long maximumAttendees = document.getLong("capacity");
+                            String signUpAddress = document.getString("2ndQrCode");
+                            Uri photoUri = photoUrlString != null ? Uri.parse(photoUrlString) : null;
+                            String infoAddress = document.getString("qrcodeurl");
+
+                            // init new event object
+                            Event event = new Event(null, name, description); // organizer is set to null temporarily
+                            event.setId(id);
+                            event.setLocation(location);
+                            event.setMaximumAttendees(maximumAttendees);
+                            event.setSignUpAddress(signUpAddress);
+                            event.setPosterURI(photoUri);
+                            event.setInfoAddress(infoAddress);
+
+                            event.setOrganizer(null);
+                            event.setParticipants(new ArrayList<>());
+
+                            // Add the event to the list
+                            eventsList.add(event);
+                        }
+
+                        callback.onSuccess(eventsList);
+                    } else {
+                        if (task.getException() != null) {
+                            Log.e("EventController", "Error getting documents: ", task.getException());
+                            callback.onError(task.getException());
+                        }
+                    }
+                });
+    }
+
+
+
     /**
      * This will give back an arrayList of event Type, consisting of events created
      * by the current user (user is obtained from usercontroller.getuser())
