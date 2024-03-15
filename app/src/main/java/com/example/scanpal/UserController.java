@@ -180,4 +180,24 @@ public class UserController {
             return null;
         }
     }
+
+    /**
+     * Check internal storage to see if user object exists.
+     *
+     * @return true if user object exists in internal storage, false if not.
+     */
+    public boolean isUserLoggedIn() {
+        String filename = "user.ser";
+        FileInputStream fis;
+        try {
+            fis = context.openFileInput(filename);
+            if (fis != null) {
+                fis.close();
+                return true;
+            }
+        } catch (Exception ignored) {
+        }
+        return false;
+    }
+
 }
