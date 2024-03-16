@@ -21,6 +21,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -50,6 +51,7 @@ public class EditProfileFragment extends Fragment {
                 }
             });
     private UserController userController;
+    private AttendeeController attendeeController;
 
     /**
      * Inflates the layout for the edit profile page.
@@ -74,6 +76,7 @@ public class EditProfileFragment extends Fragment {
         FloatingActionButton deleteButton = view.findViewById(R.id.delete_button);
         Button saveButton = view.findViewById(R.id.save_button);
         FloatingActionButton goBack = view.findViewById(R.id.button_go_back);
+        Button resetButton = view.findViewById(R.id.reset_button);
 
         username = (TextInputEditText) ((TextInputLayout) view.findViewById(R.id.username)).getEditText();
         if (username != null) {
@@ -84,6 +87,7 @@ public class EditProfileFragment extends Fragment {
 
         imageController = new ImageController();
         userController = new UserController(FirebaseFirestore.getInstance(), getContext());
+        attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), getContext());
 
         uploadButton.setOnClickListener(v -> openGallery());
         deleteButton.setOnClickListener(v -> profileImageView.setImageDrawable(null));
@@ -93,7 +97,7 @@ public class EditProfileFragment extends Fragment {
             NavController navController = NavHostFragment.findNavController(EditProfileFragment.this);
             navController.navigate(R.id.save_profile_edits);
         });
-
+        resetButton.setOnClickListener(v -> showDeleteConfirmation());
         fetchUserDetails();
     }
 
@@ -168,5 +172,47 @@ public class EditProfileFragment extends Fragment {
                 Toast.makeText(getContext(), "Failed to update user details: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    /**
+     * Shows a confirmation dialog to confirm user deletion.
+     */
+    private void showDeleteConfirmation() {
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Confirm Delete")
+                .setMessage("Are you sure you want to reset your profile? This action cannot be undone.")
+                .setPositiveButton("Delete", (dialog, which) -> deleteUser())
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    /**
+     * Handles the user & linked attendees deletion process.
+     */
+    private void deleteUser() {
+        String storedUsername = userController.fetchStoredUsername();
+        if (storedUsername != null) {
+            attendeeController.deleteAllUserAttendees(storedUsername, new DeleteAllAttendeesCallback() {
+                @Override
+                public void onSuccess() {
+                    userController.removeUser(storedUsername, new UserRemoveCallback() {
+                        @Override
+                        public void onSuccess() {
+                            Toast.makeText(getContext(), "Profile reset successfully", Toast.LENGTH_SHORT).show();
+                            NavController navController = NavHostFragment.findNavController(EditProfileFragment.this);
+                            navController.navigate(R.id.signupFragment);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(Exception e) {
+                }
+            });
+        }
     }
 }

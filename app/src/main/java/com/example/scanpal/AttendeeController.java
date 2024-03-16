@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,10 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Manages operations related to attendee management within a Firestore database. This class
- * provides functionality to add, fetch, and update attendee records in Firestore, facilitating
- * the tracking and management of event participants. It leverages Firebase Firestore and
- * device Internal Storage for persistent storage and retrieval of attendee data.
+ * Manages attendee data interactions with a Firestore database and internal storage.
+ * Provides methods to add, fetch, update, and delete attendee records.
  */
 public class AttendeeController {
     private final FirebaseFirestore database;
@@ -44,7 +44,7 @@ public class AttendeeController {
      * This method serializes the {@link Attendee} object and saves it, then updates the Firestore
      * database with attendee details including location, RSVP status, and event association.
      *
-     * @param attendee The attendee to be added to the database.
+     * @param attendee The attendee to be added.
      * @param callback An {@link AttendeeAddCallback} to handle success or error outcomes.
      */
     public void addAttendee(Attendee attendee, AttendeeAddCallback callback) {
@@ -151,6 +151,28 @@ public class AttendeeController {
         database.collection("Attendees").document(attendee.getId())
                 .update(updated)
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(callback::onError);
+    }
+
+    /**
+     * Deletes all attendee records associated with a user from Firestore and local storage.
+     *
+     * @param username The username of the user whose attendee records are to be deleted.
+     * @param callback The callback for success or error handling.
+     */
+    public void deleteAllUserAttendees(String username, final DeleteAllAttendeesCallback callback) {
+        database.collection("Attendees")
+                .whereEqualTo("user", database.collection("Users").document(username))
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    WriteBatch batch = database.batch();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        DocumentReference attendeeRef = database.collection("Attendees").document(document.getId());
+                        batch.delete(attendeeRef);
+                        context.deleteFile(document.getId() + ".ser");
+                    }
+                    batch.commit().addOnSuccessListener(aVoid -> callback.onSuccess()).addOnFailureListener(callback::onError);
+                })
                 .addOnFailureListener(callback::onError);
     }
 }

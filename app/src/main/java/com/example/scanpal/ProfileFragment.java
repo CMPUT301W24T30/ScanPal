@@ -128,7 +128,8 @@ public class ProfileFragment extends Fragment {
         });
 
         buttonHomepage.setOnClickListener(v -> {
-            // TODO
+            NavController navController = NavHostFragment.findNavController(ProfileFragment.this);
+            navController.navigate(R.id.profile_to_events);
         });
 
         buttonEditProfile.setOnClickListener(v -> {
