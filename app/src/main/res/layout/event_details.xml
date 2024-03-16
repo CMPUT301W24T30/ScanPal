@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     android:background="#16181F">
 
+    <Button
+        android:id="@+id/map_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="View Map"
+        app:layout_constraintTop_toBottomOf="@+id/join_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
 
     <TextView
         android:id="@+id/event_description"

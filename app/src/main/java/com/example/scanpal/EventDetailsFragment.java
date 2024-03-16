@@ -30,6 +30,10 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.Objects;
+import android.content.Intent;
+import com.example.scanpal.MapsActivity;
+import android.widget.Button;
+import com.google.android.material.button.MaterialButton;
 
 /**
  * Fragment for displaying event details. It expects an event ID as an argument
@@ -88,6 +92,12 @@ public class EventDetailsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.event_details, null, false);
+
+        MaterialButton mapButton = view.findViewById(R.id.map_button);
+        mapButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), MapsActivity.class);
+            startActivity(intent);
+        });
 
         // Retrieve and display event details
         assert getArguments() != null;

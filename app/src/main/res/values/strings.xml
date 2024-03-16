@@ -5,4 +5,5 @@
     <string name="addLastName">Enter Last Name</string>
     <string name="continueButton">Continue</string>
     <string name="addUserImage">User Image</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>
