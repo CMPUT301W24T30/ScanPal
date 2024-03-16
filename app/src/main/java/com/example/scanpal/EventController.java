@@ -192,10 +192,9 @@ public class EventController {
     }
 
 
-
     /**
      * This will give back an arrayList of event Type, consisting of events created
-     * by the current user (user is obtained from usercontroller.getuser())
+     * by the current user (user is obtained from UserController.getUser())
      */
     public void getEventsByUser(View view, EventFetchByUserCallback callback) {
         // TODO: a clause for admins to return all existing events

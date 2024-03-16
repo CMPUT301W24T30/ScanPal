@@ -154,6 +154,28 @@ public class UserController {
     }
 
     /**
+     * Removes a user from the Firestore database and deletes the local copy.
+     *
+     * @param username The username of the user to remove.
+     * @param callback The callback to report success or failure.
+     */
+    public void removeUser(String username, UserRemoveCallback callback) {
+        // delete user locally
+        try {
+            context.deleteFile("user.ser");
+        } catch (Exception e) {
+            callback.onError(e);
+            return;
+        }
+
+        // delete user from Firestore
+        DocumentReference docRef = database.collection("Users").document(username);
+        docRef.delete()
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(callback::onError);
+    }
+
+    /**
      * Checks if the provided username already exists in the Firestore database.
      *
      * @param username The username to check.
@@ -179,5 +201,24 @@ public class UserController {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /**
+     * Check internal storage to see if user object exists.
+     *
+     * @return true if user object exists in internal storage, false if not.
+     */
+    public boolean isUserLoggedIn() {
+        String filename = "user.ser";
+        FileInputStream fis;
+        try {
+            fis = context.openFileInput(filename);
+            if (fis != null) {
+                fis.close();
+                return true;
+            }
+        } catch (Exception ignored) {
+        }
+        return false;
     }
 }
