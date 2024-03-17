@@ -2,7 +2,12 @@ package com.example.scanpal;
 
 import com.example.scanpal.EventController;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +20,7 @@ import android.widget.Button;
 
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -125,8 +131,19 @@ public class EventPageFragment extends Fragment {
         // Fetch events from Firebase and update the grid
         fetchEventsAndUpdateGrid();
 
+
+
+
+
+
+
+
+
+
+
         return view;
     }
+
 
     private void fetchAllEvents() {
         eventController.fetchAllEvents(new EventsFetchCallback() {

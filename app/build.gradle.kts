@@ -76,4 +76,6 @@ dependencies {
     implementation("com.google.zxing:javase:3.4.0")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("androidx.core:core-splashscreen:1.1.0-alpha02")
+    //implementation("androidx.core:core-ktx:2.2.0") // for push notifications
+
 }
