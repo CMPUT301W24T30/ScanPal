@@ -108,6 +108,13 @@ public class EventPageFragment extends Fragment {
             navController.navigate(R.id.events_to_profile);
         });
 
+        // Set up button to navigate to Notifications/Announcements.
+        FloatingActionButton notificationsButton = view.findViewById(R.id.button_notifications);
+        notificationsButton.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
+            navController.navigate(R.id.eventsPage_to_notifications);
+        });
+
         gridView.setOnItemClickListener((parent, view1, position, id) -> {
             Event event = eventsList.get(position);
             Bundle bundle = new Bundle();

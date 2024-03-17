@@ -195,6 +195,13 @@ public class EventDetailsFragment extends Fragment {
             navController.navigate(R.id.event_details_to_profile);
         });
 
+        // Set up button to navigate to Notifications/Announcements.
+        FloatingActionButton notificationsButton = view.findViewById(R.id.button_notifications);
+        notificationsButton.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
+            navController.navigate(R.id.eventDetailsPage_to_notifications);
+        });
+
         // Implement event edit functionality
         eventEditButton.setOnClickListener(v -> {
 
