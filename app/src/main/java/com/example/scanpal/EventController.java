@@ -65,6 +65,7 @@ public class EventController {
         eventMap.put("location", event.getLocation());
         eventMap.put("photo", event.getPosterURI());
         eventMap.put("capacity", event.getMaximumAttendees());
+        eventMap.put("announcementCount", event.getAnnouncementCount());
 
         DocumentReference organizerRef = database.collection("Users").document(event.getOrganizer().getUsername());
         eventMap.put("organizer", organizerRef);
@@ -280,6 +281,7 @@ public class EventController {
                             Uri imageURI = Uri.parse(Objects.requireNonNull(eventDoc.get("photo")).toString());
                             event.setPosterURI(imageURI);
                             event.setId(EventID);
+                            event.setAnnouncementCount( (long)eventDoc.get("announcementCount") );
 
                             // Access the data using eventDoc.getData() or convert it to an object
                             fetchEventOrganizerByRef((DocumentReference) Objects.requireNonNull(eventDoc.get("organizer")),
@@ -319,6 +321,7 @@ public class EventController {
         updates.put("location", event.getLocation());
         updates.put("description", event.getDescription());
         updates.put("capacity", event.getMaximumAttendees());
+        updates.put("announcementCount", event.getAnnouncementCount()); //TODO: TEST FOR BUGS LATER
 
         Map<String, Object> eventMap = new HashMap<>();
 
