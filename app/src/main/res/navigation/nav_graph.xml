@@ -80,6 +80,16 @@
     </fragment>
 
     <fragment
+        android:id="@+id/ShowQrFragment"
+        android:name="com.example.scanpal.ShowQrFragment"
+        android:label="Show Qr Code"
+        tools:layout="@layout/show_qr">
+        <action
+            android:id="@+id/show_qr_to_eventDetails"
+            app:destination="@id/eventDetailsPage" />
+    </fragment>
+
+    <fragment
         android:id="@+id/edit_profile_fragment"
         android:name="com.example.scanpal.EditProfileFragment"
         android:label="Edit Profile Page"
@@ -88,6 +98,7 @@
             android:id="@+id/save_profile_edits"
             app:destination="@id/profile_fragment" />
     </fragment>
+
     <fragment
         android:id="@+id/editEventFragment"
         android:name="com.example.scanpal.EditEventFragment"
@@ -96,7 +107,6 @@
             android:id="@+id/done_editingEvent"
             app:destination="@id/eventDetailsPage" />
     </fragment>
-
-
+    
 </navigation>
 
