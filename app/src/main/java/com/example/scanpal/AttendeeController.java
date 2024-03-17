@@ -1,22 +1,36 @@
 package com.example.scanpal;
 
 import android.content.Context;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Manages attendee data interactions with a Firestore database and internal storage.
- * Provides methods to add, fetch, update, and delete attendee records.
+ * Manages operations related to attendee management within a Firestore database. This class
+ * provides functionality to add, fetch, and update attendee records in Firestore, facilitating
+ * the tracking and management of event participants. It leverages Firebase Firestore and
+ * device Internal Storage for persistent storage and retrieval of attendee data.
  */
 public class AttendeeController {
     private final FirebaseFirestore database;
@@ -44,7 +58,7 @@ public class AttendeeController {
      * This method serializes the {@link Attendee} object and saves it, then updates the Firestore
      * database with attendee details including location, RSVP status, and event association.
      *
-     * @param attendee The attendee to be added.
+     * @param attendee The attendee to be added to the database.
      * @param callback An {@link AttendeeAddCallback} to handle success or error outcomes.
      */
     public void addAttendee(Attendee attendee, AttendeeAddCallback callback) {
@@ -152,6 +166,85 @@ public class AttendeeController {
                 .update(updated)
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(callback::onError);
+    }
+
+    interface OnCompleteSignedUpAttendees {
+        void onSuccess(ArrayList<Attendee> attendees);
+        void onFailure(Exception e);
+    }
+
+    /**
+     * Given an event id, fetch all signed up attendees for the corresponding event.
+     * Signed up user means its rsvp field is set to true.
+     * @param eventID String event id
+     * @param listener OnCompleteSignedUpAttendees
+     */
+    public void fetchSignedUpUsers(String eventID, OnCompleteSignedUpAttendees listener) {
+        DocumentReference eventRef = database.collection("Events").document(eventID);
+        ArrayList<Attendee> attendees = new ArrayList<>();
+
+        AtomicInteger attendeesCounter = new AtomicInteger();
+
+        database.collection("Attendees")
+                .whereEqualTo("eventID", eventRef)
+                .whereEqualTo("rsvp", true)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    int totalAttendees = queryDocumentSnapshots.size();
+
+                    if (totalAttendees == 0) {
+                        return;
+                    }
+
+                    for (QueryDocumentSnapshot attendeeDoc : queryDocumentSnapshots) {
+                        String eventID_remote = Objects.requireNonNull(attendeeDoc.getDocumentReference("eventID")).toString();
+                        boolean rsvp = Boolean.TRUE.equals(attendeeDoc.getBoolean("rsvp"));
+                        boolean checkedIn = Boolean.TRUE.equals(attendeeDoc.getBoolean("checkedIn"));
+                        String location = attendeeDoc.getString("location");
+
+                        DocumentReference userRef = attendeeDoc.getDocumentReference("user");
+                        userRef.get().addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot userDoc = task.getResult();
+
+                                if (userDoc != null && userDoc.exists()) {
+                                    int completedFetches = attendeesCounter.incrementAndGet();
+
+                                    User user = new User(
+                                            userDoc.getId(),
+                                            userDoc.getString("firstName"),
+                                            userDoc.getString("lastName"),
+                                            userDoc.getString("photo")
+                                    );
+
+                                    Attendee attendee = new Attendee(user, eventID_remote, rsvp, checkedIn);
+                                    attendee.setLocation(location);
+                                    attendees.add(attendee);
+                                    Log.d("AttendeeController", user.getUsername());
+                                    Log.d("AttendeeController", user.getFirstName());
+                                    Log.d("AttendeeController", user.getLastName());
+                                    Log.d("AttendeeController", user.getPhoto());
+
+
+
+                                    if (completedFetches == totalAttendees) {
+                                        listener.onSuccess(attendees);
+                                    }
+                                } else {
+                                    listener.onFailure(new Exception("User does not exist"));
+                                }
+
+
+                            } else {
+                                listener.onFailure(new Exception("Error fetching user", task.getException()));
+                            }
+                        });
+
+                    }
+
+                })
+                .addOnFailureListener(e -> listener.onFailure(e));
+
     }
 
     /**

@@ -64,6 +64,10 @@
         <action
             android:id="@+id/event_details_to_profile"
             app:destination="@id/profile_fragment" />
+
+        <action
+            android:id="@+id/view_signed_up_users"
+            app:destination="@+id/signedUpUsersFragment" />
     </fragment>
 
     <fragment
@@ -96,6 +100,15 @@
             android:id="@+id/done_editingEvent"
             app:destination="@id/eventDetailsPage" />
     </fragment>
+    <fragment
+        android:id="@+id/signedUpUsersFragment"
+        android:name="com.example.scanpal.SignedUpUsersFragment"
+        android:label="signedUpUsersFragment"
+        tools:layout="@layout/attendees_list"
+    >
+
+    </fragment>
+
 
 
 </navigation>
