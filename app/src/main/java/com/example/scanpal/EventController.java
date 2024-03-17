@@ -6,10 +6,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -369,4 +375,32 @@ public class EventController {
             }
         });
     }
+
+    public void getAllEventIds(EventIDsFetchCallback callback) {
+        CollectionReference eventsRef = database.collection("Events");
+        List<String> documentIds = new ArrayList<>();
+
+        eventsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+
+                    for (DocumentSnapshot document : task.getResult()) {
+                        String documentId = document.getId();
+                        documentIds.add(documentId);
+                    }
+
+                    callback.onSuccess(documentIds);
+
+                    for (String id : documentIds) {
+                        Log.d("Document ID", id);
+                    }
+                } else {
+                    Log.d("Firestore", "Error getting documents: ", task.getException());
+                }
+            }
+        });
+
+    }
+
 }

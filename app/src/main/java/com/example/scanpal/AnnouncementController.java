@@ -2,15 +2,25 @@ package com.example.scanpal;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AnnouncementController {
@@ -77,7 +87,41 @@ public class AnnouncementController {
             }
         });
 
+    }
 
+    public void getAnnouncementsByEventId(String EventID, AnnouncementsFetchCallback callback) {
+        CollectionReference announcementsRef = database.collection("Announcements");
+
+
+        Query query = announcementsRef.whereEqualTo("eventID", EventID);
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    List<Announcement> announcementsList = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+
+                        Announcement announcement = new Announcement();//document.toObject(Announcement.class);
+                        announcement.setAnnouncementNum((long) document.get("announcementNum"));
+                        announcement.setEventID((String) document.get("eventID"));
+                        announcement.setMessage((String) document.get("message"));
+                        announcement.setTimeStamp((String) document.get("timeStamp"));
+
+
+                        // Add the Announcement object to the list
+                        announcementsList.add(announcement);
+
+                    }
+                    callback.onSuccess(announcementsList);
+
+                    for (Announcement announcement : announcementsList) {
+                        Log.d("Announcement", announcement.toString());
+                    }
+                } else {
+                    Log.d("Firestore", "Error getting documents: ", task.getException());
+                }
+            }
+        });
 
     }
 }
