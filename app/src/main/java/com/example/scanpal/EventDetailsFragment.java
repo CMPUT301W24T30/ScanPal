@@ -29,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -58,6 +59,7 @@ public class EventDetailsFragment extends Fragment {
     private String ImageURI;
     private Button joinButton;
     private ImageView organizerImage;
+    private Button viewSignedUpUsersBtn;
 
     /**
      * Default constructor for EventDetailsFragment.
@@ -117,11 +119,13 @@ public class EventDetailsFragment extends Fragment {
         organizerImage = view.findViewById(R.id.organizer_image);
         FloatingActionButton scanQR = view.findViewById(R.id.scan_code);
         FloatingActionButton profileButton = view.findViewById(R.id.button_profile);
+        viewSignedUpUsersBtn = view.findViewById(R.id.view_signed_up_users_button);
 
         // Setup user and attendee controllers
         UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
         attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), getContext());
         qrScannerController = new QrScannerController(attendeeController);
+
 
         // Fetch and setup current user details
         userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
@@ -230,6 +234,15 @@ public class EventDetailsFragment extends Fragment {
             }
         });
 
+        viewSignedUpUsersBtn.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
+
+            Bundle bundle = new Bundle();
+            bundle.putString("eventID", eventID);
+
+            navController.navigate(R.id.view_signed_up_users, bundle);
+        });
+
         return view;
     }
 
@@ -265,6 +278,12 @@ public class EventDetailsFragment extends Fragment {
 
                         if (OrganizerName != null) {
                             OrganizerName.setText(eventOrganizer);
+                        }
+
+                        Log.d("EventDetailsFragment", userDetails.getUsername());
+                        Log.d("EventDetailsFragment", getEventOrganizerUserName);
+                        if (getEventOrganizerUserName.contentEquals(userDetails.getUsername())) {
+                            viewSignedUpUsersBtn.setVisibility(View.VISIBLE);
                         }
                     }
                 } else {
