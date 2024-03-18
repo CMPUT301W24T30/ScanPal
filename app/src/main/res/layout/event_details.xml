@@ -45,6 +45,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_description" />
 
+    <Button
+        android:id="@+id/view_signed_up_users_button"
+        android:layout_width="182dp"
+        android:layout_height="49dp"
+        android:text="Signed Up Users"
+        android:textColor="@color/white"
+        android:backgroundTint="#0D6EFD"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/join_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+
+        />
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
