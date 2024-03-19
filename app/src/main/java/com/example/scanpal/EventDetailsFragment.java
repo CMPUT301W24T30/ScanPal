@@ -501,6 +501,9 @@ public class EventDetailsFragment extends Fragment {
             announcement.setAnnouncementNum(eventAnnouncementCount + 1L);
 
             AC.createAnnouncment(announcement);
+            //Method to send push notifications to he attendees.
+            AC.pushNotificationToAttendees(announcement);
+
             Toast.makeText(getContext(), "Announcement sent!", Toast.LENGTH_LONG).show();
 
 

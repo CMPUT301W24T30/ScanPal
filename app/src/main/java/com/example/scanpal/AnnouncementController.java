@@ -124,4 +124,16 @@ public class AnnouncementController {
         });
 
     }
+
+    /**
+     * Send a push notification to the devices of users tied to the eventID
+     * in the announcement object
+     * @param announcement contains the details in the push notification
+     */
+    public void pushNotificationToAttendees(Announcement announcement) {
+
+    }
+
+
+    //TODO: Milestone alert method for organizers
 }

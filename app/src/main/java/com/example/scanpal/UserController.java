@@ -5,6 +5,7 @@ import android.content.Context;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -53,12 +54,15 @@ public class UserController {
             callback.onError(e);
         }
 
+        //user.setDeviceToken( FirebaseMessaging.getInstance().getToken().getResult() );
+
         // Prepare user data for Firestore
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("administrator", user.isAdministrator());
         userMap.put("firstName", user.getFirstName());
         userMap.put("lastName", user.getLastName());
         userMap.put("photo", user.getPhoto());
+        userMap.put("deviceToken", user.getDeviceToken());
 
         // Attempt to add user to Firestore
         DocumentReference docRef = database.collection("Users").document(user.getUsername());
@@ -138,7 +142,7 @@ public class UserController {
                 if (document != null && document.exists()) {
                     Map<String, Object> data = document.getData();
                     if (data != null) {
-                        User user = new User(username, (String) data.get("firstName"), (String) data.get("lastName"));
+                        User user = new User(username, (String) data.get("firstName"), (String) data.get("lastName"), (String) data.get("deviceToken"));
                         user.setPhoto(String.valueOf(data.get("photo")));
                         callback.onSuccess(user);
                     } else {

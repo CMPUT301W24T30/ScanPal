@@ -214,7 +214,8 @@ public class AttendeeController {
                                             userDoc.getId(),
                                             userDoc.getString("firstName"),
                                             userDoc.getString("lastName"),
-                                            userDoc.getString("photo")
+                                            userDoc.getString("photo"),
+                                            userDoc.getString("deviceToken")
                                     );
 
                                     Attendee attendee = new Attendee(user, eventID_remote, rsvp, checkedIn);

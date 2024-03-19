@@ -155,7 +155,7 @@ public class EditProfileFragment extends Fragment {
      * Saves the updated user details to Firestore and updates the local user serialization.
      */
     private void saveUserDetails() {
-        User updatedUser = new User(Objects.requireNonNull(username.getText()).toString(), Objects.requireNonNull(firstName.getText()).toString(), Objects.requireNonNull(lastName.getText()).toString());
+        User updatedUser = new User(Objects.requireNonNull(username.getText()).toString(), Objects.requireNonNull(firstName.getText()).toString(), Objects.requireNonNull(lastName.getText()).toString(),null);//because don't change device token
         if (imageUri != null) {
             updatedUser.setPhoto(imageUri.toString());
         }

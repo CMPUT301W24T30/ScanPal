@@ -71,7 +71,7 @@ public class EventController {
         eventMap.put("location", event.getLocation());
         eventMap.put("photo", event.getPosterURI());
         eventMap.put("capacity", event.getMaximumAttendees());
-        eventMap.put("announcementCount", event.getAnnouncementCount());
+        eventMap.put("announcementCount", 0L);//event.getAnnouncementCount());// Initialize to 0
 
         DocumentReference organizerRef = database.collection("Users").document(event.getOrganizer().getUsername());
         eventMap.put("organizer", organizerRef);
@@ -287,7 +287,7 @@ public class EventController {
                             Uri imageURI = Uri.parse(Objects.requireNonNull(eventDoc.get("photo")).toString());
                             event.setPosterURI(imageURI);
                             event.setId(EventID);
-                            event.setAnnouncementCount( (long)eventDoc.get("announcementCount") );
+                            event.setAnnouncementCount( (long) eventDoc.get("announcementCount") );
 
                             // Access the data using eventDoc.getData() or convert it to an object
                             fetchEventOrganizerByRef((DocumentReference) Objects.requireNonNull(eventDoc.get("organizer")),
@@ -367,7 +367,8 @@ public class EventController {
 
                 if (organizerDoc.exists()) {
                     User organizer = new User(organizerDoc.getId(),
-                            Objects.requireNonNull(organizerDoc.get("firstName")).toString(), Objects.requireNonNull(organizerDoc.get("lastName")).toString());
+                            Objects.requireNonNull(organizerDoc.get("firstName")).toString(), Objects.requireNonNull(organizerDoc.get("lastName")).toString(),
+                            Objects.requireNonNull(organizerDoc.get("deviceToken")).toString());
                     organizer.setAdministrator((boolean) organizerDoc.get("administrator"));
                     organizer.setPhoto(Objects.requireNonNull(organizerDoc.get("photo")).toString());
                     callback.onSuccess(organizer);
