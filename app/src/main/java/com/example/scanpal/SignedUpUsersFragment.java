@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -55,7 +56,7 @@ public class SignedUpUsersFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        attendeeController.fetchSignedUpUsers(eventID, new AttendeeController.OnCompleteSignedUpAttendees() {
+        attendeeController.fetchSignedUpUsers(eventID, new AttendeeSignedUpFetchCallback() {
             @Override
             public void onSuccess(ArrayList<Attendee> attendees) {
                 // upcast to User
