@@ -6,6 +6,7 @@ const admin = require("firebase-admin");
 const { initializeApp } = require('firebase-admin/app');
 
 var serviceAccount = require("./scanpal-15383-firebase-adminsdk-2c6i7-2f88122c18.json");
+const { QueryDocumentSnapshot } = require("firebase-admin/firestore");
 
 
 initializeApp({
@@ -18,7 +19,7 @@ initializeApp({
 
 
 
-const sendNotification = async (deviceToken, message) => {
+const sendNotification = async (deviceToken, message, eventName) => {
    /* const payload = {
         notification: {
             title: "New Announcement",
@@ -26,11 +27,13 @@ const sendNotification = async (deviceToken, message) => {
         },
     };*/
 
+    //message correctly contains the string
+
     const payload1 = {
         token: deviceToken,
         notification: {
-            title: 'cloud function demo',
-            body: "message"
+            title: 'Announcement From Event: ' + eventName,
+            body: message
         },
         data: {
             body: "message",
@@ -52,12 +55,47 @@ exports.sendNotificationOnAnnouncement = functions.firestore
         const announcementData = snapshot.data();
         const { eventID, message } = announcementData;
 
+        const payload1 = {
+            //token: deviceToken,
+            notification: {
+                title: 'Topic From Event: ',
+                body: "test body"
+            },
+        };
+
+        try {
+          admin.messaging().sendToTopic(eventID, payload1);
+          console.log("\n Topic sent successfully to:");
+
+
+        } catch(error) {
+          console.error("\nError sending topic:\n", error);
+
+        }
+ 
         /*const attendeesSnapshot = await admin.firestore()
             .collection('Attendees')
             .where('eventID', '==', eventID)
             .get();*/
 
-            sendNotification("fYFuphSCTvKKiACyxdvV4G:APA91bGDA5rh5feCSIlVRzA4ncSXW5rgbhxXszZSGBafxNaaR3uvXD3q9aJL28tpBA9Kg6FowviBDlry9N6gWNwxlGvFaWa_CNfJrvUlC6dZqyn75OGZbeJDvCM0dvUs0GKyiGg1d1N4", message);
+        const eventSnapshot = await admin.firestore()
+            .collection("Events")
+            .doc(eventID)
+            .get()
+
+            if(eventSnapshot.exists) {
+                const eventData = eventSnapshot.data();
+                const eventName = eventData.name;
+
+                //eventually replace hardcoded devToken
+                sendNotification("fYFuphSCTvKKiACyxdvV4G:APA91bGDA5rh5feCSIlVRzA4ncSXW5rgbhxXszZSGBafxNaaR3uvXD3q9aJL28tpBA9Kg6FowviBDlry9N6gWNwxlGvFaWa_CNfJrvUlC6dZqyn75OGZbeJDvCM0dvUs0GKyiGg1d1N4", message, eventName);
+
+            } else {
+                console.log("Event with ID ${eventID} does not exist.");
+            }
+
+            
+
 
         /*attendeesSnapshot.forEach((attendeeDoc) => {
             const attendeeData = attendeeDoc.data();

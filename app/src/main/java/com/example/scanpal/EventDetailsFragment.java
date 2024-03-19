@@ -24,11 +24,14 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -244,7 +247,25 @@ public class EventDetailsFragment extends Fragment {
                 attendeeController.updateAttendee(attendee, new AttendeeUpdateCallback() {
                     @Override
                     public void onSuccess() {
-                        setJoinButton();
+
+
+                        FirebaseMessaging.getInstance().subscribeToTopic(eventID)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        String msg = "Subscribed";
+                                        if (!task.isSuccessful()) {
+                                            msg = "Subscribe failed";
+
+                                        }
+                                        else {
+                                            setJoinButton();
+                                            Log.d("Subscribing", msg);
+                                        }
+
+                                        //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                     }
 
                     @Override
