@@ -13,7 +13,6 @@ public class User implements Serializable {
     private String firstName;
     private String lastName;
     private String photo; // Profile Photo of the User
-
     /**
      * Constructs a user with a username, first name, and last name.
      *
@@ -62,6 +61,10 @@ public class User implements Serializable {
 
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public boolean isAdministrator() {

@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
-
 import java.util.ArrayList;
 
 
@@ -23,10 +22,12 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
 
     ArrayList<User> users;
     Context context;
+
     public UsersAdapter(Context context, ArrayList<User> users) {
         this.users = users;
         this.context = context;
     }
+
     @NonNull
     @Override
     public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -50,10 +51,10 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
 
     public void addUser(User user) {
         users.add(user);
-        notifyItemInserted(users.size()-1);
+        notifyItemInserted(users.size() - 1);
     }
 
-    class UsersViewHolder extends RecyclerView.ViewHolder  {
+    class UsersViewHolder extends RecyclerView.ViewHolder {
         TextView fullName;
         ImageView profilePic;
 
@@ -61,9 +62,6 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
             super(itemView);
             fullName = itemView.findViewById(R.id.user_full_name);
             profilePic = itemView.findViewById(R.id.user_profile_pic);
-
-
         }
-
     }
 }
