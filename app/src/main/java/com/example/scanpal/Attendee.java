@@ -9,10 +9,6 @@ import java.io.Serializable;
  */
 public class Attendee implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    /*
-    Attendee ID is a combination of username and eventID
-     */
     private String id;
     private User user;
     private String eventID;

@@ -26,6 +26,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -43,18 +45,13 @@ import java.util.Objects;
  */
 public class EventDetailsFragment extends Fragment {
 
-    // User details of the current user
     public User userDetails;
-    // The attendee of the event
-    public User user;
     public Attendee attendee;
-    // Attendee ID, constructed from user's username and eventID
     public String attendeeId;
     public AttendeeController attendeeController;
     // ActivityResultLauncher for QR code scanner
     ActivityResultLauncher<ScanOptions> qrCodeScanner;
     private QrScannerController qrScannerController;
-    // Event details
     private String eventName;
     private String eventID;
     private String eventDescription;
@@ -70,26 +67,21 @@ public class EventDetailsFragment extends Fragment {
     private Button viewSignedUpUsersBtn;
 
     /**
-     * Default constructor for EventDetailsFragment.
+     * Required empty public constructor for instantiating the fragment.
      */
     public EventDetailsFragment() {
-        // Required empty public constructor
     }
 
+    /**
+     * Called when the Fragment is visible to the user.
+     * This method checks for any arguments passed to the fragment and updates the RSVP status accordingly.
+     */
     @Override
     public void onResume() {
         super.onResume();
-        // Check if userDetails is not null and arguments are provided
-        if (userDetails != null && getArguments() != null) {
-            String eventID = getArguments().getString("0");
-            if (eventID != null) {
-                attendeeId = userDetails.getUsername() + eventID;
-                UpdateUI(attendeeId);
-            } else {
-                Log.e("EventDetailsFragment", "Event ID is null in onResume.");
-            }
-        } else {
-            Log.e("EventDetailsFragment", "User details are null or getArguments() is null in onResume.");
+        if (getArguments() != null) {
+            String eventID = getArguments().getString("event_id");
+            updateRSVPStatus(eventID);
         }
     }
 
@@ -98,26 +90,9 @@ public class EventDetailsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.event_details, null, false);
-
-        // Retrieve and display event details
         assert getArguments() != null;
         eventID = getArguments().getString("event_id");
         fetchEventDetails(eventID);
-
-        // Retrieve and display event details
-        Bundle arguments = getArguments();
-        if (arguments != null) {
-            if (eventID != null) {
-                fetchEventDetails(eventID);
-            } else {
-                Log.e("EventDetailsFragment", "Event ID is null.");
-                Toast.makeText(getContext(), "Error: Event details cannot be loaded.", Toast.LENGTH_LONG).show();
-            }
-        } else {
-            Log.e("EventDetailsFragment", "Arguments are null.");
-            // Handling the null case
-            Toast.makeText(getContext(), "Error: Event details cannot be loaded.", Toast.LENGTH_LONG).show();
-        }
 
         // Initialize UI components and setup event handlers
         FloatingActionButton backButton = view.findViewById(R.id.event_details_backButton);
@@ -134,42 +109,10 @@ public class EventDetailsFragment extends Fragment {
         attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), getContext());
         qrScannerController = new QrScannerController(attendeeController);
 
-
-        // Fetch and setup current user details
         userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
             @Override
             public void onSuccess(User user) {
                 userDetails = user;
-                attendeeId = userDetails.getUsername() + eventID;
-                attendeeController.fetchAttendee(attendeeId, new AttendeeFetchCallback() {
-                    @Override
-                    public void onSuccess(Attendee existingAttendee) {
-                        Log.d("EventDetailsFragment", "Attendee already exists. No need to add a new one.");
-                        attendee = existingAttendee;
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        Log.d("EventDetailsFragment", "Attendee does not exist. Adding a new one.");
-
-                        if (eventID != null && userDetails != null) {
-                            attendee = new Attendee(userDetails, eventID, false, false);
-                            attendee.setId(attendeeId);
-                            attendeeController.addAttendee(attendee, new AttendeeAddCallback() {
-                                @Override
-                                public void onSuccess(Attendee attendee) {
-                                    Log.d("EventDetailsFragment", "New attendee added");
-                                    onResume();
-                                }
-
-                                @Override
-                                public void onError(Exception e) {
-                                    Toast.makeText(view.getContext(), "Failed to add attendee", Toast.LENGTH_LONG).show();
-                                }
-                            });
-                        }
-                    }
-                });
             }
 
             @Override
@@ -239,63 +182,84 @@ public class EventDetailsFragment extends Fragment {
             //navToEditDetails(view);
         });
 
-        // Implement join button functionality
         joinButton.setOnClickListener(v -> {
             if (attendee != null) {
-                attendee.setRsvp(!attendee.isRsvp());
-                attendeeController.updateAttendee(attendee, new AttendeeUpdateCallback() {
-                    @Override
-                    public void onSuccess() {
+                showConfirmationDialog("Cancel RSVP", "Are you sure you want to cancel your RSVP?",
+                        () -> attendeeController.deleteAttendee(attendee.getId(), new AttendeeDeleteCallback() {
+                            @Override
+                            public void onSuccess() {
 
+                                //TODO: unsubscribe user from topic in FCM
+                                Toast.makeText(getContext(), "RSVP cancelled successfully.", Toast.LENGTH_SHORT).show();
+                                setJoinButton(false);
+                                onResume();
+                            }
 
-                        FirebaseMessaging.getInstance().subscribeToTopic(eventID)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onError(Exception e) {
+                                Toast.makeText(getContext(), "Failed to cancel RSVP", Toast.LENGTH_LONG).show();
+                            }
+                        }));
+            } else {
+                showConfirmationDialog("Join Event", "Do you want to RSVP to this event?",
+                        () -> {
+                            if (eventID != null && userDetails != null) {
+                                String attendeeId = userDetails.getUsername() + eventID;
+                                attendee = new Attendee(userDetails, eventID, true, false);
+                                attendee.setId(attendeeId);
+                                attendeeController.addAttendee(attendee, new AttendeeAddCallback() {
                                     @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        String msg = "Subscribed";
-                                        if (!task.isSuccessful()) {
-                                            msg = "Subscribe failed";
+                                    public void onSuccess() {
+                                        Toast.makeText(getContext(), "RSVP successful.", Toast.LENGTH_SHORT).show();
 
-                                        }
-                                        else {
-                                            setJoinButton();
-                                            Log.d("Subscribing", msg);
-                                        }
+                                        FirebaseMessaging.getInstance().subscribeToTopic(eventID)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        String msg = "Subscribed";
+                                                        if (!task.isSuccessful()) {
+                                                            msg = "Subscribe failed";
 
-                                        //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                                        }
+                                                        else {
+                                                            setJoinButton(true);
+                                                            onResume();
+                                                            Log.d("Subscribing", msg);
+                                                        }
+
+                                                        //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+
+                                        //setJoinButton(true);
+                                        //onResume();
+                                    }
+
+                                    @Override
+                                    public void onError(Exception e) {
+                                        Toast.makeText(getContext(), "Failed to RSVP", Toast.LENGTH_LONG).show();
                                     }
                                 });
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        Toast.makeText(view.getContext(), "Failed to update RSVP status", Toast.LENGTH_LONG).show();
-                    }
-                });
-            } else {
-                Log.e("EventDetailsFragment", "Join button clicked but attendee is null.");
+                            }
+                        });
             }
         });
 
         viewSignedUpUsersBtn.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
-
             Bundle bundle = new Bundle();
             bundle.putString("eventID", eventID);
-
             navController.navigate(R.id.view_signed_up_users, bundle);
         });
-
         return view;
     }
 
+
     /**
-     * This method takes the inputted /User document reference stores their first
-     * and
-     * lastname as one string in the 'eventOrganizer' field
+     * Fetches the organizer's details based on the provided user reference.
+     * Updates the UI with the organizer's name and profile image.
      *
-     * @param userRef this is just the specific 'user' that was found to be tied to
-     *                the event
+     * @param userRef Reference to the User document in Firestore.
      */
     private void fetchOrganizer(DocumentReference userRef) {
 
@@ -346,9 +310,10 @@ public class EventDetailsFragment extends Fragment {
     }
 
     /**
-     * Fetch and display event details from Firestore using the provided event ID.
+     * Fetches and displays the details of the event from Firestore based on the provided event ID.
+     * Updates the UI with the event's name, description, location, and image.
      *
-     * @param eventID The ID of the event.
+     * @param eventID The ID of the event to fetch details for.
      */
     void fetchEventDetails(String eventID) {
         EventController eventController = new EventController();
@@ -412,36 +377,62 @@ public class EventDetailsFragment extends Fragment {
     }
 
     /**
-     * Updates the UI based on the attendee's RSVP status.
+     * Updates the RSVP status of the current user for the event.
+     * Checks if the user has already RSVP'd to the event and updates the join button state accordingly.
+     *
+     * @param eventID The ID of the event to check RSVP status for.
      */
-    private void setJoinButton() {
-        if (attendee != null && attendee.isRsvp()) {
-            joinButton.setText("Cancel RSVP");
-            joinButton.setBackgroundColor(Color.RED);
-        } else {
-            joinButton.setText("Join Event");
-            joinButton.setBackgroundColor(Color.GREEN);
+    private void updateRSVPStatus(String eventID) {
+        if (eventID != null && userDetails != null) {
+            attendeeId = userDetails.getUsername() + eventID;
+            attendeeController.fetchAttendee(attendeeId, new AttendeeFetchCallback() {
+                @Override
+                public void onSuccess(Attendee existingAttendee) {
+                    attendee = existingAttendee;
+                    setJoinButton(attendee.isRsvp());
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    attendee = null;
+                    setJoinButton(false);
+                }
+            });
         }
     }
 
     /**
-     * Update UI elements based on attendee information.
+     * Shows a confirmation dialog with a given title and message.
+     * Executes a Runnable if the user confirms the action.
      *
-     * @param attendeeId The ID of the attendee.
+     * @param title     The title of the confirmation dialog.
+     * @param message   The message displayed in the dialog.
+     * @param onConfirm A Runnable to execute if the user confirms the action.
      */
-    private void UpdateUI(String attendeeId) {
-        attendeeController.fetchAttendee(attendeeId, new AttendeeFetchCallback() {
-            @Override
-            public void onSuccess(Attendee existingAttendee) {
-                attendee = existingAttendee;
-                setJoinButton();
-            }
+    private void showConfirmationDialog(String title, String message, Runnable onConfirm) {
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> onConfirm.run())
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
 
-            @Override
-            public void onError(Exception e) {
-                Log.e("EventDetailsFragment", "Failed to fetch attendee: ", e);
-            }
-        });
+    /**
+     * Sets the state of the join button based on the user's RSVP status.
+     * Changes the button text and background color accordingly.
+     *
+     * @param isRsvp True if the user has RSVP'd, false otherwise.
+     */
+    private void setJoinButton(boolean isRsvp) {
+        if (isRsvp) {
+            joinButton.setText("Cancel RSVP");
+            joinButton.setBackgroundColor(Color.RED);
+        } else {
+            joinButton.setText("Join Event");
+            joinButton.setBackgroundColor(Color.parseColor("#0D6EFD"));
+        }
     }
 
     /**

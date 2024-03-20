@@ -10,6 +10,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.Serializable;
 
+
 /**
  * Initializes a user with a username, first name, and last name.
  * Implements Serializable for object serialization and deserialization.
@@ -22,7 +23,6 @@ public class User implements Serializable {
     private String lastName;
     private String photo; // Profile Photo of the User
     private String deviceToken;
-
 
     /**
      * Constructs a user with a username, first name, and last name.
@@ -75,6 +75,10 @@ public class User implements Serializable {
 
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public boolean isAdministrator() {
