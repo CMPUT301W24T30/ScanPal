@@ -5,8 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -23,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NotificationsFragment extends Fragment {
+    private final List<Announcement> notificationsList = new ArrayList<>();
     private ListView listView;
     private NotificationListAdapter adapter;
-    private List<Announcement> notificationsList = new ArrayList<>();
     private EventController eventController;
     private List<String> allEventIDs;
 
@@ -73,8 +71,8 @@ public class NotificationsFragment extends Fragment {
         //need a list of all eventIDs
         notificationsList.clear();
         AnnouncementController announcementController = new AnnouncementController();
-        AttendeeController attendeeController = new AttendeeController(FirebaseFirestore.getInstance(),this.getContext());
-        UserController userController = new UserController(FirebaseFirestore.getInstance(),this.getContext());
+        AttendeeController attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), this.getContext());
+        UserController userController = new UserController(FirebaseFirestore.getInstance(), this.getContext());
         String userName = userController.fetchStoredUsername();
 
 
@@ -83,7 +81,7 @@ public class NotificationsFragment extends Fragment {
             public void onSuccess(List<String> EventIDs) {
                 allEventIDs = EventIDs;
 
-                for(String ID : allEventIDs) {
+                for (String ID : allEventIDs) {
                     Log.d("NOTIFICATIONS", "In for loop");
 
                     announcementController.getAnnouncementsByEventId(ID, new AnnouncementsFetchCallback() {
@@ -95,37 +93,25 @@ public class NotificationsFragment extends Fragment {
                             attendeeController.fetchAttendee(userName + ID, new AttendeeFetchCallback() {
                                 @Override
                                 public void onSuccess(Attendee attendee) {
-                                    if(attendee.isRsvp()) {//if theyre rvsp'd then add notifs
-                                        Log.d("Testing Attendee is Rvsp'd", userName+ ID);
-
-
+                                    if (attendee.isRsvp()) {
                                         notificationsList.addAll(notifications);
                                         adapter.setNotifications(notificationsList);
-
                                     }
                                 }
 
                                 @Override
                                 public void onError(Exception e) {
-                                    //Toast.makeText(getContext(), "Error fetching attendee", Toast.LENGTH_SHORT).show();
                                     Log.d("Notifications", "Attendee Object Does not exist for: " + userName + ID);
-
                                 }
                             });
-
-
                         }
 
                         @Override
                         public void onError(Exception e) {
                             Toast.makeText(getContext(), "Error fetching all event IDs.", Toast.LENGTH_SHORT).show();
-
-
                         }
                     });
-
                 }
-
             }
 
             @Override
@@ -133,9 +119,5 @@ public class NotificationsFragment extends Fragment {
 
             }
         });
-
-
-
     }
-
 }

@@ -6,16 +6,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -287,7 +282,7 @@ public class EventController {
                             Uri imageURI = Uri.parse(Objects.requireNonNull(eventDoc.get("photo")).toString());
                             event.setPosterURI(imageURI);
                             event.setId(EventID);
-                            event.setAnnouncementCount( (long) eventDoc.get("announcementCount") );
+                            event.setAnnouncementCount((long) eventDoc.get("announcementCount"));
 
                             // Access the data using eventDoc.getData() or convert it to an object
                             fetchEventOrganizerByRef((DocumentReference) Objects.requireNonNull(eventDoc.get("organizer")),
@@ -381,24 +376,21 @@ public class EventController {
         CollectionReference eventsRef = database.collection("Events");
         List<String> documentIds = new ArrayList<>();
 
-        eventsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
+        eventsRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
 
-                    for (DocumentSnapshot document : task.getResult()) {
-                        String documentId = document.getId();
-                        documentIds.add(documentId);
-                    }
-
-                    callback.onSuccess(documentIds);
-
-                    for (String id : documentIds) {
-                        Log.d("Document ID", id);
-                    }
-                } else {
-                    Log.d("Firestore", "Error getting documents: ", task.getException());
+                for (DocumentSnapshot document : task.getResult()) {
+                    String documentId = document.getId();
+                    documentIds.add(documentId);
                 }
+
+                callback.onSuccess(documentIds);
+
+                for (String id : documentIds) {
+                    Log.d("Document ID", id);
+                }
+            } else {
+                Log.d("Firestore", "Error getting documents: ", task.getException());
             }
         });
 
