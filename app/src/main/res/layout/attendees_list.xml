@@ -21,7 +21,7 @@
         android:backgroundTint="#0D6EFD"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button_chat"
+        app:layout_constraintEnd_toStartOf="@+id/button_notifications"
         app:layout_constraintStart_toEndOf="@+id/button_your_events"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.99"
