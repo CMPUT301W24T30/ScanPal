@@ -102,6 +102,7 @@ public class EventDetailsFragment extends Fragment {
         organizerImage = view.findViewById(R.id.organizer_image);
         FloatingActionButton scanQR = view.findViewById(R.id.scan_code);
         FloatingActionButton profileButton = view.findViewById(R.id.button_profile);
+        FloatingActionButton shareButton = view.findViewById(R.id.event_shareButton);
         viewSignedUpUsersBtn = view.findViewById(R.id.view_signed_up_users_button);
 
         // Setup user and attendee controllers
@@ -251,6 +252,13 @@ public class EventDetailsFragment extends Fragment {
             bundle.putString("eventID", eventID);
             navController.navigate(R.id.view_signed_up_users, bundle);
         });
+
+        // Share button functionality
+        shareButton.setOnClickListener(v -> {
+            ShareEventController shareEventController = new ShareEventController(getContext());
+            shareEventController.shareQrCode(eventID);
+        });
+
         return view;
     }
 
