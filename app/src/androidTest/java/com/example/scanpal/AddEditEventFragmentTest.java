@@ -40,7 +40,7 @@ import org.junit.runner.RunWith;
 @LargeTest
 public class AddEditEventFragmentTest {
 
-    private final User testUser = new User("test1", "Test1", "Testuser");
+    private final User testUser = new User("test1", "Test1", "Testuser", "token");
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<>(MainActivity.class);
 

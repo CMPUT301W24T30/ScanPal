@@ -37,7 +37,7 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 public class EventDetailsFragmentTest {
 
-    private final User testUser = new User("test1", "Test1", "Testuser");
+    private final User testUser = new User("test1", "Test1", "Testuser", "token");
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<>(MainActivity.class);
 
