@@ -1,19 +1,10 @@
 package com.example.scanpal;
 
 import android.content.Context;
-import android.util.Log;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.io.FileInputStream;
@@ -27,39 +18,41 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Manages operations related to attendee management within a Firestore database. This class
- * provides functionality to add, fetch, and update attendee records in Firestore, facilitating
- * the tracking and management of event participants. It leverages Firebase Firestore and
- * device Internal Storage for persistent storage and retrieval of attendee data.
+ * Manages attendee data interactions with a Firestore database and internal storage.
+ * Provides methods to add, fetch, update, and delete attendee records.
  */
 public class AttendeeController {
     private final FirebaseFirestore database;
     private final Context context;
 
     /**
-     * Constructs an AttendeeController with a specified Firestore database instance and
-     * application context. This constructor initializes the controller ready for attendee
-     * data management operations.
+     * Instantiates a controller for managing attendee data.
      *
-     * @param database The Firestore database instance for operations.
-     * @param context  The application context used for file operations.
+     * @param database The Firestore database instance for data operations.
+     * @param context  The application's context for internal file operations.
      */
     public AttendeeController(FirebaseFirestore database, Context context) {
         this.database = database;
         this.context = context;
     }
 
+    /**
+     * Retrieves the Firestore database instance associated with this controller.
+     *
+     * @return The Firestore database instance.
+     */
     public FirebaseFirestore getDatabase() {
         return this.database;
     }
 
     /**
-     * Adds a new attendee record to the Firestore database and optionally to local storage.
-     * This method serializes the {@link Attendee} object and saves it, then updates the Firestore
-     * database with attendee details including location, RSVP status, and event association.
+     * Adds an attendee to both Firestore and local storage.
+     * <p>
+     * Serializes the {@link Attendee} object for local storage and creates a map
+     * of attendee properties for Firestore. Handles the success or error of the addition process.
      *
-     * @param attendee The attendee to be added to the database.
-     * @param callback An {@link AttendeeAddCallback} to handle success or error outcomes.
+     * @param attendee The attendee object to add.
+     * @param callback Callback to handle the outcome of the addition process.
      */
     public void addAttendee(Attendee attendee, AttendeeAddCallback callback) {
 
@@ -85,17 +78,18 @@ public class AttendeeController {
         attendeeMap.put("eventID", eventRef);
 
         database.collection("Attendees").document(attendee.getId()).set(attendeeMap)
-                .addOnSuccessListener(aVoid -> System.out.println("Attendee added successfully!"))
-                .addOnFailureListener(e -> System.out.println("Error adding attendee: " + e.getMessage()));
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(callback::onError);
     }
 
     /**
-     * Fetches an attendee's details from the Firestore database or local storage if available.
-     * This method attempts to retrieve the attendee details based on the attendee ID, providing
-     * an async callback with the result.
+     * Fetches the details of an attendee by their ID.
+     * <p>
+     * Tries to retrieve the attendee from local storage. If not found, attempts to
+     * fetch from Firestore. Utilizes callback to handle the result or any errors.
      *
      * @param attendeeId The unique ID of the attendee to fetch.
-     * @param callback   An {@link AttendeeFetchCallback} to handle the fetched data or errors.
+     * @param callback   Callback to handle the fetched attendee or errors.
      */
     public void fetchAttendee(String attendeeId, AttendeeFetchCallback callback) {
 
@@ -107,25 +101,42 @@ public class AttendeeController {
             fis.close();
             callback.onSuccess(attendee);
             return;
-        } catch (Exception e) {
-            callback.onError(e);
+        } catch (Exception ignored) {
         }
 
+        // Attempt to fetch from Firestore if internal fetch fails
         database.collection("Attendees").document(attendeeId).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        try {
-                            String location = documentSnapshot.getString("location");
-                            boolean checkedIn = Boolean.TRUE.equals(documentSnapshot.getBoolean("checkedIn"));
-                            boolean rsvp = Boolean.TRUE.equals(documentSnapshot.getBoolean("rsvp"));
-                            DocumentReference userRef = documentSnapshot.getDocumentReference("user");
-                            String eventID = documentSnapshot.getString("eventID");
+                        Attendee attendee = new Attendee();
+                        attendee.setId(attendeeId);
+                        attendee.setLocation(documentSnapshot.getString("location"));
+                        attendee.setCheckedIn(Boolean.TRUE.equals(documentSnapshot.getBoolean("checkedIn")));
+                        attendee.setRsvp(Boolean.TRUE.equals(documentSnapshot.getBoolean("rsvp")));
 
-                        } catch (Exception e) {
-                            callback.onError(e);
+                        DocumentReference userRef = documentSnapshot.getDocumentReference("user");
+                        DocumentReference eventRef = documentSnapshot.getDocumentReference("eventID");
+                        if (userRef != null && eventRef != null) {
+                            userRef.get().addOnSuccessListener(userDoc -> {
+                                if (userDoc.exists()) {
+                                    User user = userDoc.toObject(User.class);
+                                    if (user != null) {
+                                        user.setUsername(userDoc.getId());
+                                        attendee.setUser(user);
+                                        attendee.setEventID(eventRef.getId());
+                                        callback.onSuccess(attendee);
+                                    } else {
+                                        callback.onError(new Exception("Failed to deserialize user"));
+                                    }
+                                } else {
+                                    callback.onError(new Exception("User document not found"));
+                                }
+                            }).addOnFailureListener(callback::onError);
+                        } else {
+                            callback.onError(new Exception("User reference or Event reference not found in attendee document"));
                         }
                     } else {
-                        callback.onError(new Exception("Attendee not found"));
+                        callback.onError(new Exception("Attendee document not found"));
                     }
                 })
                 .addOnFailureListener(callback::onError);
@@ -133,12 +144,13 @@ public class AttendeeController {
 
 
     /**
-     * Updates an existing attendee's information in the Firestore database and local storage.
-     * This method allows updating fields such as RSVP status and checked-in status, ensuring
-     * the attendee record is current.
+     * Updates the details of an existing attendee in both Firestore and local storage.
+     * <p>
+     * Serializes the updated {@link Attendee} object for local storage and updates
+     * the attendee's details in Firestore. Uses callback to handle success or errors.
      *
-     * @param attendee The {@link Attendee} object with updated details to be saved.
-     * @param callback An {@link AttendeeUpdateCallback} to handle success or error outcomes.
+     * @param attendee The updated attendee object.
+     * @param callback Callback to handle the outcome of the update process.
      */
     public void updateAttendee(Attendee attendee, AttendeeUpdateCallback callback) {
 
@@ -168,90 +180,96 @@ public class AttendeeController {
                 .addOnFailureListener(callback::onError);
     }
 
-    interface OnCompleteSignedUpAttendees {
-        void onSuccess(ArrayList<Attendee> attendees);
-        void onFailure(Exception e);
+    /**
+     * Deletes an attendee's record from both Firestore and local storage by their unique ID.
+     * <p>
+     * Removes the serialized attendee object from local storage and deletes their
+     * record from Firestore. Uses callback to manage success or error outcomes.
+     *
+     * @param attendeeId The unique ID of the attendee to delete.
+     * @param callback   Callback to handle the outcome of the deletion process.
+     */
+    public void deleteAttendee(String attendeeId, final AttendeeDeleteCallback callback) {
+        try {
+            context.deleteFile(attendeeId + ".ser");
+        } catch (Exception ignored) {
+        }
+        database.collection("Attendees").document(attendeeId)
+                .delete()
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(callback::onError);
     }
 
     /**
-     * Given an event id, fetch all signed up attendees for the corresponding event.
-     * Signed up user means its rsvp field is set to true.
-     * @param eventID String event id
-     * @param listener OnCompleteSignedUpAttendees
+     * Fetches all attendees who have RSVP'd for a given event.
+     * <p>
+     * Retrieves attendees from Firestore where the RSVP is true for the specified eventID.
+     * Assembles a list of {@link Attendee} objects for successful RSVPs and utilizes a callback
+     * to handle success or failure.
+     *
+     * @param eventID  The unique ID of the event.
+     * @param callback Callback to manage the fetched attendees or errors.
      */
-    public void fetchSignedUpUsers(String eventID, OnCompleteSignedUpAttendees listener) {
+    public void fetchSignedUpUsers(String eventID, AttendeeSignedUpFetchCallback callback) {
         DocumentReference eventRef = database.collection("Events").document(eventID);
         ArrayList<Attendee> attendees = new ArrayList<>();
-
-        AtomicInteger attendeesCounter = new AtomicInteger();
 
         database.collection("Attendees")
                 .whereEqualTo("eventID", eventRef)
                 .whereEqualTo("rsvp", true)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    int totalAttendees = queryDocumentSnapshots.size();
-
-                    if (totalAttendees == 0) {
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        callback.onSuccess(attendees);
                         return;
                     }
 
-                    for (QueryDocumentSnapshot attendeeDoc : queryDocumentSnapshots) {
-                        String eventID_remote = Objects.requireNonNull(attendeeDoc.getDocumentReference("eventID")).toString();
-                        boolean rsvp = Boolean.TRUE.equals(attendeeDoc.getBoolean("rsvp"));
-                        boolean checkedIn = Boolean.TRUE.equals(attendeeDoc.getBoolean("checkedIn"));
-                        String location = attendeeDoc.getString("location");
+                    AtomicInteger completedFetches = new AtomicInteger();
+                    int totalAttendees = queryDocumentSnapshots.size();
 
+                    queryDocumentSnapshots.forEach(attendeeDoc -> {
                         DocumentReference userRef = attendeeDoc.getDocumentReference("user");
-                        userRef.get().addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot userDoc = task.getResult();
-
-                                if (userDoc != null && userDoc.exists()) {
-                                    int completedFetches = attendeesCounter.incrementAndGet();
-
-                                    User user = new User(
-                                            userDoc.getId(),
-                                            userDoc.getString("firstName"),
-                                            userDoc.getString("lastName"),
-                                            userDoc.getString("photo")
-                                    );
-
-                                    Attendee attendee = new Attendee(user, eventID_remote, rsvp, checkedIn);
-                                    attendee.setLocation(location);
-                                    attendees.add(attendee);
-                                    Log.d("AttendeeController", user.getUsername());
-                                    Log.d("AttendeeController", user.getFirstName());
-                                    Log.d("AttendeeController", user.getLastName());
-                                    Log.d("AttendeeController", user.getPhoto());
-
-
-
-                                    if (completedFetches == totalAttendees) {
-                                        listener.onSuccess(attendees);
-                                    }
-                                } else {
-                                    listener.onFailure(new Exception("User does not exist"));
-                                }
-
-
-                            } else {
-                                listener.onFailure(new Exception("Error fetching user", task.getException()));
+                        if (userRef == null) {
+                            if (completedFetches.incrementAndGet() == totalAttendees) {
+                                callback.onSuccess(attendees);
                             }
-                        });
+                            return;
+                        }
+                        userRef.get().addOnSuccessListener(userDocSnapshot -> {
+                            if (userDocSnapshot.exists()) {
+                                User user = new User(
+                                        userDocSnapshot.getId(),
+                                        userDocSnapshot.getString("firstName"),
+                                        userDocSnapshot.getString("lastName"),
+                                        userDocSnapshot.getString("photo")
+                                );
 
-                    }
-
+                                Attendee attendee = new Attendee(
+                                        user,
+                                        Objects.requireNonNull(attendeeDoc.getDocumentReference("eventID")).toString(),
+                                        Boolean.TRUE.equals(attendeeDoc.getBoolean("rsvp")),
+                                        Boolean.TRUE.equals(attendeeDoc.getBoolean("checkedIn"))
+                                );
+                                attendee.setLocation(attendeeDoc.getString("location"));
+                                attendees.add(attendee);
+                            }
+                            if (completedFetches.incrementAndGet() == totalAttendees) {
+                                callback.onSuccess(attendees);
+                            }
+                        }).addOnFailureListener(e -> callback.onFailure(new Exception("Error fetching attendee user details", e)));
+                    });
                 })
-                .addOnFailureListener(e -> listener.onFailure(e));
-
+                .addOnFailureListener(e -> callback.onFailure(new Exception("Error fetching attendees", e)));
     }
 
     /**
-     * Deletes all attendee records associated with a user from Firestore and local storage.
+     * Deletes all attendee records associated with a specific user from Firestore and local storage.
+     * <p>
+     * Queries Firestore for all attendees linked to the specified username, then deletes
+     * each record and its corresponding local storage file. Uses callback to handle success or errors.
      *
-     * @param username The username of the user whose attendee records are to be deleted.
-     * @param callback The callback for success or error handling.
+     * @param username The username associated with the attendee records to delete.
+     * @param callback Callback to handle the outcome of the deletion process.
      */
     public void deleteAllUserAttendees(String username, final DeleteAllAttendeesCallback callback) {
         database.collection("Attendees")
