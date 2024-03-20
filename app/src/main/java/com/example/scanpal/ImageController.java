@@ -12,7 +12,7 @@ import com.google.firebase.storage.UploadTask;
  * Controller class for managing image uploads and retrievals with Firebase Storage.
  */
 public class ImageController {
-    private final FirebaseStorage storage = FirebaseStorage.getInstance();
+    protected FirebaseStorage storage = FirebaseStorage.getInstance();
 
     /**
      * Uploads an image file to Firebase Storage.
@@ -21,14 +21,15 @@ public class ImageController {
      * @param onSuccessListener Listener for successful upload operations.
      * @param onFailureListener Listener for failed upload operations.
      */
-    public void uploadImage(Uri fileUri, OnSuccessListener<UploadTask.TaskSnapshot> onSuccessListener, OnFailureListener onFailureListener) {
-        String fileName = System.currentTimeMillis() + ".jpg"; // Generates a unique file name based on the current timestamp.
+    public void uploadImage(Uri fileUri, OnSuccessListener<Uri> onSuccessListener, OnFailureListener onFailureListener) {
+        String fileName = "profiles/" + System.currentTimeMillis() + ".jpg";
 
         StorageReference storageRef = storage.getReference();
         StorageReference imageRef = storageRef.child(fileName);
         UploadTask uploadTask = imageRef.putFile(fileUri);
 
-        uploadTask.addOnSuccessListener(onSuccessListener).addOnFailureListener(onFailureListener);
+        uploadTask.addOnSuccessListener(taskSnapshot -> imageRef.getDownloadUrl().addOnSuccessListener(onSuccessListener).addOnFailureListener(onFailureListener))
+                .addOnFailureListener(onFailureListener);
     }
 
     /**
