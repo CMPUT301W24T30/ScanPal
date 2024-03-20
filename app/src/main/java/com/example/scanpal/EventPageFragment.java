@@ -2,7 +2,13 @@ package com.example.scanpal;
 
 import com.example.scanpal.EventController;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,12 +21,19 @@ import android.widget.Button;
 
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -47,6 +60,17 @@ public class EventPageFragment extends Fragment {
     private List<Event> allEvents = new ArrayList<>();
     private List<Event> userEvents = new ArrayList<>();
     private EventController eventController;
+
+    //necessary to request user for notification perms
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    // can post notifications.
+                } else {
+                    // TODO: Inform user that the app will not show notifications.
+                }
+            });
+
 
     /**
      * Default constructor for EventPageFragment.
@@ -108,6 +132,13 @@ public class EventPageFragment extends Fragment {
             navController.navigate(R.id.events_to_profile);
         });
 
+        // Set up button to navigate to Notifications/Announcements.
+        FloatingActionButton notificationsButton = view.findViewById(R.id.button_notifications);
+        notificationsButton.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
+            navController.navigate(R.id.eventsPage_to_notifications);
+        });
+
         gridView.setOnItemClickListener((parent, view1, position, id) -> {
             Event event = eventsList.get(position);
             Bundle bundle = new Bundle();
@@ -115,11 +146,15 @@ public class EventPageFragment extends Fragment {
             NavHostFragment.findNavController(this).navigate(R.id.select_event, bundle);
         });
 
+
+        askNotificationPermission();//ask the user for perms
         // Fetch events from Firebase and update the grid
         fetchEventsAndUpdateGrid();
 
+
         return view;
     }
+
 
     private void fetchAllEvents() {
         eventController.fetchAllEvents(new EventsFetchCallback() {
@@ -196,5 +231,30 @@ public class EventPageFragment extends Fragment {
                 Toast.makeText(getContext(), "Error fetching events: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    /**
+     *
+     * Sends a pop to the user asking for notifications permissions
+     * only ask once, when the user first gets to this fragment
+     */
+    private void askNotificationPermission() {
+        // This is only necessary for API level >= 33 (TIRAMISU)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.POST_NOTIFICATIONS) ==
+                    PackageManager.PERMISSION_GRANTED) {
+
+                // FCM SDK and app can post notifications.
+            } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS)) {
+                // TODO: display an educational UI explaining to the user the features that will be enabled
+                //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
+                //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
+                //       If the user selects "No thanks," allow the user to continue without notifications.
+            } else {
+                // Directly ask for the user's permission
+                requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
+
     }
 }

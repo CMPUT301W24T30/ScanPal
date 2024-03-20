@@ -1,5 +1,7 @@
 package com.example.scanpal;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,12 +24,16 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -46,13 +53,16 @@ public class EventDetailsFragment extends Fragment {
     ActivityResultLauncher<ScanOptions> qrCodeScanner;
     private QrScannerController qrScannerController;
     private String eventName;
+    private String eventID;
     private String eventDescription;
     private String eventOrganizer;
     private String getEventOrganizerUserName;
     private String eventLocation;
     private ImageView eventPoster;
+    private Long eventAnnouncementCount;
     private String ImageURI;
     private Button joinButton;
+    private FloatingActionButton eventEditButton;
     private ImageView organizerImage;
     private Button viewSignedUpUsersBtn;
 
@@ -81,14 +91,14 @@ public class EventDetailsFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.event_details, null, false);
         assert getArguments() != null;
-        String eventID = getArguments().getString("event_id");
+        eventID = getArguments().getString("event_id");
         fetchEventDetails(eventID);
 
         // Initialize UI components and setup event handlers
         FloatingActionButton backButton = view.findViewById(R.id.event_details_backButton);
         eventPoster = view.findViewById(R.id.event_detail_imageView);
         joinButton = view.findViewById(R.id.join_button);
-        FloatingActionButton eventEditButton = view.findViewById(R.id.event_editButton);
+        eventEditButton = view.findViewById(R.id.event_editButton);
         organizerImage = view.findViewById(R.id.organizer_image);
         FloatingActionButton scanQR = view.findViewById(R.id.scan_code);
         FloatingActionButton profileButton = view.findViewById(R.id.button_profile);
@@ -135,25 +145,42 @@ public class EventDetailsFragment extends Fragment {
             navController.navigate(R.id.event_details_to_profile);
         });
 
+        // Set up button to navigate to Notifications/Announcements.
+        FloatingActionButton notificationsButton = view.findViewById(R.id.button_notifications);
+        notificationsButton.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
+            navController.navigate(R.id.eventDetailsPage_to_notifications);
+        });
+
         // Implement event edit functionality
         eventEditButton.setOnClickListener(v -> {
+
+            AlertDialog.Builder OrganizerOptions = new AlertDialog.Builder(this.getContext());
+
+            // Set the message show for the Alert time
+            OrganizerOptions.setMessage("Edit Details or send announcement?");
+
+            // Set Alert Title
+            OrganizerOptions.setTitle("Organizer Options");
+
+            // Set the positive button with yes name Lambda OnClickListener method is use of DialogInterface interface.
+            OrganizerOptions.setPositiveButton("Send Announcement", (DialogInterface.OnClickListener) (dialog, which) -> {
+                // When the user click yes button then app will close
+                //finish();
+                newAnnouncement(view);
+            });
+
+            // Set the Negative button with No name Lambda OnClickListener method is use of DialogInterface interface.
+            OrganizerOptions.setNegativeButton("Edit Event Details", (DialogInterface.OnClickListener) (dialog, which) -> {
+                // If user click no then dialog box is canceled.
+                //dialog.cancel();
+                navToEditDetails(view);
+            });
+
+            OrganizerOptions.show();
+
             // Check if the current user is the organizer or an admin
-            if (userDetails.getUsername().equals(getEventOrganizerUserName) ||
-                    userDetails.isAdministrator()) {
-                // Navigate to the event edit page with necessary details
-                NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
-
-                Bundle bundle = new Bundle();
-                bundle.putString("0", eventID);
-                bundle.putString("1", eventName);
-                bundle.putString("2", eventLocation);
-                bundle.putString("3", eventDescription);
-                bundle.putString("4", ImageURI);
-
-                navController.navigate(R.id.edit_existing_event, bundle);
-            } else {
-                Toast.makeText(view.getContext(), "You Cannot Edit This Event", Toast.LENGTH_LONG).show();
-            }
+            //navToEditDetails(view);
         });
 
         joinButton.setOnClickListener(v -> {
@@ -162,6 +189,8 @@ public class EventDetailsFragment extends Fragment {
                         () -> attendeeController.deleteAttendee(attendee.getId(), new AttendeeDeleteCallback() {
                             @Override
                             public void onSuccess() {
+
+                                //TODO: unsubscribe user from topic in FCM
                                 Toast.makeText(getContext(), "RSVP cancelled successfully.", Toast.LENGTH_SHORT).show();
                                 setJoinButton(false);
                                 onResume();
@@ -183,8 +212,28 @@ public class EventDetailsFragment extends Fragment {
                                     @Override
                                     public void onSuccess() {
                                         Toast.makeText(getContext(), "RSVP successful.", Toast.LENGTH_SHORT).show();
-                                        setJoinButton(true);
-                                        onResume();
+
+                                        FirebaseMessaging.getInstance().subscribeToTopic(eventID)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        String msg = "Subscribed";
+                                                        if (!task.isSuccessful()) {
+                                                            msg = "Subscribe failed";
+
+                                                        }
+                                                        else {
+                                                            setJoinButton(true);
+                                                            onResume();
+                                                            Log.d("Subscribing", msg);
+                                                        }
+
+                                                        //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+
+                                        //setJoinButton(true);
+                                        //onResume();
                                     }
 
                                     @Override
@@ -213,6 +262,7 @@ public class EventDetailsFragment extends Fragment {
         return view;
     }
 
+
     /**
      * Fetches the organizer's details based on the provided user reference.
      * Updates the UI with the organizer's name and profile image.
@@ -231,6 +281,13 @@ public class EventDetailsFragment extends Fragment {
 
                     String organizerName = firstName + " " + lastName;
                     getEventOrganizerUserName = organizerDoc.getId();
+
+                    //Hide edit button?
+                    if( !(userDetails.getUsername().equals(getEventOrganizerUserName)) ||
+                            !(userDetails.getUsername().equals(getEventOrganizerUserName)) && !(userDetails.isAdministrator()) ) {
+                        eventEditButton.hide(); //just hide the edit button
+                    }
+
                     eventOrganizer = organizerName;
                     Glide.with(EventDetailsFragment.this)
                             .load(profileImage)
@@ -282,6 +339,7 @@ public class EventDetailsFragment extends Fragment {
                     eventDescription = document.getString("description");
                     eventLocation = document.getString("location");
                     ImageURI = document.getString("photo");
+                    eventAnnouncementCount = document.getLong("announcementCount");
 
                     //since user technically another document
                     fetchOrganizer(Objects.requireNonNull(document.getDocumentReference("organizer")));
@@ -383,5 +441,93 @@ public class EventDetailsFragment extends Fragment {
             joinButton.setText("Join Event");
             joinButton.setBackgroundColor(Color.parseColor("#0D6EFD"));
         }
+    }
+
+    /**
+     *
+     * A function call that will navigate to the edit events page if conditions are met
+     * @param view The current view
+     */
+    void navToEditDetails(View view) {
+        if (userDetails.getUsername().equals(getEventOrganizerUserName) ||
+                userDetails.isAdministrator()) {
+            // Navigate to the event edit page with necessary details
+            NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
+
+            Bundle bundle = new Bundle();
+            bundle.putString("0", eventID);
+            bundle.putString("1", eventName);
+            bundle.putString("2", eventLocation);
+            bundle.putString("3", eventDescription);
+            bundle.putString("4", ImageURI);
+
+            navController.navigate(R.id.edit_existing_event, bundle);
+        } else {
+            Toast.makeText(view.getContext(), "You Cannot Edit This Event", Toast.LENGTH_LONG).show();
+            // should just hide the button here instead
+        }
+    }
+
+    /**
+     *
+     * This function creates a dialogbox so that the organizer may send an announcement
+     * to their attendees
+     * @param view The current view
+     */
+    void newAnnouncement(View view) {
+        EditText messageBox = new EditText(this.getContext());
+        AlertDialog.Builder announcementDialog = new AlertDialog.Builder(this.getContext());
+        announcementDialog.setView(messageBox);
+
+        // Set the message show for the Alert time
+        //announcementDialog.setMessage("");
+
+        EventController eventController = new EventController();
+
+
+        eventController.getEventById(eventID, new EventFetchCallback() {
+            @Override
+            public void onSuccess(Event event) {
+                eventAnnouncementCount =  event.getAnnouncementCount();//incase multiple announcements at a time
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
+
+        // Set Alert Title
+        announcementDialog.setTitle("Event Announcement");
+
+        announcementDialog.setPositiveButton("Send", (DialogInterface.OnClickListener) (dialog, which) -> {
+            if(messageBox.getText().toString().isEmpty()) {
+                Toast.makeText(getContext(), "Error: Can't make empty Announcement", Toast.LENGTH_LONG).show();
+                dialog.cancel();
+                return;//return to prevent creating a new announcement
+            }
+
+            AnnouncementController AC = new AnnouncementController();
+
+            Announcement announcement = new Announcement();
+            announcement.setMessage(messageBox.getText().toString());
+            announcement.setEventID(eventID);
+            announcement.setAnnouncementNum(eventAnnouncementCount + 1L);//increment announcement num
+
+
+            //triggers the cloud functions to send push notifications
+            AC.createAnnouncment(announcement);
+
+            Toast.makeText(getContext(), "Announcement sent!", Toast.LENGTH_LONG).show();
+
+        });
+
+        // Set the Negative button with No name Lambda OnClickListener method is use of DialogInterface interface.
+        announcementDialog.setNegativeButton("Cancel", (DialogInterface.OnClickListener) (dialog, which) -> {
+            dialog.cancel();
+        });
+
+        announcementDialog.show();
+
     }
 }

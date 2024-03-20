@@ -23,6 +23,8 @@ public class Event {
     private Bitmap qrToEvent;
     private Bitmap qrToCheckIn;
 
+    private Long announcementCount;
+
     /**
      * Constructs an event with an organizer, name, and description.
      *
@@ -133,4 +135,11 @@ public class Event {
         return posterURI;
     }
 
+    public Long getAnnouncementCount() {
+        return announcementCount;
+    }
+
+    public void setAnnouncementCount(Long announcementCount) {
+        this.announcementCount = announcementCount;
+    }
 }

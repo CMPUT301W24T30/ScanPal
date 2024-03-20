@@ -6,10 +6,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -65,6 +71,7 @@ public class EventController {
         eventMap.put("location", event.getLocation());
         eventMap.put("photo", event.getPosterURI());
         eventMap.put("capacity", event.getMaximumAttendees());
+        eventMap.put("announcementCount", 0L);//event.getAnnouncementCount());// Initialize to 0
 
         DocumentReference organizerRef = database.collection("Users").document(event.getOrganizer().getUsername());
         eventMap.put("organizer", organizerRef);
@@ -280,6 +287,7 @@ public class EventController {
                             Uri imageURI = Uri.parse(Objects.requireNonNull(eventDoc.get("photo")).toString());
                             event.setPosterURI(imageURI);
                             event.setId(EventID);
+                            event.setAnnouncementCount( (long) eventDoc.get("announcementCount") );
 
                             // Access the data using eventDoc.getData() or convert it to an object
                             fetchEventOrganizerByRef((DocumentReference) Objects.requireNonNull(eventDoc.get("organizer")),
@@ -319,6 +327,7 @@ public class EventController {
         updates.put("location", event.getLocation());
         updates.put("description", event.getDescription());
         updates.put("capacity", event.getMaximumAttendees());
+        updates.put("announcementCount", event.getAnnouncementCount()); //TODO: TEST FOR BUGS LATER
 
         Map<String, Object> eventMap = new HashMap<>();
 
@@ -358,7 +367,8 @@ public class EventController {
 
                 if (organizerDoc.exists()) {
                     User organizer = new User(organizerDoc.getId(),
-                            Objects.requireNonNull(organizerDoc.get("firstName")).toString(), Objects.requireNonNull(organizerDoc.get("lastName")).toString());
+                            Objects.requireNonNull(organizerDoc.get("firstName")).toString(), Objects.requireNonNull(organizerDoc.get("lastName")).toString(),
+                            Objects.requireNonNull(organizerDoc.get("deviceToken")).toString());
                     organizer.setAdministrator((boolean) organizerDoc.get("administrator"));
                     organizer.setPhoto(Objects.requireNonNull(organizerDoc.get("photo")).toString());
                     callback.onSuccess(organizer);
@@ -366,4 +376,32 @@ public class EventController {
             }
         });
     }
+
+    public void getAllEventIds(EventIDsFetchCallback callback) {
+        CollectionReference eventsRef = database.collection("Events");
+        List<String> documentIds = new ArrayList<>();
+
+        eventsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+
+                    for (DocumentSnapshot document : task.getResult()) {
+                        String documentId = document.getId();
+                        documentIds.add(documentId);
+                    }
+
+                    callback.onSuccess(documentIds);
+
+                    for (String id : documentIds) {
+                        Log.d("Document ID", id);
+                    }
+                } else {
+                    Log.d("Firestore", "Error getting documents: ", task.getException());
+                }
+            }
+        });
+
+    }
+
 }

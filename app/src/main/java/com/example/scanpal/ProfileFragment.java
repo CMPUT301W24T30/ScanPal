@@ -91,7 +91,7 @@ public class ProfileFragment extends Fragment {
         profileImageView = view.findViewById(R.id.imageView);
         buttonScan = view.findViewById(R.id.button_scan);
         buttonGoBack = view.findViewById(R.id.button_go_back);
-        buttonChat = view.findViewById(R.id.button_chat);
+        buttonChat = view.findViewById(R.id.button_notifications);
         buttonProfile = view.findViewById(R.id.button_profile);
         buttonYourEvents = view.findViewById(R.id.button_your_events);
         buttonHomepage = view.findViewById(R.id.button_homepage);
@@ -130,6 +130,12 @@ public class ProfileFragment extends Fragment {
         buttonHomepage.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(ProfileFragment.this);
             navController.navigate(R.id.profile_to_events);
+        });
+
+        // Set up button to navigate to Notifications/Announcements.
+        buttonChat.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(ProfileFragment.this);
+            navController.navigate(R.id.profile_fragment_to_notifications);
         });
 
         buttonEditProfile.setOnClickListener(v -> {

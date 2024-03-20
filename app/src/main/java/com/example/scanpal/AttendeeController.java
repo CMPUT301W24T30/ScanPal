@@ -241,7 +241,8 @@ public class AttendeeController {
                                         userDocSnapshot.getId(),
                                         userDocSnapshot.getString("firstName"),
                                         userDocSnapshot.getString("lastName"),
-                                        userDocSnapshot.getString("photo")
+                                        userDocSnapshot.getString("photo"),
+                                        userDocSnapshot.getString("deviceToken")
                                 );
 
                                 Attendee attendee = new Attendee(

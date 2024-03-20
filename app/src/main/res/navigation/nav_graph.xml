@@ -42,6 +42,9 @@
         <action
             android:id="@+id/events_to_profile"
             app:destination="@id/profile_fragment" />
+        <action
+            android:id="@+id/eventsPage_to_notifications"
+            app:destination="@id/notificationsFragment" />
     </fragment>
 
 
@@ -57,17 +60,20 @@
     <fragment
         android:id="@+id/eventDetailsPage"
         android:name="com.example.scanpal.EventDetailsFragment"
-        android:label="fragement_eventDetails">
+        android:label="fragement_eventDetails"
+        tools:layout="@layout/event_details">
         <action
             android:id="@+id/edit_existing_event"
             app:destination="@id/editEventFragment" />
         <action
             android:id="@+id/event_details_to_profile"
             app:destination="@id/profile_fragment" />
-
         <action
             android:id="@+id/view_signed_up_users"
             app:destination="@+id/signedUpUsersFragment" />
+        <action
+            android:id="@+id/eventDetailsPage_to_notifications"
+            app:destination="@id/notificationsFragment" />
     </fragment>
 
     <fragment
@@ -81,6 +87,9 @@
         <action
             android:id="@+id/profile_to_events"
             app:destination="@id/eventsPage" />
+        <action
+            android:id="@+id/profile_fragment_to_notifications"
+            app:destination="@id/notificationsFragment" />
     </fragment>
 
     <fragment
@@ -106,7 +115,8 @@
     <fragment
         android:id="@+id/editEventFragment"
         android:name="com.example.scanpal.EditEventFragment"
-        android:label="EditEventFragment">
+        android:label="EditEventFragment"
+        tools:layout="@layout/add_edit_event">
         <action
             android:id="@+id/done_editingEvent"
             app:destination="@id/eventDetailsPage" />
@@ -116,10 +126,21 @@
         android:name="com.example.scanpal.SignedUpUsersFragment"
         android:label="signedUpUsersFragment"
         tools:layout="@layout/attendees_list"
-    >
+        >
 
     </fragment>
-
+    <fragment
+        android:id="@+id/notificationsFragment"
+        android:name="com.example.scanpal.NotificationsFragment"
+        android:label="NotificationsFragment"
+        tools:layout="@layout/notifications_screen">
+        <action
+            android:id="@+id/notifications_to_eventsPage"
+            app:destination="@id/eventsPage" />
+        <action
+            android:id="@+id/notifications_to_profile_fragment"
+            app:destination="@id/profile_fragment" />
+    </fragment>
 
 
 </navigation>

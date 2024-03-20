@@ -91,7 +91,7 @@
         app:tint="@color/white" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/button_chat"
+        android:id="@+id/button_notifications"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/black"
@@ -163,7 +163,7 @@
         android:theme="@style/Theme.AppCompat"
         app:backgroundTint="#0D6EFD"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button_chat"
+        app:layout_constraintEnd_toStartOf="@+id/button_notifications"
         app:layout_constraintStart_toEndOf="@+id/button_your_events"
         app:layout_constraintTop_toTopOf="@+id/app_bar"
         app:layout_constraintVertical_bias="1.0"

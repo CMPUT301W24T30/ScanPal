@@ -47,15 +47,13 @@
         android:id="@+id/button_scan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="668dp"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="11dp"
         android:backgroundTint="#0D6EFD"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/app_bar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintEnd_toStartOf="@+id/button_notifications"
+        app:layout_constraintHorizontal_bias="0.517"
+        app:layout_constraintStart_toEndOf="@+id/button_your_events"
         app:srcCompat="@drawable/camera_icon"
         app:tint="@color/white" />
 
@@ -75,7 +73,7 @@
         app:tint="@color/white" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/button_chat"
+        android:id="@+id/button_notifications"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/black"
@@ -101,7 +99,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.983"
-        app:srcCompat="@android:drawable/ic_input_get"
+        app:srcCompat="@drawable/profile_icon"
         app:tint="#7f7f7f" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
