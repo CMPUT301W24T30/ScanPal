@@ -62,14 +62,14 @@ public class EventPageFragment extends Fragment {
     private EventController eventController;
 
     //necessary to request user for notification perms
-    /*private final ActivityResultLauncher<String> requestPermissionLauncher =
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
                     // FCM SDK (and your app) can post notifications.
                 } else {
                     // TODO: Inform user that that your app will not show notifications.
                 }
-            });*/
+            });
 
 
     /**
@@ -147,9 +147,10 @@ public class EventPageFragment extends Fragment {
         });
 
 
-        //askNotificationPermission();//ask the user for perms
+        askNotificationPermission();//ask the user for perms
         // Fetch events from Firebase and update the grid
         fetchEventsAndUpdateGrid();
+
 
 
 
@@ -233,7 +234,7 @@ public class EventPageFragment extends Fragment {
             }
         });
     }
-/*
+
 
     private void askNotificationPermission() {
         // This is only necessary for API level >= 33 (TIRAMISU)
@@ -252,5 +253,5 @@ public class EventPageFragment extends Fragment {
             }
         }
 
-    }*/
+    }
 }

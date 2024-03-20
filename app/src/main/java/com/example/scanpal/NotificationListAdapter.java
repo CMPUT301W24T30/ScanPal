@@ -82,8 +82,6 @@ public class NotificationListAdapter extends BaseAdapter {
             });
 
 
-
-
             return convertView;
         }
 

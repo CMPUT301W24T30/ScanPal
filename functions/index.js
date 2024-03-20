@@ -55,28 +55,13 @@ exports.sendNotificationOnAnnouncement = functions.firestore
         const announcementData = snapshot.data();
         const { eventID, message } = announcementData;
 
-        const payload1 = {
-            //token: deviceToken,
-            notification: {
-                title: 'Topic From Event: ',
-                body: "test body"
-            },
-        };
-
-        try {
-          admin.messaging().sendToTopic(eventID, payload1);
-          console.log("\n Topic sent successfully to:");
-
-
-        } catch(error) {
-          console.error("\nError sending topic:\n", error);
-
-        }
+        
  
         /*const attendeesSnapshot = await admin.firestore()
             .collection('Attendees')
             .where('eventID', '==', eventID)
             .get();*/
+            
 
         const eventSnapshot = await admin.firestore()
             .collection("Events")
@@ -87,14 +72,31 @@ exports.sendNotificationOnAnnouncement = functions.firestore
                 const eventData = eventSnapshot.data();
                 const eventName = eventData.name;
 
+        const payload1 = {
+                    //token: deviceToken,
+                    notification: {
+                        title: 'Announcement From Event: ' + eventName,
+                        body: message
+                    },
+                };
+
+                try {
+                  admin.messaging().sendToTopic(eventID, payload1);
+                  console.log("\n Announcement sent successfully Topic: " + eventID);
+
+                } catch(error) {
+                  console.error("\nError sending to topic:\n", error);
+
+                }
+
+                /*
+
                 //eventually replace hardcoded devToken
                 sendNotification("fYFuphSCTvKKiACyxdvV4G:APA91bGDA5rh5feCSIlVRzA4ncSXW5rgbhxXszZSGBafxNaaR3uvXD3q9aJL28tpBA9Kg6FowviBDlry9N6gWNwxlGvFaWa_CNfJrvUlC6dZqyn75OGZbeJDvCM0dvUs0GKyiGg1d1N4", message, eventName);
-
+                */
             } else {
                 console.log("Event with ID ${eventID} does not exist.");
             }
-
-            
 
 
         /*attendeesSnapshot.forEach((attendeeDoc) => {

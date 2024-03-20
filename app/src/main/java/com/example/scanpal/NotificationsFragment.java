@@ -63,6 +63,10 @@ public class NotificationsFragment extends Fragment {
         return view;
     }
 
+
+    /**
+     * Gets all notifications relevant to the current user
+     */
     private void fetchAllNotifications() {
 
         //got to get all attendee objects that have your username + eventIDMatch
