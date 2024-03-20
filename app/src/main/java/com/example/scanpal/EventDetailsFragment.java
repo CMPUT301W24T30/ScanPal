@@ -24,9 +24,6 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
@@ -214,22 +211,18 @@ public class EventDetailsFragment extends Fragment {
                                         Toast.makeText(getContext(), "RSVP successful.", Toast.LENGTH_SHORT).show();
 
                                         FirebaseMessaging.getInstance().subscribeToTopic(eventID)
-                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        String msg = "Subscribed";
-                                                        if (!task.isSuccessful()) {
-                                                            msg = "Subscribe failed";
+                                                .addOnCompleteListener(task -> {
+                                                    String msg = "Subscribed";
+                                                    if (!task.isSuccessful()) {
+                                                        msg = "Subscribe failed";
 
-                                                        }
-                                                        else {
-                                                            setJoinButton(true);
-                                                            onResume();
-                                                            Log.d("Subscribing", msg);
-                                                        }
-
-                                                        //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                                    } else {
+                                                        setJoinButton(true);
+                                                        onResume();
+                                                        Log.d("Subscribing", msg);
                                                     }
+
+                                                    //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
                                                 });
 
                                         //setJoinButton(true);
@@ -283,8 +276,8 @@ public class EventDetailsFragment extends Fragment {
                     getEventOrganizerUserName = organizerDoc.getId();
 
                     //Hide edit button?
-                    if( !(userDetails.getUsername().equals(getEventOrganizerUserName)) ||
-                            !(userDetails.getUsername().equals(getEventOrganizerUserName)) && !(userDetails.isAdministrator()) ) {
+                    if (!(userDetails.getUsername().equals(getEventOrganizerUserName)) ||
+                            !(userDetails.getUsername().equals(getEventOrganizerUserName)) && !(userDetails.isAdministrator())) {
                         eventEditButton.hide(); //just hide the edit button
                     }
 
@@ -444,8 +437,8 @@ public class EventDetailsFragment extends Fragment {
     }
 
     /**
-     *
      * A function call that will navigate to the edit events page if conditions are met
+     *
      * @param view The current view
      */
     void navToEditDetails(View view) {
@@ -469,9 +462,9 @@ public class EventDetailsFragment extends Fragment {
     }
 
     /**
-     *
      * This function creates a dialogbox so that the organizer may send an announcement
      * to their attendees
+     *
      * @param view The current view
      */
     void newAnnouncement(View view) {
@@ -488,7 +481,7 @@ public class EventDetailsFragment extends Fragment {
         eventController.getEventById(eventID, new EventFetchCallback() {
             @Override
             public void onSuccess(Event event) {
-                eventAnnouncementCount =  event.getAnnouncementCount();//incase multiple announcements at a time
+                eventAnnouncementCount = event.getAnnouncementCount();//incase multiple announcements at a time
             }
 
             @Override
@@ -501,7 +494,7 @@ public class EventDetailsFragment extends Fragment {
         announcementDialog.setTitle("Event Announcement");
 
         announcementDialog.setPositiveButton("Send", (DialogInterface.OnClickListener) (dialog, which) -> {
-            if(messageBox.getText().toString().isEmpty()) {
+            if (messageBox.getText().toString().isEmpty()) {
                 Toast.makeText(getContext(), "Error: Can't make empty Announcement", Toast.LENGTH_LONG).show();
                 dialog.cancel();
                 return;//return to prevent creating a new announcement
@@ -523,9 +516,7 @@ public class EventDetailsFragment extends Fragment {
         });
 
         // Set the Negative button with No name Lambda OnClickListener method is use of DialogInterface interface.
-        announcementDialog.setNegativeButton("Cancel", (DialogInterface.OnClickListener) (dialog, which) -> {
-            dialog.cancel();
-        });
+        announcementDialog.setNegativeButton("Cancel", (DialogInterface.OnClickListener) (dialog, which) -> dialog.cancel());
 
         announcementDialog.show();
 
