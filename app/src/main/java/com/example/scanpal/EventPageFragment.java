@@ -1,39 +1,24 @@
 package com.example.scanpal;
 
-import com.example.scanpal.EventController;
-
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
-import android.widget.Button;
-
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -46,21 +31,6 @@ import java.util.List;
  */
 public class EventPageFragment extends Fragment {
 
-    private ArrayList<String> testList;
-    private ArrayList<String> EventIDs;
-    private ActivityResultLauncher<ScanOptions> qrCodeScanner;
-    private QrScannerController qrScannerController;
-
-    private GridView gridView;
-    private EventGridAdapter adapter;
-    private List<Event> eventsList = new ArrayList<>();
-
-    private Button buttonAllEvents;
-    private Button buttonYourEvents;
-    private List<Event> allEvents = new ArrayList<>();
-    private List<Event> userEvents = new ArrayList<>();
-    private EventController eventController;
-
     //necessary to request user for notification perms
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -70,6 +40,18 @@ public class EventPageFragment extends Fragment {
                     // TODO: Inform user that the app will not show notifications.
                 }
             });
+    private ArrayList<String> testList;
+    private ArrayList<String> EventIDs;
+    private ActivityResultLauncher<ScanOptions> qrCodeScanner;
+    private QrScannerController qrScannerController;
+    private GridView gridView;
+    private EventGridAdapter adapter;
+    private final List<Event> eventsList = new ArrayList<>();
+    private Button buttonAllEvents;
+    private Button buttonYourEvents;
+    private final List<Event> allEvents = new ArrayList<>();
+    private final List<Event> userEvents = new ArrayList<>();
+    private EventController eventController;
 
 
     /**
@@ -115,28 +97,11 @@ public class EventPageFragment extends Fragment {
             }
         });
 
-        FloatingActionButton scan = view.findViewById(R.id.button_scan);
-        scan.setOnClickListener(v -> qrCodeScanner.launch(QrScannerController.getOptions()));
-
         // Set up button to add new events.
         FloatingActionButton addEventButton = view.findViewById(R.id.button_add_event);
         addEventButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
             navController.navigate(R.id.addEvent);
-        });
-
-        // Set up button to navigate to user profile.
-        FloatingActionButton profileButton = view.findViewById(R.id.button_profile);
-        profileButton.setOnClickListener(v -> {
-            NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
-            navController.navigate(R.id.events_to_profile);
-        });
-
-        // Set up button to navigate to Notifications/Announcements.
-        FloatingActionButton notificationsButton = view.findViewById(R.id.button_notifications);
-        notificationsButton.setOnClickListener(v -> {
-            NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
-            navController.navigate(R.id.eventsPage_to_notifications);
         });
 
         gridView.setOnItemClickListener((parent, view1, position, id) -> {
@@ -234,7 +199,6 @@ public class EventPageFragment extends Fragment {
     }
 
     /**
-     *
      * Sends a pop to the user asking for notifications permissions
      * only ask once, when the user first gets to this fragment
      */

@@ -31,7 +31,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.Objects;
@@ -91,22 +90,20 @@ public class EventDetailsFragment extends Fragment {
         eventID = getArguments().getString("event_id");
         fetchEventDetails(eventID);
 
+
         // Initialize UI components and setup event handlers
         FloatingActionButton backButton = view.findViewById(R.id.event_details_backButton);
         eventPoster = view.findViewById(R.id.event_detail_imageView);
         joinButton = view.findViewById(R.id.join_button);
         eventEditButton = view.findViewById(R.id.event_editButton);
         organizerImage = view.findViewById(R.id.organizer_image);
-        FloatingActionButton scanQR = view.findViewById(R.id.scan_code);
-        FloatingActionButton profileButton = view.findViewById(R.id.button_profile);
         FloatingActionButton shareButton = view.findViewById(R.id.event_shareButton);
         viewSignedUpUsersBtn = view.findViewById(R.id.view_signed_up_users_button);
 
         // Setup user and attendee controllers
         UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
         attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), getContext());
-        qrScannerController = new QrScannerController(attendeeController);
-
+        System.out.println("test");
         userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
             @Override
             public void onSuccess(User user) {
@@ -119,34 +116,12 @@ public class EventDetailsFragment extends Fragment {
             }
         });
 
-        // Setup QR code scanner
-        qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
-            if (result.getContents() != null) {
-                String username = userController.fetchStoredUsername();
-                qrScannerController.handleResult(result.getContents(), username);
-            } else {
-                Toast.makeText(getContext(), "Invalid QR Code", Toast.LENGTH_SHORT).show();
-            }
-        });
-        scanQR.setOnClickListener(v -> qrCodeScanner.launch(QrScannerController.getOptions()));
+        System.out.println("test");
 
         // Navigate back to the events page
         backButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
             navController.navigate(R.id.eventsPage);
-        });
-
-        // Navigate to the user profile page
-        profileButton.setOnClickListener(v -> {
-            NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
-            navController.navigate(R.id.event_details_to_profile);
-        });
-
-        // Set up button to navigate to Notifications/Announcements.
-        FloatingActionButton notificationsButton = view.findViewById(R.id.button_notifications);
-        notificationsButton.setOnClickListener(v -> {
-            NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
-            navController.navigate(R.id.eventDetailsPage_to_notifications);
         });
 
         // Implement event edit functionality
@@ -179,6 +154,10 @@ public class EventDetailsFragment extends Fragment {
             // Check if the current user is the organizer or an admin
             //navToEditDetails(view);
         });
+
+        System.out.println("test");
+
+        System.out.println("test");
 
         joinButton.setOnClickListener(v -> {
             if (attendee != null) {
@@ -239,6 +218,8 @@ public class EventDetailsFragment extends Fragment {
             }
         });
 
+        System.out.println("test");
+
         viewSignedUpUsersBtn.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
             Bundle bundle = new Bundle();
@@ -246,11 +227,12 @@ public class EventDetailsFragment extends Fragment {
             navController.navigate(R.id.view_signed_up_users, bundle);
         });
 
-        // Share button functionality
-        shareButton.setOnClickListener(v -> {
-            ShareEventController shareEventController = new ShareEventController(getContext());
-            shareEventController.shareQrCode(eventID);
-        });
+
+//        // Share button functionality
+//        shareButton.setOnClickListener(v -> {
+//            ShareEventController shareEventController = new ShareEventController(getContext());
+//            shareEventController.shareQrCode(eventID);
+//        });
 
         return view;
     }
