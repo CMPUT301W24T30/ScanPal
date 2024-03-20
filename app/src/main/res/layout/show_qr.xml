@@ -115,38 +115,24 @@
         app:srcCompat="@drawable/home_icon"
         app:tint="#7f7f7f" />
 
+
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/show_qr_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="56dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="95dp"
         android:layout_marginBottom="24dp"
-        android:text="Scan Event"
+        android:text="Check In"
         android:textColor="@color/white"
         android:textSize="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.075"
+        app:layout_constraintHorizontal_bias="0.333"
         app:layout_constraintStart_toEndOf="@+id/button_go_back"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.003" />
-
-    <Button
-        android:id="@+id/button_share_code"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="144dp"
-        android:layout_marginEnd="145dp"
-        android:backgroundTint="@color/black"
-        android:text="Share Code"
-        app:layout_constraintBottom_toTopOf="@+id/app_bar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/qr_code"
-        app:layout_constraintVertical_bias="0.343"
-        android:layout_width="wrap_content"/>
+        app:layout_constraintVertical_bias="0.001" />
 
     <ImageView
         android:id="@+id/qr_code"
@@ -170,9 +156,10 @@
         android:textSize="30dp"
         app:layout_constraintBottom_toTopOf="@+id/app_bar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_share_code" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.711" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
