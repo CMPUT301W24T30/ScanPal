@@ -1,6 +1,7 @@
 package com.example.scanpal;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -18,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton buttonScan, buttonChat, buttonProfile, buttonYourEvents, buttonHomepage;
     private NavController navController;
-
+    private View appBar;
     private ActivityResultLauncher<ScanOptions> qrCodeScanner;
     private QrScannerController qrScannerController;
 
@@ -30,11 +31,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.nav_host);
-        setupNavController();
-
-        // Initialize views and setup button listeners
+        setNavbarVisibility(false);
         initializeViews();
         setupButtonListeners();
+        setupNavController();
 
     }
 
@@ -47,9 +47,12 @@ public class MainActivity extends AppCompatActivity {
 
         UserController userController = new UserController(FirebaseFirestore.getInstance(), this);
         if (userController.isUserLoggedIn()) {
+            setNavbarVisibility(true);
             navController.navigate(R.id.eventsPage);
+            // Make navbar visible after user is confirmed to be logged in// Now that user is logged in, set up listeners.
         } else {
             navController.navigate(R.id.signupFragment);
+            setNavbarVisibility(false);
         }
     }
 
@@ -62,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         buttonProfile = findViewById(R.id.button_profile);
         buttonYourEvents = findViewById(R.id.button_your_events);
         buttonHomepage = findViewById(R.id.button_homepage);
+        appBar = findViewById(R.id.app_bar);
     }
 
     /**
@@ -105,4 +109,15 @@ public class MainActivity extends AppCompatActivity {
             //navController.navigate(R.id.yourEvents);
         });
     }
+
+    public void setNavbarVisibility(boolean isVisible) {
+        int visibility = isVisible ? View.VISIBLE : View.GONE;
+        if (buttonScan != null) buttonScan.setVisibility(visibility);
+        if (buttonChat != null) buttonChat.setVisibility(visibility);
+        if (buttonProfile != null) buttonProfile.setVisibility(visibility);
+        if (buttonYourEvents != null) buttonYourEvents.setVisibility(visibility);
+        if (buttonHomepage != null) buttonHomepage.setVisibility(visibility);
+        if (appBar != null) appBar.setVisibility(visibility);
+    }
+
 }
