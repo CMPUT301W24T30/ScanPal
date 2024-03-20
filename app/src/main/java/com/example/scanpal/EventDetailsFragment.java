@@ -103,7 +103,7 @@ public class EventDetailsFragment extends Fragment {
         // Setup user and attendee controllers
         UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
         attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), getContext());
-        System.out.println("test");
+
         userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
             @Override
             public void onSuccess(User user) {
@@ -115,8 +115,6 @@ public class EventDetailsFragment extends Fragment {
                 Toast.makeText(view.getContext(), "Failed to load user details", Toast.LENGTH_LONG).show();
             }
         });
-
-        System.out.println("test");
 
         // Navigate back to the events page
         backButton.setOnClickListener(v -> {
@@ -154,10 +152,6 @@ public class EventDetailsFragment extends Fragment {
             // Check if the current user is the organizer or an admin
             //navToEditDetails(view);
         });
-
-        System.out.println("test");
-
-        System.out.println("test");
 
         joinButton.setOnClickListener(v -> {
             if (attendee != null) {
@@ -218,8 +212,6 @@ public class EventDetailsFragment extends Fragment {
             }
         });
 
-        System.out.println("test");
-
         viewSignedUpUsersBtn.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
             Bundle bundle = new Bundle();
@@ -228,11 +220,11 @@ public class EventDetailsFragment extends Fragment {
         });
 
 
-//        // Share button functionality
-//        shareButton.setOnClickListener(v -> {
-//            ShareEventController shareEventController = new ShareEventController(getContext());
-//            shareEventController.shareQrCode(eventID);
-//        });
+        // Share button functionality
+        shareButton.setOnClickListener(v -> {
+            ShareEventController shareEventController = new ShareEventController(getContext());
+            shareEventController.shareQrCode(eventID);
+        });
 
         return view;
     }
