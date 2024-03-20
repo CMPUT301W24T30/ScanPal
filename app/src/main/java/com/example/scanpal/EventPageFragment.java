@@ -65,9 +65,9 @@ public class EventPageFragment extends Fragment {
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
-                    // FCM SDK (and your app) can post notifications.
+                    // can post notifications.
                 } else {
-                    // TODO: Inform user that that your app will not show notifications.
+                    // TODO: Inform user that the app will not show notifications.
                 }
             });
 
@@ -152,8 +152,6 @@ public class EventPageFragment extends Fragment {
         fetchEventsAndUpdateGrid();
 
 
-
-
         return view;
     }
 
@@ -235,20 +233,25 @@ public class EventPageFragment extends Fragment {
         });
     }
 
-
+    /**
+     *
+     * Sends a pop to the user asking for notifications permissions
+     * only ask once, when the user first gets to this fragment
+     */
     private void askNotificationPermission() {
         // This is only necessary for API level >= 33 (TIRAMISU)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.POST_NOTIFICATIONS) ==
                     PackageManager.PERMISSION_GRANTED) {
-                // FCM SDK (and your app) can post notifications.
+
+                // FCM SDK and app can post notifications.
             } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS)) {
                 // TODO: display an educational UI explaining to the user the features that will be enabled
                 //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
                 //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
                 //       If the user selects "No thanks," allow the user to continue without notifications.
             } else {
-                // Directly ask for the permission
+                // Directly ask for the user's permission
                 requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS);
             }
         }

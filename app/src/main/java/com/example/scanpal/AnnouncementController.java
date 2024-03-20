@@ -14,11 +14,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,15 +67,11 @@ public class AnnouncementController {
                 Map<String, Object> updates = new HashMap<>();
                 updates.put("announcementCount", event.getAnnouncementCount()); //TODO: TEST FOR BUGS LATER
 
-                //eventController.editEventById(announcement.getEventID(),event);
-
                 DocumentReference eventRef = database.collection("Events").document(announcement.getEventID());
 
                 eventRef
                         .update(updates)
                         .addOnSuccessListener(unused -> Log.d("DB", "Document successfully updated!")).addOnFailureListener(e -> Log.w("DB ERROR", "Error updating document", e));
-
-
             }
 
             @Override
@@ -91,7 +84,6 @@ public class AnnouncementController {
 
     public void getAnnouncementsByEventId(String EventID, AnnouncementsFetchCallback callback) {
         CollectionReference announcementsRef = database.collection("Announcements");
-
 
         Query query = announcementsRef.whereEqualTo("eventID", EventID);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -106,7 +98,6 @@ public class AnnouncementController {
                         announcement.setEventID((String) document.get("eventID"));
                         announcement.setMessage((String) document.get("message"));
                         announcement.setTimeStamp((String) document.get("timeStamp"));
-
 
                         // Add the Announcement object to the list
                         announcementsList.add(announcement);
@@ -124,16 +115,6 @@ public class AnnouncementController {
         });
 
     }
-
-    /**
-     * Send a push notification to the devices of users tied to the eventID
-     * in the announcement object
-     * @param announcement contains the details in the push notification
-     */
-    public void pushNotificationToAttendees(Announcement announcement) {
-
-    }
-
 
     //TODO: Milestone alert method for organizers
 }

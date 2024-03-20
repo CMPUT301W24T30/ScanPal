@@ -13,7 +13,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage message) {
-
         super.onMessageReceived(message);
     }
 

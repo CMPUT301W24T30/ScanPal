@@ -13,7 +13,6 @@ public class Announcement {
      */
     private Long announcementNum;
     private String eventID;
-
     private String message;
     private String timeStamp;
 

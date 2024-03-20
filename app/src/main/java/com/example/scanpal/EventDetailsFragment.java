@@ -35,7 +35,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -473,6 +472,7 @@ public class EventDetailsFragment extends Fragment {
     /**
      *
      * This function creates a dialogbox so that the organizer may send an announcement
+     * to their attendees
      * @param view The current view
      */
     void newAnnouncement(View view) {
@@ -501,11 +501,7 @@ public class EventDetailsFragment extends Fragment {
         // Set Alert Title
         announcementDialog.setTitle("Event Announcement");
 
-        // Set the positive button with yes name Lambda OnClickListener method is use of DialogInterface interface.
         announcementDialog.setPositiveButton("Send", (DialogInterface.OnClickListener) (dialog, which) -> {
-            // When the user click yes button then app will close
-            //finish();
-            //sendAnnouncement(view);
             if(messageBox.getText().toString().isEmpty()) {
                 Toast.makeText(getContext(), "Error: Can't make empty Announcement", Toast.LENGTH_LONG).show();
                 dialog.cancel();
@@ -514,32 +510,23 @@ public class EventDetailsFragment extends Fragment {
 
             AnnouncementController AC = new AnnouncementController();
 
-
-
             Announcement announcement = new Announcement();
             announcement.setMessage(messageBox.getText().toString());
             announcement.setEventID(eventID);
-            announcement.setAnnouncementNum(eventAnnouncementCount + 1L);
+            announcement.setAnnouncementNum(eventAnnouncementCount + 1L);//increment announcement num
 
+
+            //triggers the cloud functions to send push notifications
             AC.createAnnouncment(announcement);
-            //Method to send push notifications to he attendees.
-            AC.pushNotificationToAttendees(announcement);
 
             Toast.makeText(getContext(), "Announcement sent!", Toast.LENGTH_LONG).show();
 
-
-
-            //TODO: make anouncement controller to handle DB stuff call func here
         });
 
         // Set the Negative button with No name Lambda OnClickListener method is use of DialogInterface interface.
         announcementDialog.setNegativeButton("Cancel", (DialogInterface.OnClickListener) (dialog, which) -> {
-            // If user click no then dialog box is canceled.
             dialog.cancel();
-            //navToEditDetails(view);
         });
-
-
 
         announcementDialog.show();
 
