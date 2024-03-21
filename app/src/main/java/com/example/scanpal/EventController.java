@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -65,6 +66,7 @@ public class EventController {
         eventMap.put("location", event.getLocation());
         eventMap.put("photo", event.getPosterURI());
         eventMap.put("capacity", event.getMaximumAttendees());
+        eventMap.put("announcementCount", 0L);//event.getAnnouncementCount());// Initialize to 0
 
         DocumentReference organizerRef = database.collection("Users").document(event.getOrganizer().getUsername());
         eventMap.put("organizer", organizerRef);
@@ -192,10 +194,9 @@ public class EventController {
     }
 
 
-
     /**
      * This will give back an arrayList of event Type, consisting of events created
-     * by the current user (user is obtained from usercontroller.getuser())
+     * by the current user (user is obtained from UserController.getUser())
      */
     public void getEventsByUser(View view, EventFetchByUserCallback callback) {
         // TODO: a clause for admins to return all existing events
@@ -281,6 +282,7 @@ public class EventController {
                             Uri imageURI = Uri.parse(Objects.requireNonNull(eventDoc.get("photo")).toString());
                             event.setPosterURI(imageURI);
                             event.setId(EventID);
+                            event.setAnnouncementCount((long) eventDoc.get("announcementCount"));
 
                             // Access the data using eventDoc.getData() or convert it to an object
                             fetchEventOrganizerByRef((DocumentReference) Objects.requireNonNull(eventDoc.get("organizer")),
@@ -320,6 +322,7 @@ public class EventController {
         updates.put("location", event.getLocation());
         updates.put("description", event.getDescription());
         updates.put("capacity", event.getMaximumAttendees());
+        updates.put("announcementCount", event.getAnnouncementCount()); //TODO: TEST FOR BUGS LATER
 
         Map<String, Object> eventMap = new HashMap<>();
 
@@ -359,7 +362,8 @@ public class EventController {
 
                 if (organizerDoc.exists()) {
                     User organizer = new User(organizerDoc.getId(),
-                            Objects.requireNonNull(organizerDoc.get("firstName")).toString(), Objects.requireNonNull(organizerDoc.get("lastName")).toString());
+                            Objects.requireNonNull(organizerDoc.get("firstName")).toString(), Objects.requireNonNull(organizerDoc.get("lastName")).toString(),
+                            Objects.requireNonNull(organizerDoc.get("deviceToken")).toString());
                     organizer.setAdministrator((boolean) organizerDoc.get("administrator"));
                     organizer.setPhoto(Objects.requireNonNull(organizerDoc.get("photo")).toString());
                     callback.onSuccess(organizer);
@@ -367,4 +371,29 @@ public class EventController {
             }
         });
     }
+
+    public void getAllEventIds(EventIDsFetchCallback callback) {
+        CollectionReference eventsRef = database.collection("Events");
+        List<String> documentIds = new ArrayList<>();
+
+        eventsRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+
+                for (DocumentSnapshot document : task.getResult()) {
+                    String documentId = document.getId();
+                    documentIds.add(documentId);
+                }
+
+                callback.onSuccess(documentIds);
+
+                for (String id : documentIds) {
+                    Log.d("Document ID", id);
+                }
+            } else {
+                Log.d("Firestore", "Error getting documents: ", task.getException());
+            }
+        });
+
+    }
+
 }

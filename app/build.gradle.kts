@@ -39,12 +39,18 @@ android {
 
 dependencies {
 
+    compileOnly(files("${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"))
+
     // firebase
     implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.android.gms:play-services-maps:17.0.1")
     implementation("com.google.android.gms:play-services-location:18.0.0")
+    implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-analytics")
+
+
 
     // navigation
     implementation("androidx.navigation:navigation-fragment-ktx")
@@ -81,4 +87,6 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("androidx.core:core-splashscreen:1.1.0-alpha02")
     implementation("androidx.core:core:1.3.2")
+
+    implementation("de.hdodenhof:circleimageview:3.1.0")
 }

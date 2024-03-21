@@ -1,20 +1,18 @@
 package com.example.scanpal;
 
-import com.example.scanpal.EventController;
-
-import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
-import android.widget.Button;
-
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -33,20 +31,28 @@ import java.util.List;
  */
 public class EventPageFragment extends Fragment {
 
+    //necessary to request user for notification perms
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    // can post notifications.
+                } else {
+                    // TODO: Inform user that the app will not show notifications.
+                }
+            });
     private ArrayList<String> testList;
     private ArrayList<String> EventIDs;
     private ActivityResultLauncher<ScanOptions> qrCodeScanner;
     private QrScannerController qrScannerController;
-
     private GridView gridView;
     private EventGridAdapter adapter;
-    private List<Event> eventsList = new ArrayList<>();
-
+    private final List<Event> eventsList = new ArrayList<>();
     private Button buttonAllEvents;
     private Button buttonYourEvents;
-    private List<Event> allEvents = new ArrayList<>();
-    private List<Event> userEvents = new ArrayList<>();
+    private final List<Event> allEvents = new ArrayList<>();
+    private final List<Event> userEvents = new ArrayList<>();
     private EventController eventController;
+
 
     /**
      * Default constructor for EventPageFragment.
@@ -91,21 +97,11 @@ public class EventPageFragment extends Fragment {
             }
         });
 
-        FloatingActionButton scan = view.findViewById(R.id.button_scan);
-        scan.setOnClickListener(v -> qrCodeScanner.launch(QrScannerController.getOptions()));
-
         // Set up button to add new events.
         FloatingActionButton addEventButton = view.findViewById(R.id.button_add_event);
         addEventButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
             navController.navigate(R.id.addEvent);
-        });
-
-        // Set up button to navigate to user profile.
-        FloatingActionButton profileButton = view.findViewById(R.id.button_profile);
-        profileButton.setOnClickListener(v -> {
-            NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
-            navController.navigate(R.id.events_to_profile);
         });
 
         gridView.setOnItemClickListener((parent, view1, position, id) -> {
@@ -115,11 +111,15 @@ public class EventPageFragment extends Fragment {
             NavHostFragment.findNavController(this).navigate(R.id.select_event, bundle);
         });
 
+
+        askNotificationPermission();//ask the user for perms
         // Fetch events from Firebase and update the grid
         fetchEventsAndUpdateGrid();
 
+
         return view;
     }
+
 
     private void fetchAllEvents() {
         eventController.fetchAllEvents(new EventsFetchCallback() {
@@ -196,5 +196,29 @@ public class EventPageFragment extends Fragment {
                 Toast.makeText(getContext(), "Error fetching events: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    /**
+     * Sends a pop to the user asking for notifications permissions
+     * only ask once, when the user first gets to this fragment
+     */
+    private void askNotificationPermission() {
+        // This is only necessary for API level >= 33 (TIRAMISU)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.POST_NOTIFICATIONS) ==
+                    PackageManager.PERMISSION_GRANTED) {
+
+                // FCM SDK and app can post notifications.
+            } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS)) {
+                // TODO: display an educational UI explaining to the user the features that will be enabled
+                //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
+                //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
+                //       If the user selects "No thanks," allow the user to continue without notifications.
+            } else {
+                // Directly ask for the user's permission
+                requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
+
     }
 }

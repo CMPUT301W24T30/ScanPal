@@ -134,6 +134,7 @@ public class AddEventFragment extends Fragment {
                 newEvent.setDescription(eventDescriptionForm.getText().toString());
                 newEvent.setMaximumAttendees(Integer.parseInt(attendeesForm.getText().toString()));
                 newEvent.setPosterURI(imageUri);
+                newEvent.setAnnouncementCount(0L);
 
                 //now add the new event to the database
                 eventController.addEvent(newEvent);
