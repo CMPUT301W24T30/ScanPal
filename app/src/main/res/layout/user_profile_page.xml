@@ -37,6 +37,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="#2d3132"
         android:clickable="true"
+        android:theme="@style/Theme.App"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.04"
@@ -59,7 +60,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/profile_page_image"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:scaleType="fitXY"
@@ -75,6 +76,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#0D6EFD"
+        android:theme="@style/Theme.App"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

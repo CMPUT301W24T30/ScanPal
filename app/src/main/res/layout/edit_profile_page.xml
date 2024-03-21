@@ -35,7 +35,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/profile_page_image"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginTop="32dp"
@@ -55,6 +55,7 @@
         android:layout_marginBottom="24dp"
         android:backgroundTint="#204916"
         android:text="Save Changes"
+        android:theme="@style/Theme.AppCompat"
         android:textColor="@color/white"
         android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -66,6 +67,7 @@
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
+        android:theme="@style/Theme.App.TextInput"
         app:boxBackgroundColor="#0A0C16"
         app:boxStrokeColor="@color/input_layout_stroke_color"
         app:hintTextColor="@color/white"
@@ -89,6 +91,7 @@
         app:boxBackgroundColor="#0A0C16"
         app:boxStrokeColor="@color/input_layout_stroke_color"
         app:hintTextColor="@color/white"
+        android:theme="@style/Theme.App.TextInput"
         app:layout_constraintBottom_toTopOf="@+id/last_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.508"
@@ -111,6 +114,7 @@
         app:boxBackgroundColor="#0A0C16"
         app:boxStrokeColor="@color/input_layout_stroke_color"
         app:hintTextColor="@color/white"
+        android:theme="@style/Theme.App.TextInput"
         app:layout_constraintBottom_toTopOf="@+id/about_me"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.508"
@@ -134,6 +138,7 @@
         app:hintTextColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/geolocation"
         app:layout_constraintEnd_toEndOf="parent"
+        android:theme="@style/Theme.App.TextInput"
         app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -169,7 +174,7 @@
         app:backgroundTint="#3580FF"
         app:layout_constraintBottom_toTopOf="@+id/username"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toEndOf="@+id/profile_page_image"
         app:layout_constraintTop_toBottomOf="@+id/heading"
         app:srcCompat="@drawable/upload_icon" />
 
@@ -181,7 +186,7 @@
         android:theme="@style/Theme.AppCompat"
         app:backgroundTint="#3580FF"
         app:layout_constraintBottom_toTopOf="@+id/username"
-        app:layout_constraintEnd_toStartOf="@+id/imageView"
+        app:layout_constraintEnd_toStartOf="@+id/profile_page_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/heading"
         app:srcCompat="@drawable/delete_icon" />
