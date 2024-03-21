@@ -66,4 +66,8 @@ public class QrScannerController {
             // TODO: handle event check-in?
         }
     }
+
+    public void customQrCode(String url) {
+
+    }
 }

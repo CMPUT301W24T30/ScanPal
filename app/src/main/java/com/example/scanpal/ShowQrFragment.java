@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -20,6 +21,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 
 public class ShowQrFragment extends Fragment {
@@ -29,6 +32,8 @@ public class ShowQrFragment extends Fragment {
     }
 
     private final FirebaseStorage storage = FirebaseStorage.getInstance();
+    private ActivityResultLauncher<ScanOptions> qrCodeScanner;
+    private QrScannerController qrScannerController;
 
     @Nullable
     @Override
@@ -55,6 +60,18 @@ public class ShowQrFragment extends Fragment {
             NavController navController = NavHostFragment.findNavController(ShowQrFragment.this);
             navController.navigate(R.id.show_qr_to_eventDetails);
         });
+
+        // Add Custom QR code button
+        Button customQr = view.findViewById(R.id.add_custom_qr_button);
+
+        qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
+            if (result.getContents() != null) {
+                qrScannerController.customQrCode(result.getContents());
+            } else {
+                Toast.makeText(getContext(), "Invalid QR Code", Toast.LENGTH_SHORT).show();
+            }
+        });
+        customQr.setOnClickListener( v-> qrCodeScanner.launch(QrScannerController.getOptions()));
 
         return view;
     }
