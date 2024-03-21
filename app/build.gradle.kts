@@ -44,6 +44,7 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.android.gms:play-services-maps:17.0.1")
+    implementation("com.google.android.gms:play-services-location:18.0.0")
 
     // navigation
     implementation("androidx.navigation:navigation-fragment-ktx")
@@ -79,4 +80,5 @@ dependencies {
     implementation("com.google.zxing:javase:3.4.0")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("androidx.core:core-splashscreen:1.1.0-alpha02")
+    implementation("androidx.core:core:1.3.2")
 }

@@ -1,7 +1,8 @@
 package com.example.scanpal;
 
-import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -9,24 +10,39 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.example.scanpal.databinding.ActivityMapsBinding;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+
+
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-private ActivityMapsBinding binding;
+    private ActivityMapsBinding binding;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-     binding = ActivityMapsBinding.inflate(getLayoutInflater());
-     setContentView(binding.getRoot());
+        binding = ActivityMapsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        } else {
+            Log.e("MapsActivity", "SupportMapFragment not found.");
+        }
+
+        // Find the FloatingActionButton and set a click listener to finish the activity
+        FloatingActionButton backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener(v -> {
+            finish();
+        });
     }
 
     /**
@@ -41,19 +57,29 @@ private ActivityMapsBinding binding;
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        fetchAttendeeLocations();
+    }
 
-        // Add a marker with a pop-up info window
-        LatLng location = new LatLng(-34, 151); // Example location (Sydney, Australia)
-        mMap.addMarker(new MarkerOptions().position(location).title("Marker in Sydney").snippet("This is a test marker"));
+    private void fetchAttendeeLocations() {
+        // Assuming you're passing the event ID to this activity via intent
+        String eventId = getIntent().getStringExtra("event_id");
 
-        // Move the camera to the marker and zoom in
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10));
-
-        // Set a listener for marker click to show the info window
-        mMap.setOnMarkerClickListener(marker -> {
-            marker.showInfoWindow();
-            return true; // Return 'true' to indicate that we have handled the click event
-        });
+        db.collection("attendees")
+                .whereEqualTo("eventId", eventId) // Assuming each attendee document has an "eventId" field
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        if (document.contains("location")) {
+                            GeoPoint geoPoint = document.getGeoPoint("location"); // Ensure that "location" is stored as GeoPoint in Firestore
+                            if (geoPoint != null) {
+                                LatLng latLng = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
+                                mMap.addMarker(new MarkerOptions().position(latLng).title("Attendee Location"));
+                            }
+                        }
+                    }
+                    // Optionally, move the camera to the first attendee's location or a default location if no attendees are found
+                })
+                .addOnFailureListener(e -> Log.e("MapsActivity", "Error fetching attendee locations", e));
     }
 
 }

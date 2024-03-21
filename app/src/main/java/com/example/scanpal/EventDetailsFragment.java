@@ -96,6 +96,8 @@ public class EventDetailsFragment extends Fragment {
         MaterialButton mapButton = view.findViewById(R.id.map_button);
         mapButton.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), MapsActivity.class);
+            String eventID = getArguments().getString("event_id");
+            intent.putExtra("event_id", eventID);
             startActivity(intent);
         });
 
