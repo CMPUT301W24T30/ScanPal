@@ -50,7 +50,7 @@
         app:layout_constraintBottom_toBottomOf="@id/app_bar"
         app:layout_constraintStart_toEndOf="@+id/button_scan"
         app:layout_constraintTop_toTopOf="@+id/app_bar"
-        app:srcCompat="@android:drawable/ic_dialog_email"
+        app:srcCompat="@drawable/notification_icon"
         app:tint="#7f7f7f" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -62,10 +62,8 @@
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="@+id/app_bar"
         app:layout_constraintStart_toEndOf="@+id/button_chat"
-
         app:layout_constraintTop_toTopOf="@+id/app_bar"
-
-        app:srcCompat="@android:drawable/ic_input_get"
+        app:srcCompat="@drawable/profile_icon"
         app:tint="#7f7f7f" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

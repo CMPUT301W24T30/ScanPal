@@ -44,6 +44,7 @@
         android:text="Events"
         android:textColor="@color/white"
         android:textSize="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/event_grid"
         app:layout_constraintEnd_toStartOf="@+id/button_add_event"
         app:layout_constraintStart_toEndOf="@+id/event_page_backButton"
         app:layout_constraintTop_toTopOf="parent" />
