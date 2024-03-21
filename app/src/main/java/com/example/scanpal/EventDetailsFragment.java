@@ -24,9 +24,6 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
@@ -34,7 +31,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.Objects;
@@ -94,21 +90,19 @@ public class EventDetailsFragment extends Fragment {
         eventID = getArguments().getString("event_id");
         fetchEventDetails(eventID);
 
+
         // Initialize UI components and setup event handlers
         FloatingActionButton backButton = view.findViewById(R.id.event_details_backButton);
         eventPoster = view.findViewById(R.id.event_detail_imageView);
         joinButton = view.findViewById(R.id.join_button);
         eventEditButton = view.findViewById(R.id.event_editButton);
         organizerImage = view.findViewById(R.id.organizer_image);
-        FloatingActionButton scanQR = view.findViewById(R.id.scan_code);
-        FloatingActionButton profileButton = view.findViewById(R.id.button_profile);
         FloatingActionButton shareButton = view.findViewById(R.id.event_shareButton);
         viewSignedUpUsersBtn = view.findViewById(R.id.view_signed_up_users_button);
 
         // Setup user and attendee controllers
         UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
         attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), getContext());
-        qrScannerController = new QrScannerController(attendeeController);
 
         userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
             @Override
@@ -122,34 +116,10 @@ public class EventDetailsFragment extends Fragment {
             }
         });
 
-        // Setup QR code scanner
-        qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
-            if (result.getContents() != null) {
-                String username = userController.fetchStoredUsername();
-                qrScannerController.handleResult(result.getContents(), username);
-            } else {
-                Toast.makeText(getContext(), "Invalid QR Code", Toast.LENGTH_SHORT).show();
-            }
-        });
-        scanQR.setOnClickListener(v -> qrCodeScanner.launch(QrScannerController.getOptions()));
-
         // Navigate back to the events page
         backButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
             navController.navigate(R.id.eventsPage);
-        });
-
-        // Navigate to the user profile page
-        profileButton.setOnClickListener(v -> {
-            NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
-            navController.navigate(R.id.event_details_to_profile);
-        });
-
-        // Set up button to navigate to Notifications/Announcements.
-        FloatingActionButton notificationsButton = view.findViewById(R.id.button_notifications);
-        notificationsButton.setOnClickListener(v -> {
-            NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
-            navController.navigate(R.id.eventDetailsPage_to_notifications);
         });
 
         // Implement event edit functionality
@@ -214,22 +184,18 @@ public class EventDetailsFragment extends Fragment {
                                         Toast.makeText(getContext(), "RSVP successful.", Toast.LENGTH_SHORT).show();
 
                                         FirebaseMessaging.getInstance().subscribeToTopic(eventID)
-                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        String msg = "Subscribed";
-                                                        if (!task.isSuccessful()) {
-                                                            msg = "Subscribe failed";
+                                                .addOnCompleteListener(task -> {
+                                                    String msg = "Subscribed";
+                                                    if (!task.isSuccessful()) {
+                                                        msg = "Subscribe failed";
 
-                                                        }
-                                                        else {
-                                                            setJoinButton(true);
-                                                            onResume();
-                                                            Log.d("Subscribing", msg);
-                                                        }
-
-                                                        //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                                    } else {
+                                                        setJoinButton(true);
+                                                        onResume();
+                                                        Log.d("Subscribing", msg);
                                                     }
+
+                                                    //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
                                                 });
 
                                         //setJoinButton(true);
@@ -252,6 +218,7 @@ public class EventDetailsFragment extends Fragment {
             bundle.putString("eventID", eventID);
             navController.navigate(R.id.view_signed_up_users, bundle);
         });
+
 
         // Share button functionality
         shareButton.setOnClickListener(v -> {
@@ -283,8 +250,8 @@ public class EventDetailsFragment extends Fragment {
                     getEventOrganizerUserName = organizerDoc.getId();
 
                     //Hide edit button?
-                    if( !(userDetails.getUsername().equals(getEventOrganizerUserName)) ||
-                            !(userDetails.getUsername().equals(getEventOrganizerUserName)) && !(userDetails.isAdministrator()) ) {
+                    if (!(userDetails.getUsername().equals(getEventOrganizerUserName)) ||
+                            !(userDetails.getUsername().equals(getEventOrganizerUserName)) && !(userDetails.isAdministrator())) {
                         eventEditButton.hide(); //just hide the edit button
                     }
 
@@ -444,8 +411,8 @@ public class EventDetailsFragment extends Fragment {
     }
 
     /**
-     *
      * A function call that will navigate to the edit events page if conditions are met
+     *
      * @param view The current view
      */
     void navToEditDetails(View view) {
@@ -469,9 +436,9 @@ public class EventDetailsFragment extends Fragment {
     }
 
     /**
-     *
      * This function creates a dialogbox so that the organizer may send an announcement
      * to their attendees
+     *
      * @param view The current view
      */
     void newAnnouncement(View view) {
@@ -488,7 +455,7 @@ public class EventDetailsFragment extends Fragment {
         eventController.getEventById(eventID, new EventFetchCallback() {
             @Override
             public void onSuccess(Event event) {
-                eventAnnouncementCount =  event.getAnnouncementCount();//incase multiple announcements at a time
+                eventAnnouncementCount = event.getAnnouncementCount();//incase multiple announcements at a time
             }
 
             @Override
@@ -501,7 +468,7 @@ public class EventDetailsFragment extends Fragment {
         announcementDialog.setTitle("Event Announcement");
 
         announcementDialog.setPositiveButton("Send", (DialogInterface.OnClickListener) (dialog, which) -> {
-            if(messageBox.getText().toString().isEmpty()) {
+            if (messageBox.getText().toString().isEmpty()) {
                 Toast.makeText(getContext(), "Error: Can't make empty Announcement", Toast.LENGTH_LONG).show();
                 dialog.cancel();
                 return;//return to prevent creating a new announcement
@@ -523,9 +490,7 @@ public class EventDetailsFragment extends Fragment {
         });
 
         // Set the Negative button with No name Lambda OnClickListener method is use of DialogInterface interface.
-        announcementDialog.setNegativeButton("Cancel", (DialogInterface.OnClickListener) (dialog, which) -> {
-            dialog.cancel();
-        });
+        announcementDialog.setNegativeButton("Cancel", (DialogInterface.OnClickListener) (dialog, which) -> dialog.cancel());
 
         announcementDialog.show();
 

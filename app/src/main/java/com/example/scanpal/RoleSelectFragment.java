@@ -7,13 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -43,50 +40,48 @@ public class RoleSelectFragment extends Fragment {
 
         view.findViewById(R.id.createUserButton).setOnClickListener(
 
-                userButton -> FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        deviceToken = task.getResult().toString();
-                        Log.d("Geting Dev token", task.getResult().toString());
+                userButton -> FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+                    deviceToken = task.getResult();
+                    Log.d("Geting Dev token", task.getResult());
 
-                        //CHANGE CONSTRUCTOR
-                        userController.addUser(new User(username, firstName, lastName,deviceToken), new UserAddCallback() {
-                            @Override
-                            public void onSuccess() {
-                                NavController navController = NavHostFragment.findNavController(RoleSelectFragment.this);
-                                navController.navigate(R.id.createUserCompleted);
-                            }
+                    //CHANGE CONSTRUCTOR
+                    userController.addUser(new User(username, firstName, lastName, deviceToken), new UserAddCallback() {
+                        @Override
+                        public void onSuccess() {
+                            NavController navController = NavHostFragment.findNavController(RoleSelectFragment.this);
+                            navController.navigate(R.id.createUserCompleted);
 
-                            @Override
-                            public void onError(Exception e) {
-                                Toast.makeText(userButton.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                            }
-                        });
+                            ((MainActivity) getActivity()).setNavbarVisibility(true);
+                        }
 
-                    }
+                        @Override
+                        public void onError(Exception e) {
+                            Toast.makeText(userButton.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+
                 }));
 
         view.findViewById(R.id.createAdminButton).setOnClickListener(
 
-                userButton -> FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        deviceToken = task.getResult().toString();
-                        Log.d("Geting Dev token", task.getResult().toString());
+                userButton -> FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+                    deviceToken = task.getResult();
+                    Log.d("Geting Dev token", task.getResult());
 
-                        userController.addUser(new Administrator(username, firstName, lastName, deviceToken), new UserAddCallback() {
-                                    @Override
-                                    public void onSuccess() {
-                                        NavController navController = NavHostFragment.findNavController(RoleSelectFragment.this);
-                                        navController.navigate(R.id.createUserCompleted);
-                                    }
+                    userController.addUser(new Administrator(username, firstName, lastName, deviceToken), new UserAddCallback() {
+                        @Override
+                        public void onSuccess() {
+                            NavController navController = NavHostFragment.findNavController(RoleSelectFragment.this);
+                            navController.navigate(R.id.createUserCompleted);
 
-                                    @Override
-                                    public void onError(Exception e) {
-                                        Toast.makeText(userButton.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                    }
+                            ((MainActivity) getActivity()).setNavbarVisibility(true);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Toast.makeText(userButton.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }));
         return view;
     }

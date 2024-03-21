@@ -30,9 +30,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class ProfileFragment extends Fragment {
 
     private ImageView profileImageView;
-    private FloatingActionButton buttonScan, buttonGoBack, buttonChat, buttonProfile, buttonYourEvents, buttonHomepage,
-            buttonEditProfile;
-    private TextView addUsername, firstName, lastName, homepage;
+    private FloatingActionButton buttonGoBack, buttonEditProfile;
+    private TextView addUsername, firstName, lastName;
     private UserController userController;
 
     /**
@@ -89,53 +88,21 @@ public class ProfileFragment extends Fragment {
      */
     private void initializeViews(View view) {
         profileImageView = view.findViewById(R.id.imageView);
-        buttonScan = view.findViewById(R.id.button_scan);
         buttonGoBack = view.findViewById(R.id.button_go_back);
-        buttonChat = view.findViewById(R.id.button_notifications);
-        buttonProfile = view.findViewById(R.id.button_profile);
-        buttonYourEvents = view.findViewById(R.id.button_your_events);
-        buttonHomepage = view.findViewById(R.id.button_homepage);
         buttonEditProfile = view.findViewById(R.id.button_edit_profile);
         addUsername = view.findViewById(R.id.addUsername);
         firstName = view.findViewById(R.id.first_name);
         lastName = view.findViewById(R.id.last_name);
-        homepage = view.findViewById(R.id.homepage);
     }
 
     /**
      * Sets up listeners for the various buttons in the profile fragment.
      */
     private void setupButtonListeners() {
-        buttonScan.setOnClickListener(v -> {
-            // TODO
-        });
 
         buttonGoBack.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(ProfileFragment.this);
             navController.navigate(R.id.profile_to_events);
-        });
-
-        buttonChat.setOnClickListener(v -> {
-            // TODO
-        });
-
-        buttonProfile.setOnClickListener(v -> {
-            // TODO
-        });
-
-        buttonYourEvents.setOnClickListener(v -> {
-            // TODO
-        });
-
-        buttonHomepage.setOnClickListener(v -> {
-            NavController navController = NavHostFragment.findNavController(ProfileFragment.this);
-            navController.navigate(R.id.profile_to_events);
-        });
-
-        // Set up button to navigate to Notifications/Announcements.
-        buttonChat.setOnClickListener(v -> {
-            NavController navController = NavHostFragment.findNavController(ProfileFragment.this);
-            navController.navigate(R.id.profile_fragment_to_notifications);
         });
 
         buttonEditProfile.setOnClickListener(v -> {

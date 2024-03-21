@@ -30,6 +30,8 @@ public class SignupFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         View view = inflater.inflate(R.layout.signup_page, container, false);
 
         ConstraintLayout layout = view.findViewById(R.id.constraint_layout);
@@ -82,8 +84,6 @@ public class SignupFragment extends Fragment {
                 }
             }
         });
-
-
         return view;
     }
 }

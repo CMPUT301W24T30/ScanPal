@@ -1,13 +1,5 @@
 package com.example.scanpal;
 
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.messaging.FirebaseMessaging;
-
 import java.io.Serializable;
 
 
@@ -31,7 +23,7 @@ public class User implements Serializable {
      * @param firstName The first name of the user.
      * @param lastName  The last name of the user.
      */
-    public User(String username, String firstName, String lastName,String deviceToken) {
+    public User(String username, String firstName, String lastName, String deviceToken) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -69,7 +61,7 @@ public class User implements Serializable {
      * @param username The username for which the profile image URL is generated.
      * @return A string representing the URL to the generated default profile image.
      */
-    private String createProfileImage(String username) {
+    public String createProfileImage(String username) {
         return "https://www.gravatar.com/avatar/" + username + "?s=100&d=identicon&r=PG";
     }
 
