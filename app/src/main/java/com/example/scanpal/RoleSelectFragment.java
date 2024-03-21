@@ -50,6 +50,8 @@ public class RoleSelectFragment extends Fragment {
                         public void onSuccess() {
                             NavController navController = NavHostFragment.findNavController(RoleSelectFragment.this);
                             navController.navigate(R.id.createUserCompleted);
+
+                            ((MainActivity) getActivity()).setNavbarVisibility(true);
                         }
 
                         @Override
@@ -71,6 +73,8 @@ public class RoleSelectFragment extends Fragment {
                         public void onSuccess() {
                             NavController navController = NavHostFragment.findNavController(RoleSelectFragment.this);
                             navController.navigate(R.id.createUserCompleted);
+
+                            ((MainActivity) getActivity()).setNavbarVisibility(true);
                         }
 
                         @Override

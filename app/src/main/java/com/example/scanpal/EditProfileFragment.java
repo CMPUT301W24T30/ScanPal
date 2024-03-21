@@ -63,6 +63,7 @@ public class EditProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        ((MainActivity) requireActivity()).setNavbarVisibility(false);
         return inflater.inflate(R.layout.edit_profile_page, container, false);
     }
 
@@ -108,6 +109,7 @@ public class EditProfileFragment extends Fragment {
         goBack.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EditProfileFragment.this);
             navController.navigate(R.id.save_profile_edits);
+            ((MainActivity) requireActivity()).setNavbarVisibility(true);
         });
         resetButton.setOnClickListener(v -> showDeleteConfirmation());
         fetchUserDetails();
@@ -204,11 +206,13 @@ public class EditProfileFragment extends Fragment {
                 Toast.makeText(getContext(), "User details updated successfully 🎉", Toast.LENGTH_SHORT).show();
                 NavController navController = NavHostFragment.findNavController(EditProfileFragment.this);
                 navController.navigate(R.id.save_profile_edits);
+                ((MainActivity) requireActivity()).setNavbarVisibility(true);
             }
 
             @Override
             public void onError(Exception e) {
                 progressBar.setVisibility(View.GONE);
+                ((MainActivity) requireActivity()).setNavbarVisibility(true);
             }
         });
     }

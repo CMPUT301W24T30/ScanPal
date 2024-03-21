@@ -11,10 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -22,7 +19,6 @@ import java.util.List;
 
 public class NotificationsFragment extends Fragment {
     private final List<Announcement> notificationsList = new ArrayList<>();
-    private ListView listView;
     private NotificationListAdapter adapter;
     private EventController eventController;
     private List<String> allEventIDs;
@@ -38,22 +34,8 @@ public class NotificationsFragment extends Fragment {
 
         eventController = new EventController();
 
-        // Set up button to navigate to user profile.
-        FloatingActionButton profileButton = view.findViewById(R.id.button_profile);
-        profileButton.setOnClickListener(v -> {
-            NavController navController = NavHostFragment.findNavController(NotificationsFragment.this);
-            navController.navigate(R.id.notifications_to_profile_fragment);
-        });
-
-        // Set up button to navigate to Homepage
-        FloatingActionButton homeButton = view.findViewById(R.id.button_homepage);
-        homeButton.setOnClickListener(v -> {
-            NavController navController = NavHostFragment.findNavController(NotificationsFragment.this);
-            navController.navigate(R.id.notifications_to_eventsPage);
-        });
-
         adapter = new NotificationListAdapter(getContext(), new ArrayList<>());
-        listView = view.findViewById(R.id.notification_list);
+        ListView listView = view.findViewById(R.id.notification_list);
         listView.setAdapter(adapter);
 
         fetchAllNotifications();
