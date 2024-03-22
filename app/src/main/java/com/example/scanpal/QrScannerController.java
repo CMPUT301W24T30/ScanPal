@@ -64,6 +64,34 @@ public class QrScannerController {
             });
         } else if (qrId.startsWith("E")) {
             // TODO: handle event check-in?
+
+        } else {
+            // Custom check in code eventId == qrId
+            String attendeeId = username + qrId;
+            Log.d("ATTENDEE", attendeeId);
+
+            attendeeController.fetchAttendee(attendeeId, new AttendeeFetchCallback() {
+                @Override
+                public void onSuccess(Attendee attendee) {
+                    attendee.setCheckedIn(true);
+                    attendeeController.updateAttendee(attendee, new AttendeeUpdateCallback() {
+                        @Override
+                        public void onSuccess() {
+                            Log.wtf("CHECKED IN!", "Attendee checked-in successfully!");
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Log.wtf("NOT CHECKED IN!", "check-in failed");
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    System.err.println("Error fetching attendee: " + e.getMessage());
+                }
+            });
         }
     }
 

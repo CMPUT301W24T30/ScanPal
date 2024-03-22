@@ -1,6 +1,5 @@
 package com.example.scanpal;
 
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
@@ -12,7 +11,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -79,61 +77,12 @@ public class EventController {
         }
         eventMap.put("participants", participantRefs);
 
-        // Creating bitmap for qrcode and add it to event
-        Bitmap qr_to_event = QrCodeController.generate("E" + event.getId());
-        event.setQrToEvent(qr_to_event);
+        // Generate Qr Code or get custom code
+        QrCodeController qrCodeController = new QrCodeController();
+        qrCodeController.generateAndStoreQrCode(event, eventMap, null);
 
-        // Storing the bitmap into firebase by converting into byte array
-        assert qr_to_event != null;
-        byte[] imageDataEvent = QrCodeController.bitmapToByteArray(qr_to_event);
-
-        // Creating bitmap for qrcode check-in
-        Bitmap qr_to_checkin = QrCodeController.generate("C" + event.getId());
-        event.setQrToCheckIn(qr_to_checkin);
-
-        // Storing the bitmap into firebase by converting into byte array
-        assert qr_to_checkin != null;
-        byte[] imageDataCheckin = QrCodeController.bitmapToByteArray(qr_to_checkin);
-
-        // upload qr code images
-        StorageMetadata metadata = new StorageMetadata.Builder()
-                .setContentType("image/png")
-                .build();
         StorageReference storageRef = storage.getReference();
         DocumentReference eventRef = database.collection("Events").document(event.getId());
-
-        // Save to database
-        eventRef.set(eventMap)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("EventController", "Event added successfully!");
-                    StorageReference checkInQRCodeRef = storageRef.child("qr-codes/" + event.getId() + "-check-in.png");
-                    StorageReference eventQRCodeRef = storageRef.child("qr-codes/" + event.getId() + "-event.png");
-                    // StorageReference eventPosterRef = storageRef.child("/" + event.getId() +
-                    // "-poster.jpg");//TODO: checking img types?
-                    UploadTask uploadTask = checkInQRCodeRef.putBytes(imageDataCheckin, metadata);
-                    uploadTask
-                            .addOnFailureListener(exception -> Log.e("FirebaseStorage",
-                                    "Failed to upload check in qr code: " + exception.getMessage()))
-                            .addOnSuccessListener(taskSnapshot -> taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(uri -> {
-                                eventMap.put("checkInQRCodeUrl", uri.toString());
-                                // Save to database
-                                eventRef.update("checkInQRCodeURL", uri);
-                            }).addOnFailureListener(exception -> Log.e("FirebaseStorage",
-                                    "Failed to get download url for check in qr code" + exception.getMessage())));
-                    uploadTask = eventQRCodeRef.putBytes(imageDataEvent, metadata);
-                    uploadTask
-                            .addOnFailureListener(exception -> Log.e("FirebaseStorage",
-                                    "Failed to upload event qr code: " + exception.getMessage()))
-
-                            .addOnSuccessListener(taskSnapshot -> taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(uri -> {
-                                eventMap.put("eventQRCodeUrl", uri.toString());
-                                // Save to database
-                                eventRef.update("eventQRCodeURL", uri);
-                            }).addOnFailureListener(exception -> Log.e("FirebaseStorage",
-                                    "Failed to get download url for event qr code" + exception.getMessage())));
-                })
-                .addOnFailureListener(e -> Log.d("EventController", "Error adding event: " + e.getMessage()));
-
         StorageReference eventPosterRef = storageRef.child("/" + event.getId() + "-poster.jpg");
         // TODO: check types?
         eventPosterRef.putFile(event.getPosterURI());
@@ -192,7 +141,6 @@ public class EventController {
                     }
                 });
     }
-
 
     /**
      * This will give back an arrayList of event Type, consisting of events created

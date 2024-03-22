@@ -22,7 +22,7 @@ public class Event {
     private String infoAddress;
     private Bitmap qrToEvent;
     private Bitmap qrToCheckIn;
-
+    private Boolean isCustom = false;
     private Long announcementCount;
 
     /**
@@ -141,5 +141,13 @@ public class Event {
 
     public void setAnnouncementCount(Long announcementCount) {
         this.announcementCount = announcementCount;
+    }
+
+    public Boolean getCustom() {
+        return isCustom;
+    }
+
+    public void setCustom(Boolean custom) {
+        isCustom = custom;
     }
 }
