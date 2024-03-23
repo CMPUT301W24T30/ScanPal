@@ -121,7 +121,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:backgroundTint="#3580FF"
-        android:theme="@style/Theme.App"
+        android:theme="@style/AppTheme"
         android:text="@string/continueButton"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
