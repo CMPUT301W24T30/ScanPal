@@ -45,10 +45,14 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
-    implementation("com.google.android.gms:play-services-maps:17.0.1")
     implementation("com.google.android.gms:play-services-location:18.0.0")
     implementation("com.google.firebase:firebase-messaging")
     implementation("com.google.firebase:firebase-analytics")
+
+    // google maps
+    implementation("com.google.android.libraries.places:places:3.3.0")
+    implementation("com.google.android.gms:play-services-maps:17.0.1")
+
 
 
 
