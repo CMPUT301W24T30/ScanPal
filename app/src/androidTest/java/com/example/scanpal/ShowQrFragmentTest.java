@@ -25,7 +25,7 @@ public class ShowQrFragmentTest {
     }
 
     /**
-     * Tests the UI components' visibility in the ProfileFragment.
+     * Tests the UI components' visibility in the ShowQrFragment.
      */
     @Test
     public void testUIVisibility() {
