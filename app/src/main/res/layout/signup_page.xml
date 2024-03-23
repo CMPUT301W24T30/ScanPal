@@ -43,7 +43,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout4"
-        android:theme="@style/Theme.App.TextInputSignup"
+        android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColorHint="@color/grey"
@@ -67,7 +67,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout6"
-        android:theme="@style/Theme.App.TextInputSignup"
+        android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColorHint="@color/grey"
@@ -81,6 +81,7 @@
         app:startIconDrawable="@drawable/short_text"
         app:startIconTint="@color/white">
 
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/addFirstName"
             android:layout_width="match_parent"
@@ -91,7 +92,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout5"
-        android:theme="@style/Theme.App.TextInputSignup"
+        android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColorHint="@color/grey"
@@ -120,6 +121,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:backgroundTint="#3580FF"
+        android:theme="@style/Theme.App"
         android:text="@string/continueButton"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
