@@ -10,6 +10,7 @@
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_add_event"
         android:layout_width="wrap_content"
+        android:theme="@style/AppTheme"
         android:layout_height="wrap_content"
         android:backgroundTint="#0D6EFD"
         android:clickable="true"
@@ -26,6 +27,7 @@
         android:id="@+id/event_page_backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:theme="@style/AppTheme"
         android:backgroundTint="#2d3132"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -38,10 +40,11 @@
         app:tint="@color/white" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/event_page_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Events"
+        android:theme="@style/Theme.AppCompat"
         android:textColor="@color/white"
         android:textSize="30dp"
         app:layout_constraintBottom_toTopOf="@+id/event_grid"

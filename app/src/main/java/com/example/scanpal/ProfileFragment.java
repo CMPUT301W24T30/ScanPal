@@ -87,7 +87,7 @@ public class ProfileFragment extends Fragment {
      * @param view The view returned by onCreateView.
      */
     private void initializeViews(View view) {
-        profileImageView = view.findViewById(R.id.imageView);
+        profileImageView = view.findViewById(R.id.profile_page_image);
         buttonGoBack = view.findViewById(R.id.button_go_back);
         buttonEditProfile = view.findViewById(R.id.button_edit_profile);
         addUsername = view.findViewById(R.id.addUsername);
