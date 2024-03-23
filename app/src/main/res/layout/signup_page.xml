@@ -8,7 +8,7 @@
     android:padding="24dp">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/signup_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/signup_instructions"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Please enter your information and create your account."
@@ -29,7 +29,7 @@
         app:layout_constraintBottom_toTopOf="@+id/logoImageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/signup_title" />
 
     <ImageView
         android:id="@+id/logoImageView"
@@ -39,11 +39,11 @@
         app:layout_constraintBottom_toTopOf="@+id/textInputLayout4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/signup_instructions" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout4"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColorHint="@color/grey"
@@ -67,7 +67,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout6"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColorHint="@color/grey"
@@ -92,7 +92,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout5"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColorHint="@color/grey"
@@ -121,6 +121,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:backgroundTint="#3580FF"
+        android:theme="@style/AppTheme"
         android:text="@string/continueButton"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
