@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="#2d3132"
         android:clickable="true"
+        android:theme="@style/Theme.App"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.045"

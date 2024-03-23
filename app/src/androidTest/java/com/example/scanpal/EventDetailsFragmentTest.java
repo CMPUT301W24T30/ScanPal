@@ -16,11 +16,12 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 public class EventDetailsFragmentTest {
 
+
     @Before
     public void setUp() {
         Bundle args = new Bundle();
         args.putString("event_id", "515e4f51-1728-495e-8437-0b6862263b23");
-        FragmentScenario<ProfileFragment> scenario = FragmentScenario.launchInContainer(ProfileFragment.class, args);
+        FragmentScenario<EventDetailsFragment> scenario = FragmentScenario.launchInContainer(EventDetailsFragment.class, args);
         scenario.moveToState(Lifecycle.State.STARTED);
     }
 
