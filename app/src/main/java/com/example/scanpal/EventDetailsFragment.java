@@ -65,6 +65,8 @@ public class EventDetailsFragment extends Fragment {
     private FloatingActionButton eventEditButton;
     private ImageView organizerImage;
     private Button viewSignedUpUsersBtn;
+    private MaterialButton mapButton;
+
 
     /**
      * Required empty public constructor for instantiating the fragment.
@@ -85,14 +87,17 @@ public class EventDetailsFragment extends Fragment {
         }
     }
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.event_details, null, false);
 
-        MaterialButton mapButton = view.findViewById(R.id.map_button);
+        mapButton = view.findViewById(R.id.map_button);
+        mapButton.setVisibility(View.GONE); // Initially hide the button
         mapButton.setOnClickListener(v -> {
+            Log.d("EventDetailsFragment", "Sending eventID to MapActivity: " + eventID);
             Intent intent = new Intent(getActivity(), MapsActivity.class);
             String eventID = getArguments().getString("event_id");
             intent.putExtra("event_id", eventID);
@@ -122,6 +127,7 @@ public class EventDetailsFragment extends Fragment {
             @Override
             public void onSuccess(User user) {
                 userDetails = user;
+                adjustMapButtonVisibility();
             }
 
             @Override
@@ -243,6 +249,18 @@ public class EventDetailsFragment extends Fragment {
         return view;
     }
 
+    private void adjustMapButtonVisibility() {
+        boolean isUserOrganizer = userDetails.getUsername().equals(getEventOrganizerUserName);
+        boolean isUserAdmin = userDetails.isAdministrator();
+
+        if (isUserOrganizer || isUserAdmin) {
+            mapButton.setVisibility(View.VISIBLE);
+        } else {
+            mapButton.setVisibility(View.GONE);
+        }
+    }
+
+
 
     /**
      * Fetches the organizer's details based on the provided user reference.
@@ -289,6 +307,8 @@ public class EventDetailsFragment extends Fragment {
                             viewSignedUpUsersBtn.setVisibility(View.VISIBLE);
                         }
                     }
+
+                    adjustMapButtonVisibility();
                 } else {
                     Log.d("TAG", "Organizer document does not exist");
                 }

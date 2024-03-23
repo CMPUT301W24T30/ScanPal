@@ -22,8 +22,16 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.gms.common.api.Status;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Arrays;
 
 /**
  * A Fragment for adding new events to the Firestore database. It allows users to input
@@ -37,7 +45,6 @@ public class AddEventFragment extends Fragment {
     Button editImageButton;
     EditText attendeesForm;
     EditText eventNameForm;
-    EditText eventLocationForm;
     EditText eventDescriptionForm;
     Event newEvent;
     EventController eventController;
@@ -46,6 +53,10 @@ public class AddEventFragment extends Fragment {
     private Uri imageUri;
     private ImageView profileImageView;
     private ImageController imageController;
+    private PlacesClient placesClient;
+    private String selectedLocationName;
+    private static final String TAG = "AddEditEvent";
+
 
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -60,7 +71,15 @@ public class AddEventFragment extends Fragment {
 
     public AddEventFragment() {
         // Required empty public constructor
+    }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // SDK init
+        Places.initialize(requireContext(), getString(R.string.google_maps_key));
+        // Create a new Places client instance
+        placesClient = Places.createClient(requireActivity());
     }
 
     @Nullable
@@ -82,7 +101,6 @@ public class AddEventFragment extends Fragment {
         this.editImageButton = view.findViewById(R.id.add_edit_event_imageButton);
         this.attendeesForm = view.findViewById(R.id.add_edit_event_Attendees);
         this.eventNameForm = view.findViewById(R.id.add_edit_event_Name);
-        this.eventLocationForm = view.findViewById(R.id.add_edit_event_Location);
         this.eventDescriptionForm = view.findViewById(R.id.add_edit_event_description);
         this.profileImageView = view.findViewById(R.id.add_edit_event_ImageView);
 
@@ -119,7 +137,7 @@ public class AddEventFragment extends Fragment {
 
             //checking for valid input
             if (eventNameForm.getText().toString().isEmpty() ||
-                    eventLocationForm.getText().toString().isEmpty() ||
+                    selectedLocationName == null || selectedLocationName.isEmpty() ||
                     eventDescriptionForm.getText().toString().isEmpty() ||
                     attendeesForm.getText().toString().isEmpty() ||
                     null == imageUri) {
@@ -130,7 +148,7 @@ public class AddEventFragment extends Fragment {
                 Toast.makeText(view.getContext(), "Please allow at least 1 Attendee", Toast.LENGTH_LONG).show();
             } else {
                 newEvent.setName(eventNameForm.getText().toString());
-                newEvent.setLocation(eventLocationForm.getText().toString());
+                newEvent.setLocation(selectedLocationName);
                 newEvent.setDescription(eventDescriptionForm.getText().toString());
                 newEvent.setMaximumAttendees(Integer.parseInt(attendeesForm.getText().toString()));
                 newEvent.setPosterURI(imageUri);
@@ -158,6 +176,28 @@ public class AddEventFragment extends Fragment {
             // what to do when trying to edit image
             openGallery();
         });
+
+        // Initialize Places and AutocompleteSupportFragment
+        if (!Places.isInitialized()) {
+            Places.initialize(requireContext(), getString(R.string.google_maps_key));
+        }
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        if (autocompleteFragment != null) {
+            autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+                @Override
+                public void onPlaceSelected(@NonNull Place place) {
+                    // Handle the selected place
+                    selectedLocationName = place.getName();
+                }
+
+                @Override
+                public void onError(@NonNull Status status) {
+                    Log.i(TAG, "An error occurred: " + status);
+                }
+            });
+        }
 
         return view;
     }
