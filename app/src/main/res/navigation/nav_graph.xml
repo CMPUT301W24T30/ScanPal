@@ -26,6 +26,12 @@
     </fragment>
 
     <fragment
+        android:id="@+id/yourEvents"
+        android:name="com.example.scanpal.YourEventPageFragment"
+        android:label="fragment_your_events"
+        tools:layout="@layout/your_events_page" />
+
+    <fragment
         android:id="@+id/eventsPage"
         android:name="com.example.scanpal.EventPageFragment"
         android:label="fragment_events_page"
@@ -57,6 +63,8 @@
             android:id="@+id/addEditEventComplete"
             app:destination="@id/eventsPage" />
     </fragment>
+
+
     <fragment
         android:id="@+id/eventDetailsPage"
         android:name="com.example.scanpal.EventDetailsFragment"
@@ -125,8 +133,7 @@
         android:id="@+id/signedUpUsersFragment"
         android:name="com.example.scanpal.SignedUpUsersFragment"
         android:label="signedUpUsersFragment"
-        tools:layout="@layout/attendees_list"
-        >
+        tools:layout="@layout/attendees_list">
 
     </fragment>
     <fragment

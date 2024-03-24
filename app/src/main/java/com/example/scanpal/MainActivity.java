@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         buttonYourEvents.setOnClickListener(v -> {
-//            navController.navigate(R.id.yourEvents);
+            navController.navigate(R.id.yourEvents);
         });
 
         buttonHomepage.setOnClickListener(v -> {

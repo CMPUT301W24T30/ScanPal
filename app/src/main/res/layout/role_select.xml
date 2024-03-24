@@ -29,6 +29,7 @@
         android:layout_marginTop="8dp"
         app:cardBackgroundColor="#262A34"
         app:cardCornerRadius="24dp"
+        android:theme="@style/AppTheme"
         app:cardElevation="10dp"
         app:contentPadding="16dp"
         app:layout_constraintBottom_toTopOf="@+id/spacingGuideTop"
@@ -54,7 +55,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/imageView8"
+                app:layout_constraintStart_toEndOf="@+id/user_imageview"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -72,6 +73,7 @@
             <Button
                 android:id="@+id/createUserButton"
                 android:layout_width="0dp"
+                android:theme="@style/AppTheme"
                 android:layout_height="48dp"
                 android:backgroundTint="#60C34A"
                 android:text="Join as User"
@@ -80,7 +82,7 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <ImageView
-                android:id="@+id/imageView8"
+                android:id="@+id/user_imageview"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -93,6 +95,7 @@
         android:id="@+id/adminCard"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:theme="@style/AppTheme"
         android:layout_marginBottom="8dp"
         app:cardBackgroundColor="#262A34"
         app:cardCornerRadius="24dp"
@@ -137,6 +140,7 @@
                 android:id="@+id/createAdminButton"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
+                android:theme="@style/AppTheme"
                 android:backgroundTint="#FF5722"
                 android:text="Join as Administrator"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -144,7 +148,7 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <ImageView
-                android:id="@+id/imageView7"
+                android:id="@+id/admin_imageview"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_marginStart="16dp"

@@ -104,17 +104,20 @@ public class EventDetailsFragment extends Fragment {
         UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
         attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), getContext());
 
-        userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
-            @Override
-            public void onSuccess(User user) {
-                userDetails = user;
-            }
+        if (userController.fetchStoredUsername() != null) {
+            userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
+                @Override
+                public void onSuccess(User user) {
+                    userDetails = user;
+                }
 
-            @Override
-            public void onError(Exception e) {
-                Toast.makeText(view.getContext(), "Failed to load user details", Toast.LENGTH_LONG).show();
-            }
-        });
+                @Override
+                public void onError(Exception e) {
+                    Toast.makeText(view.getContext(), "Failed to load user details", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
 
         // Navigate back to the events page
         backButton.setOnClickListener(v -> {

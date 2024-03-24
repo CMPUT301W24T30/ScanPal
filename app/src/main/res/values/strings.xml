@@ -5,4 +5,9 @@
     <string name="addLastName">Enter Last Name</string>
     <string name="continueButton">Continue</string>
     <string name="addUserImage">User Image</string>
+    <string-array name="browser_select_array">
+        <item>Events Browser</item>
+        <item>Image Browser</item>
+        <item>Profile Browser</item>
+    </string-array>
 </resources>
