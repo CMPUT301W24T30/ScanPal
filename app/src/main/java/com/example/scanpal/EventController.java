@@ -311,46 +311,37 @@ public class EventController {
     }
 
     /**
-     * edits an existing event in database given its ID
+     * Edits an existing event in the Firestore database, including updating the event's image.
      *
-     * @param EventID the event to edit
-     * @param event   the new details for the existing event
+     * @param event       The event to be updated.
+     * @param newImageUri New image Uri for the event. Can be null if the image isn't being updated.
      */
-    public void editEventById(String EventID, Event event) {
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("name", event.getName());
-        updates.put("location", event.getLocation());
-        updates.put("description", event.getDescription());
-        updates.put("capacity", event.getMaximumAttendees());
-        updates.put("announcementCount", event.getAnnouncementCount()); //TODO: TEST FOR BUGS LATER
-
+    public void editEvent(Event event, @Nullable Uri newImageUri, EventUpdateCallback callback) {
+        String folderPath = "events";
+        String fileName = "event_" + event.getId() + ".jpg";
         Map<String, Object> eventMap = new HashMap<>();
 
-        StorageReference storageRef = storage.getReference();
-        DocumentReference eventRef = database.collection("Events").document(EventID);
+        Runnable updateEventDetails = () -> {
+            eventMap.put("name", event.getName());
+            eventMap.put("description", event.getDescription());
+            eventMap.put("location", event.getLocation());
+            eventMap.put("capacity", event.getMaximumAttendees());
+            eventMap.put("announcementCount", event.getAnnouncementCount());
 
-        StorageReference eventPosterRef = storageRef.child("/" + EventID + "-poster.jpg");// TODO: checking img types?
-        eventPosterRef.putFile(event.getPosterURI());
-        UploadTask uploadPhotoTask;
+            DocumentReference eventRef = database.collection("Events").document(event.getId());
+            eventRef.update(eventMap).addOnSuccessListener(aVoid -> callback.onSuccess(true)).addOnFailureListener(callback::onError);
+        };
 
-        uploadPhotoTask = eventPosterRef.putFile(event.getPosterURI());
-
-        uploadPhotoTask.addOnSuccessListener(taskSnapshot -> {
-            // Photo is uploaded to the storage; get download URL
-            taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(uri -> {
-                // Update eventMap with the photo URL
+        if (newImageUri != null) {
+            imageController.uploadImage(newImageUri, folderPath, fileName, uri -> {
                 eventMap.put("photo", uri.toString());
-
-                // Update the event document in Firestore with the photo URL
-                eventRef.update("photo", uri.toString())
-                        .addOnSuccessListener(aVoid -> Log.d("EventController", "Photo URL added successfully!"))
-                        .addOnFailureListener(exception -> Log.e("EventController", "Failed to update photo URL: " + exception.getMessage()));
-            }).addOnFailureListener(exception -> Log.e("FirebaseStorage", "Failed to get download URL for event photo: " + exception.getMessage()));
-        }).addOnFailureListener(exception -> Log.e("FirebaseStorage", "Failed to upload event photo: " + exception.getMessage()));
-
-        database.collection("Events").document(EventID)
-                .update(updates)
-                .addOnSuccessListener(unused -> Log.d("DB", "Document successfully updated!")).addOnFailureListener(e -> Log.w("DB ERROR", "Error updating document", e));
+                updateEventDetails.run();
+            }, callback::onError);
+        } else {
+            eventMap.put("photo", event.getPosterURI());
+            updateEventDetails.run();
+            callback.onSuccess(true);
+        }
     }
 
     public void fetchEventOrganizerByRef(DocumentReference eventRef, UserFetchCallback callback) {
