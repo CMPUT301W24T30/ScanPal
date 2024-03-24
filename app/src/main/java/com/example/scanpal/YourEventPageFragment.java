@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -28,7 +26,7 @@ import java.util.List;
  * Fragment for displaying a list of events. Allows users to navigate to event details,
  * add new events, and scan QR codes for event-related actions.
  */
-public class EventPageFragment extends Fragment {
+public class YourEventPageFragment extends Fragment {
 
     //necessary to request user for notification perms
     private final ActivityResultLauncher<String> requestPermissionLauncher =
@@ -38,8 +36,6 @@ public class EventPageFragment extends Fragment {
                 }
             });
     private final List<Event> eventsList = new ArrayList<>();
-    private final List<Event> allEvents = new ArrayList<>();
-    private final List<Event> userEvents = new ArrayList<>();
     private ArrayList<String> testList;
     private ArrayList<String> EventIDs;
     private QrScannerController qrScannerController;
@@ -51,13 +47,13 @@ public class EventPageFragment extends Fragment {
     /**
      * Default constructor for EventPageFragment.
      */
-    public EventPageFragment() {
+    public YourEventPageFragment() {
         // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.events_page, container, false);
+        View view = inflater.inflate(R.layout.your_events_page, container, false);
 
         adapter = new EventGridAdapter(getContext(), new ArrayList<>());
         gridView = view.findViewById(R.id.event_grid);
@@ -66,26 +62,12 @@ public class EventPageFragment extends Fragment {
         // init eventController
         eventController = new EventController();
 
-        Spinner spinner = view.findViewById(R.id.browser_select);
-        // Create an ArrayAdapter using the string array and a default spinner layout.
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                requireContext(),
-                R.array.browser_select_array,
-                android.R.layout.simple_spinner_item
-        );
-        // Specify the layout to use when the list of choices appears.
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner.
-        spinner.setAdapter(adapter);
-
-        fetchAllEvents();
-
-        AttendeeController attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), getContext());
+        fetchYourEvents();
 
         // Set up button to add new events.
         FloatingActionButton addEventButton = view.findViewById(R.id.button_add_event);
         addEventButton.setOnClickListener(v -> {
-            NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
+            NavController navController = NavHostFragment.findNavController(YourEventPageFragment.this);
             navController.navigate(R.id.addEvent);
         });
 
@@ -93,7 +75,7 @@ public class EventPageFragment extends Fragment {
             Event event = eventsList.get(position);
             Bundle bundle = new Bundle();
             bundle.putString("event_id", event.getId());
-            NavHostFragment.findNavController(this).navigate(R.id.select_event, bundle);
+            NavHostFragment.findNavController(this).navigate(R.id.eventDetailsPage, bundle);
         });
 
 
@@ -104,30 +86,28 @@ public class EventPageFragment extends Fragment {
         return view;
     }
 
+    private void fetchYourEvents() {
+        UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
+        String username = userController.fetchStoredUsername();
+        if (username != null) {
+            // Use EventController to fetch user-specific events
+            eventController.getEventsByUser(new View(getContext()), new EventFetchByUserCallback() {
+                @Override
+                public void onSuccess(List<Event> events) {
+                    eventsList.clear();
+                    eventsList.addAll(events);
+                    adapter.setEvents(eventsList);
+                }
 
-    private void fetchAllEvents() {
-        eventController.fetchAllEvents(new EventsFetchCallback() {
-            @Override
-            public void onSuccess(List<Event> events) {
-                allEvents.clear();
-                allEvents.addAll(events);
-                adapter.setEvents(allEvents);
-            }
-
-            @Override
-            public void onError(Exception e) {
-                // Handle the error, possibly by showing a toast message
-                Toast.makeText(getContext(), "Error fetching all events.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void showAllEvents() {
-        adapter.setEvents(allEvents);
-    }
-
-    private void showYourEvents() {
-        adapter.setEvents(userEvents);
+                @Override
+                public void onError(Exception e) {
+                    // Handle the error, possibly by showing a toast message
+                    Toast.makeText(getContext(), "Error fetching your events.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), "Username not found", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void fetchEventsAndUpdateGrid() {
