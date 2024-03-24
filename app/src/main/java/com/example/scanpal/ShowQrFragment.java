@@ -62,7 +62,7 @@ public class ShowQrFragment extends Fragment {
         });
 
         // Add Custom QR code button
-        Button customQr = view.findViewById(R.id.add_custom_qr_button);
+        FloatingActionButton customQr = view.findViewById(R.id.add_custom_qr_button);
 
         qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
             if (result.getContents() != null) {

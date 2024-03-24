@@ -50,15 +50,19 @@ public class EventController {
      * Adds a new event to the Firestore database.
      *
      * @param event The event to be added to the database.
+     * @param ID if user chooses to reuse an existing qr code, this can contain that ID
      */
-    public void addEvent(Event event) {
+    public void addEvent(Event event, String ID) {
         Map<String, Object> eventMap = new HashMap<>();
-        // have to generate for qr code
-        UUID uuid = UUID.randomUUID();
-        String uuidString = uuid.toString();
+        Boolean isCustom = Boolean.TRUE;  // to keep track of whether custom qr code or not
 
-        event.setId(uuidString);
-
+        // have to generate ID for qr code if no ID given
+        if (ID == null) {
+            UUID uuid = UUID.randomUUID();
+            ID = uuid.toString();
+            isCustom = Boolean.FALSE;
+        }
+        event.setId(ID);
         eventMap.put("name", event.getName());
         eventMap.put("description", event.getDescription());
         eventMap.put("location", event.getLocation());
@@ -79,7 +83,7 @@ public class EventController {
 
         // Generate Qr Code or get custom code
         QrCodeController qrCodeController = new QrCodeController();
-        qrCodeController.generateAndStoreQrCode(event, eventMap, null);
+        qrCodeController.generateAndStoreQrCode(event, eventMap, isCustom);  // auto generate a qr code
 
         StorageReference storageRef = storage.getReference();
         DocumentReference eventRef = database.collection("Events").document(event.getId());

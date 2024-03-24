@@ -35,7 +35,7 @@ public class QrScannerController {
      * @param username Username of the attendee who scanned the QR code
      */
     public void handleResult(String qrId, String username) {
-        if (qrId.startsWith("C")) {
+        if (qrId.startsWith("check-in-")) {
             String eventId = qrId.substring(1);
             String attendeeId = username + eventId;
             Log.d("ATTENDEE", attendeeId);
@@ -62,11 +62,11 @@ public class QrScannerController {
                     System.err.println("Error fetching attendee: " + e.getMessage());
                 }
             });
-        } else if (qrId.startsWith("E")) {
+        } else if (qrId.startsWith("event-")) {
             // TODO: handle event check-in?
 
         } else {
-            // Custom check in code eventId == qrId
+            // Custom check in code --> eventId == qrId
             String attendeeId = username + qrId;
             Log.d("ATTENDEE", attendeeId);
 
@@ -93,9 +93,5 @@ public class QrScannerController {
                 }
             });
         }
-    }
-
-    public void customQrCode(String url) {
-
     }
 }
