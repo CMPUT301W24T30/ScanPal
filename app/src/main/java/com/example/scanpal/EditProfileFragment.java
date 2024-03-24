@@ -171,7 +171,10 @@ public class EditProfileFragment extends Fragment {
                         existingUser.getDeviceToken());
 
                 if (imageUri != null) {
-                    imageController.uploadImage(imageUri, uri -> {
+                    String folderPath = "profile_images";
+                    String fileName = storedUsername + "_" + System.currentTimeMillis() + ".jpg";
+
+                    imageController.uploadImage(imageUri, folderPath, fileName, uri -> {
                         updatedUser.setPhoto(uri.toString());
                         updateUserInFirestore(updatedUser);
                     }, e -> progressBar.setVisibility(View.GONE));
