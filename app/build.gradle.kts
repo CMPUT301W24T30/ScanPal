@@ -20,11 +20,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // load local.properties file
-        val properties = Properties()
-        properties.load(project.rootProject.file("local.properties").inputStream())
-        // Set API keys in BuildConfig
-        buildConfigField("String", "MAPS_API_KEY", "\"${properties.getProperty(" MAPS_API_KEY ")}\"")
 
     }
 
