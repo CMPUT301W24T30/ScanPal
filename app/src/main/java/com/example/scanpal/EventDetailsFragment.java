@@ -211,9 +211,9 @@ public class EventDetailsFragment extends Fragment {
                     String organizerName = firstName + " " + lastName;
                     getEventOrganizerUserName = organizerDoc.getId();
 
-                    if (!(userDetails.getUsername().equals(getEventOrganizerUserName)) ||
-                            !(userDetails.getUsername().equals(getEventOrganizerUserName)) && !(userDetails.isAdministrator())) {
-                        eventEditButton.hide();
+                    if ((userDetails.getUsername().equals(getEventOrganizerUserName)) ||
+                            (userDetails.getUsername().equals(getEventOrganizerUserName)) && (userDetails.isAdministrator())) {
+                        eventEditButton.setVisibility(View.VISIBLE);
                     }
 
                     eventOrganizer = organizerName;
