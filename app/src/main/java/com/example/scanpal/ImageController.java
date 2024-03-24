@@ -15,33 +15,42 @@ public class ImageController {
     protected FirebaseStorage storage = FirebaseStorage.getInstance();
 
     /**
-     * Uploads an image file to Firebase Storage.
+     * Uploads an image file to Firebase Storage within a specified folder.
      *
      * @param fileUri           The URI of the file to be uploaded.
+     * @param folderPath        The folder path within Firebase Storage where the file should be stored.
+     * @param fileName          The name of the file in storage.
      * @param onSuccessListener Listener for successful upload operations.
      * @param onFailureListener Listener for failed upload operations.
      */
-    public void uploadImage(Uri fileUri, OnSuccessListener<Uri> onSuccessListener, OnFailureListener onFailureListener) {
-        String fileName = "profiles/" + System.currentTimeMillis() + ".jpg";
-
-        StorageReference storageRef = storage.getReference();
-        StorageReference imageRef = storageRef.child(fileName);
+    public void uploadImage(Uri fileUri, String folderPath, String fileName, OnSuccessListener<Uri> onSuccessListener, OnFailureListener onFailureListener) {
+        StorageReference imageRef = storage.getReference().child(folderPath + "/" + fileName);
         UploadTask uploadTask = imageRef.putFile(fileUri);
-
         uploadTask.addOnSuccessListener(taskSnapshot -> imageRef.getDownloadUrl().addOnSuccessListener(onSuccessListener).addOnFailureListener(onFailureListener))
                 .addOnFailureListener(onFailureListener);
     }
 
     /**
-     * Fetches the download URL of an image stored in Firebase Storage.
+     * Fetches the download URL of an image stored in a specific folder in Firebase Storage.
      *
+     * @param folderPath        The folder path within Firebase Storage where the file is stored.
      * @param fileName          The name of the file in storage.
-     * @param onSuccessListener Listener for successful retrieval operations.
-     * @param onFailureListener Listener for failed retrieval operations.
+     * @param onSuccessListener Listener for successful upload operations.
+     * @param onFailureListener Listener for failed upload operations.
      */
-    public void fetchImage(String fileName, OnSuccessListener<Uri> onSuccessListener, OnFailureListener onFailureListener) {
-        StorageReference storageRef = storage.getReference().child(fileName);
+    public void fetchImage(String folderPath, String fileName, OnSuccessListener<Uri> onSuccessListener, OnFailureListener onFailureListener) {
+        StorageReference imageRef = storage.getReference().child(folderPath + "/" + fileName);
+        imageRef.getDownloadUrl().addOnSuccessListener(onSuccessListener).addOnFailureListener(onFailureListener);
+    }
 
-        storageRef.getDownloadUrl().addOnSuccessListener(onSuccessListener).addOnFailureListener(onFailureListener);
+    /**
+     * Deletes a given image stored in a specific folder in Firebase Storage.
+     *
+     * @param folderPath The folder path within Firebase Storage where the file is stored.
+     * @param fileName   The name of the file in storage.
+     */
+    public void deleteImage(String folderPath, String fileName) {
+        StorageReference imageRef = storage.getReference().child(folderPath + "/" + fileName);
+        imageRef.delete();
     }
 }
