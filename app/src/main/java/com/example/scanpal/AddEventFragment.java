@@ -60,21 +60,19 @@ public class AddEventFragment extends Fragment {
 
     public AddEventFragment() {
         // Required empty public constructor
-
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.add_edit_event, null, false);
+        ((MainActivity) requireActivity()).setNavbarVisibility(false);
 
-        //Fragment UI
         TextView pageHeader = view.findViewById(R.id.add_edit_event_Header);
         pageHeader.setText("Create Event");
 
-        //TODO: Remove the delete button from page when creating event
         this.deleteButton = view.findViewById(R.id.add_edit_deleteButton);
-        this.deleteButton.setVisibility(View.GONE); // no need for delete button when creating an event
+        this.deleteButton.setVisibility(View.GONE);
 
 
         this.saveButton = view.findViewById(R.id.add_edit_save_button);
@@ -87,9 +85,6 @@ public class AddEventFragment extends Fragment {
         this.profileImageView = view.findViewById(R.id.add_edit_event_ImageView);
 
         imageController = new ImageController();
-
-
-        //getting an instance of the currentUser
         userController = new UserController(FirebaseFirestore.getInstance(), view.getContext());
         eventController = new EventController();
 
@@ -101,20 +96,11 @@ public class AddEventFragment extends Fragment {
 
             @Override
             public void onError(Exception e) {
-                Toast.makeText(view.getContext(), "Failed to fetch User Data", Toast.LENGTH_LONG).show();
-
-                //TODO: probably should navigate back to the events page on failure?
-
             }
         });
 
-        this.newEvent = new Event(this.Organizer, "", "");//blank event for now until user clicks 'save'
+        this.newEvent = new Event(this.Organizer, "", "");
 
-
-        //log test getting name
-        Log.d("STORAGE", userController.fetchStoredUsername());
-
-        //Implementing the Save button
         saveButton.setOnClickListener(v -> {
 
             //checking for valid input
@@ -136,28 +122,21 @@ public class AddEventFragment extends Fragment {
                 newEvent.setPosterURI(imageUri);
                 newEvent.setAnnouncementCount(0L);
 
-                //now add the new event to the database
                 eventController.addEvent(newEvent);
 
                 NavController navController = NavHostFragment.findNavController(AddEventFragment.this);
                 navController.navigate(R.id.addEditEventComplete);
+                ((MainActivity) requireActivity()).setNavbarVisibility(true);
             }
-
         });
 
-
-        //Implementing the Back button to return to Events Page
         backButton.setOnClickListener(v -> {
-
-            //just go back to the previous screen without doing anything
             NavController navController = NavHostFragment.findNavController(AddEventFragment.this);
             navController.navigate(R.id.addEditEventComplete);
+            ((MainActivity) requireActivity()).setNavbarVisibility(true);
         });
 
-        editImageButton.setOnClickListener(v -> {
-            // what to do when trying to edit image
-            openGallery();
-        });
+        editImageButton.setOnClickListener(v -> openGallery());
 
         return view;
     }
@@ -172,14 +151,16 @@ public class AddEventFragment extends Fragment {
     }
 
     /**
-     * Uploads the selected image to Firebase Storage and updates the user's profile image URL.
+     * Uploads the selected image to Firebase Storage, specifying a folder and filename.
      *
      * @param imageUri The URI of the image selected by the user.
      */
     private void uploadImageToFirebase(Uri imageUri) {
-        imageController.uploadImage(imageUri,
-                taskSnapshot -> Toast.makeText(getContext(), "Image Uploaded Successfully", Toast.LENGTH_SHORT).show(),
-                e -> Toast.makeText(getContext(), "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-    }
+        String folderPath = "events";
+        String fileName = "event_" + newEvent.getId() + ".jpg";
 
+        imageController.uploadImage(imageUri, folderPath, fileName,
+                uri -> System.out.println("Success"),
+                e -> Log.e("AddEventFragment", "Upload failed: " + e.getMessage()));
+    }
 }
