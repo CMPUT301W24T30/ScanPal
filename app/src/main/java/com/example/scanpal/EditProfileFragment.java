@@ -75,7 +75,7 @@ public class EditProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        profileImageView = view.findViewById(R.id.imageView);
+        profileImageView = view.findViewById(R.id.profile_page_image);
         FloatingActionButton uploadButton = view.findViewById(R.id.upload_button);
         FloatingActionButton deleteButton = view.findViewById(R.id.delete_button);
         Button saveButton = view.findViewById(R.id.save_button);

@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +17,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -50,7 +50,7 @@ public class ShowQrFragment extends Fragment {
         }
 
         // Back button
-        Button back = view.findViewById(R.id.button_go_back);
+        FloatingActionButton back = view.findViewById(R.id.button_go_back);
         back.setOnClickListener( v-> {
             NavController navController = NavHostFragment.findNavController(ShowQrFragment.this);
             navController.navigate(R.id.show_qr_to_eventDetails);

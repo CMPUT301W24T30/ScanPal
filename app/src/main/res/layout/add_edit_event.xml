@@ -159,6 +159,7 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_edit_backButton"
+        android:theme="@style/Theme.AppCompat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#2d3132"
@@ -190,10 +191,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:boxBackgroundColor="#0A0C16"
+        android:theme="@style/TextInput"
         app:boxBackgroundMode="outline"
         app:layout_constraintBottom_toTopOf="@+id/event_location_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.524"
+        android:textColorHint="@color/grey"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_name_title"
         app:layout_constraintVertical_bias="0.266">
@@ -212,8 +215,14 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:textColorHint="@color/grey"
+        android:layout_marginBottom="50dp"
         app:boxBackgroundColor="#0A0C16"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_description_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.459"
+        android:theme="@style/TextInput"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
