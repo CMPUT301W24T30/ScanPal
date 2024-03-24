@@ -1,8 +1,10 @@
 package com.example.scanpal;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
@@ -31,10 +34,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.Objects;
-import android.content.Intent;
-import com.example.scanpal.MapsActivity;
-import android.widget.Button;
-import com.google.android.material.button.MaterialButton;
 
 /**
  * Fragment for displaying event details. It expects an event ID as an argument
@@ -224,7 +223,6 @@ public class EventDetailsFragment extends Fragment {
             mapButton.setVisibility(View.GONE);
         }
     }
-
 
 
     /**
