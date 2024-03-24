@@ -21,7 +21,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 
@@ -60,18 +59,6 @@ public class ShowQrFragment extends Fragment {
             NavController navController = NavHostFragment.findNavController(ShowQrFragment.this);
             navController.navigate(R.id.show_qr_to_eventDetails);
         });
-
-        // Add Custom QR code button
-        FloatingActionButton customQr = view.findViewById(R.id.add_custom_qr_button);
-
-        qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
-            if (result.getContents() != null) {
-                qrScannerController.customQrCode(result.getContents());
-            } else {
-                Toast.makeText(getContext(), "Invalid QR Code", Toast.LENGTH_SHORT).show();
-            }
-        });
-        customQr.setOnClickListener( v-> qrCodeScanner.launch(QrScannerController.getOptions()));
 
         return view;
     }

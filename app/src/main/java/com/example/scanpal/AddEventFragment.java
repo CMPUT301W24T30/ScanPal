@@ -35,6 +35,8 @@ public class AddEventFragment extends Fragment {
     FloatingActionButton backButton;
     Button deleteButton;
     Button editImageButton;
+    Button GenerateQrCodeButton;
+    Button CustomQrCodeButton;
     EditText attendeesForm;
     EditText eventNameForm;
     EditText eventLocationForm;
@@ -73,7 +75,6 @@ public class AddEventFragment extends Fragment {
 
         this.deleteButton = view.findViewById(R.id.add_edit_deleteButton);
         this.deleteButton.setVisibility(View.GONE);
-
 
         this.saveButton = view.findViewById(R.id.add_edit_save_button);
         this.backButton = view.findViewById(R.id.add_edit_backButton);
@@ -122,7 +123,7 @@ public class AddEventFragment extends Fragment {
                 newEvent.setPosterURI(imageUri);
                 newEvent.setAnnouncementCount(0L);
 
-                eventController.addEvent(newEvent);
+                eventController.addEvent(newEvent, null);
 
                 NavController navController = NavHostFragment.findNavController(AddEventFragment.this);
                 navController.navigate(R.id.addEditEventComplete);
@@ -137,6 +138,19 @@ public class AddEventFragment extends Fragment {
         });
 
         editImageButton.setOnClickListener(v -> openGallery());
+
+        // Qr code buttons
+        this.GenerateQrCodeButton = view.findViewById(R.id.generate_qr_code);
+        GenerateQrCodeButton.setOnClickListener(v -> {
+            GenerateQrCodeButton.setSelected(true);
+            CustomQrCodeButton.setSelected(false);
+        });
+
+        this.CustomQrCodeButton = view.findViewById(R.id.custom_qr_code);
+        CustomQrCodeButton.setOnClickListener(v -> {
+            CustomQrCodeButton.setSelected(true);
+            GenerateQrCodeButton.setSelected(false);
+        });
 
         return view;
     }

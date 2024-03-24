@@ -30,6 +30,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class EditEventFragment extends Fragment {
 
     private Button saveButton, editImageButton;
+    Button GenerateQrCodeButton;
+    Button CustomQrCodeButton;
     private FloatingActionButton backButton;
     private EditText eventNameForm, eventLocationForm, eventDescriptionForm, attendeesForm;
     private ImageView eventImageView;
@@ -55,7 +57,6 @@ public class EditEventFragment extends Fragment {
         ((MainActivity) requireActivity()).setNavbarVisibility(false);
 
         initializeUI(view);
-
         eventController = new EventController();
         eventID = requireArguments().getString("event_id");
         setupEventDetails(eventID);
@@ -63,6 +64,11 @@ public class EditEventFragment extends Fragment {
         editImageButton.setOnClickListener(v -> openGallery());
         saveButton.setOnClickListener(v -> saveEventChanges());
         backButton.setOnClickListener(v -> navigateBack());
+
+        this.GenerateQrCodeButton = view.findViewById(R.id.generate_qr_code);
+        this.CustomQrCodeButton = view.findViewById(R.id.custom_qr_code);
+        this.GenerateQrCodeButton.setVisibility(View.GONE);
+        this.CustomQrCodeButton.setVisibility(View.GONE);
 
         return view;
     }
@@ -140,18 +146,18 @@ public class EditEventFragment extends Fragment {
         event.setPosterURI(existingImageUri);
         event.setAnnouncementCount(announcementCount);
 
-        eventController.editEvent(event, newImageUri, new EventUpdateCallback() {
-            @Override
-            public void onSuccess(boolean status) {
-                progressBar.setVisibility(View.GONE);
-                navigateBack();
-            }
-
-            @Override
-            public void onError(Exception e) {
-                progressBar.setVisibility(View.GONE);
-            }
-        });
+//        eventController.editEvent(event, newImageUri, new EventUpdateCallback() {
+//            @Override
+//            public void onSuccess(boolean status) {
+//                progressBar.setVisibility(View.GONE);
+//                navigateBack();
+//            }
+//
+//            @Override
+//            public void onError(Exception e) {
+//                progressBar.setVisibility(View.GONE);
+//            }
+//        });
     }
 
     /**
