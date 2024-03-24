@@ -1,5 +1,16 @@
 import java.util.Properties
 
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        load(localPropertiesFile.inputStream())
+    }
+}
+
+val mapsApiKey = localProperties.getProperty("MAPS_API_KEY") ?: System.getenv("MAPS_API_KEY")
+?: throw Exception("MAPS_API_KEY not found in local.properties or environment variables.")
+
+
 plugins {
     id("com.android.application")
     id("androidx.navigation.safeargs")
@@ -20,11 +31,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // load local.properties file
-        val properties = Properties()
-        properties.load(project.rootProject.file("local.properties").inputStream())
-        // Set API keys in BuildConfig
-        buildConfigField("String", "MAPS_API_KEY", "\"${properties.getProperty(" MAPS_API_KEY ")}\"")
+        buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
 
     }
 
@@ -43,6 +50,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
