@@ -4,7 +4,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -31,7 +32,7 @@ public class EventController {
     private final FirebaseFirestore database;
     private final FirebaseStorage storage;
     private static final String TAG = "EventController";
-
+    protected ImageController imageController;
 
     /**
      * Constructs an EventController with a reference to a Firestore database.
@@ -39,6 +40,7 @@ public class EventController {
     public EventController() {
         database = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
+        imageController = new ImageController();
     }
 
     /**
@@ -57,18 +59,15 @@ public class EventController {
      */
     public void addEvent(Event event) {
         Map<String, Object> eventMap = new HashMap<>();
-        // have to generate for qr code
-        UUID uuid = UUID.randomUUID();
-        String uuidString = uuid.toString();
-
-        event.setId(uuidString);
+        String uuid = UUID.randomUUID().toString();
+        event.setId(uuid);
 
         eventMap.put("name", event.getName());
         eventMap.put("description", event.getDescription());
         eventMap.put("location", event.getLocation());
         eventMap.put("photo", event.getPosterURI());
         eventMap.put("capacity", event.getMaximumAttendees());
-        eventMap.put("announcementCount", 0L);//event.getAnnouncementCount());// Initialize to 0
+        eventMap.put("announcementCount", 0L);
 
         DocumentReference organizerRef = database.collection("Users").document(event.getOrganizer().getUsername());
         eventMap.put("organizer", organizerRef);
@@ -107,11 +106,8 @@ public class EventController {
         // Save to database
         eventRef.set(eventMap)
                 .addOnSuccessListener(aVoid -> {
-                    Log.d("EventController", "Event added successfully!");
                     StorageReference checkInQRCodeRef = storageRef.child("qr-codes/" + event.getId() + "-check-in.png");
                     StorageReference eventQRCodeRef = storageRef.child("qr-codes/" + event.getId() + "-event.png");
-                    // StorageReference eventPosterRef = storageRef.child("/" + event.getId() +
-                    // "-poster.jpg");//TODO: checking img types?
                     UploadTask uploadTask = checkInQRCodeRef.putBytes(imageDataCheckin, metadata);
                     uploadTask
                             .addOnFailureListener(exception -> Log.e("FirebaseStorage",
@@ -136,8 +132,7 @@ public class EventController {
                 })
                 .addOnFailureListener(e -> Log.d("EventController", "Error adding event: " + e.getMessage()));
 
-        StorageReference eventPosterRef = storageRef.child("/" + event.getId() + "-poster.jpg");
-        // TODO: check types?
+        StorageReference eventPosterRef = storageRef.child("events/" + "event_" + event.getId() + ".jpg");
         eventPosterRef.putFile(event.getPosterURI());
         UploadTask uploadPhotoTask;
 
@@ -169,7 +164,6 @@ public class EventController {
                             Uri photoUri = photoUrlString != null ? Uri.parse(photoUrlString) : null;
                             String infoAddress = document.getString("qrcodeurl");
 
-                            // init new event object
                             Event event = new Event(null, name, description); // organizer is set to null temporarily
                             event.setId(id);
                             event.setLocation(location);
@@ -181,14 +175,11 @@ public class EventController {
                             event.setOrganizer(null);
                             event.setParticipants(new ArrayList<>());
 
-                            // Add the event to the list
                             eventsList.add(event);
                         }
-
                         callback.onSuccess(eventsList);
                     } else {
                         if (task.getException() != null) {
-                            Log.e("EventController", "Error getting documents: ", task.getException());
                             callback.onError(task.getException());
                         }
                     }
@@ -209,8 +200,6 @@ public class EventController {
         userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
             @Override
             public void onSuccess(User user) {
-                Log.d("LISTENER", "IN COMPLETE LISTENER");
-                Log.d("USERNAME", "/Users/" + user.getUsername());
 
                 DocumentReference userRef = FirebaseFirestore.getInstance().collection("Users")
                         .document(user.getUsername());
@@ -221,9 +210,6 @@ public class EventController {
 
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
-                                    // loop through all events to get events that match
-                                    Log.d("E ORGANIZER", Objects.requireNonNull(document.get("name")).toString());
-
                                     getEventById(document.getId(), new EventFetchCallback() {
                                         @Override
                                         public void onSuccess(Event event) {
@@ -236,17 +222,12 @@ public class EventController {
                                         }
                                     });
                                 }
-                            } else {
-                                Log.d("EVENTTRACKING", "NOT SUCCESSFUL");
-                                // resolve errors
                             }
                         });
             }
 
             @Override
             public void onError(Exception e) {
-                Toast.makeText(view.getContext(), "Failed to fetch User Data", Toast.LENGTH_LONG).show();
-                Log.d("USERERROR", "NO FETCH");
             }
         });
     }
@@ -262,31 +243,20 @@ public class EventController {
         database.collection("Events").document(EventID)
                 .get()
                 .addOnCompleteListener(task -> {
-                    Log.d("GETBYEID", "IN ON COMPLETE");
                     if (task.isSuccessful()) {
                         DocumentSnapshot eventDoc = task.getResult();
                         if (eventDoc.exists()) {
-                            // Document exists, retrieve its data
-                            Log.d("GETBYEID", "Document found with ID: " + EventID);
-
-                            // null user is set a few lines later
                             Event event = new Event(null, Objects.requireNonNull(eventDoc.get("name")).toString(),
                                     Objects.requireNonNull(eventDoc.get("description")).toString());
 
                             event.setLocation(Objects.requireNonNull(eventDoc.get("location")).toString());
-                            // event.setInfoAddress( eventDoc.get("eventQRCodeURL").toString() );//assuming
-                            // address to the info?
-                            // event.setSignUpAddress( eventDoc.get("checkInQRCodeURL").toString()
-                            // );//address to qrcheck in?
                             event.setMaximumAttendees((long) eventDoc.get("capacity"));
 
-                            // if event doesn't have an image this will cause a crash
                             Uri imageURI = Uri.parse(Objects.requireNonNull(eventDoc.get("photo")).toString());
                             event.setPosterURI(imageURI);
                             event.setId(EventID);
                             event.setAnnouncementCount((long) eventDoc.get("announcementCount"));
 
-                            // Access the data using eventDoc.getData() or convert it to an object
                             fetchEventOrganizerByRef((DocumentReference) Objects.requireNonNull(eventDoc.get("organizer")),
                                     new UserFetchCallback() {
                                         @Override
@@ -296,63 +266,46 @@ public class EventController {
 
                                         @Override
                                         public void onError(Exception e) {
-                                            Log.d("FetchingEventbyID", "Error getting Event");
                                         }
                                     });
-
                             callback.onSuccess(event);
-                        } else {
-                            // Document does not exist
-                            Log.d("GETBYEID", "No document found with ID: " + EventID);
                         }
-                    } else {
-                        // Error occurred while fetching document
-                        Log.d("GETBYEID", "Error getting document with ID: " + EventID, task.getException());
                     }
                 });
     }
 
     /**
-     * edits an existing event in database given its ID
+     * Edits an existing event in the Firestore database, including updating the event's image.
      *
-     * @param EventID the event to edit
-     * @param event   the new details for the existing event
+     * @param event       The event to be updated.
+     * @param newImageUri New image Uri for the event. Can be null if the image isn't being updated.
      */
-    public void editEventById(String EventID, Event event) {
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("name", event.getName());
-        updates.put("location", event.getLocation());
-        updates.put("description", event.getDescription());
-        updates.put("capacity", event.getMaximumAttendees());
-        updates.put("announcementCount", event.getAnnouncementCount()); //TODO: TEST FOR BUGS LATER
-
+    public void editEvent(Event event, @Nullable Uri newImageUri, EventUpdateCallback callback) {
+        String folderPath = "events";
+        String fileName = "event_" + event.getId() + ".jpg";
         Map<String, Object> eventMap = new HashMap<>();
 
-        StorageReference storageRef = storage.getReference();
-        DocumentReference eventRef = database.collection("Events").document(EventID);
+        Runnable updateEventDetails = () -> {
+            eventMap.put("name", event.getName());
+            eventMap.put("description", event.getDescription());
+            eventMap.put("location", event.getLocation());
+            eventMap.put("capacity", event.getMaximumAttendees());
+            eventMap.put("announcementCount", event.getAnnouncementCount());
 
-        StorageReference eventPosterRef = storageRef.child("/" + EventID + "-poster.jpg");// TODO: checking img types?
-        eventPosterRef.putFile(event.getPosterURI());
-        UploadTask uploadPhotoTask;
+            DocumentReference eventRef = database.collection("Events").document(event.getId());
+            eventRef.update(eventMap).addOnSuccessListener(aVoid -> callback.onSuccess(true)).addOnFailureListener(callback::onError);
+        };
 
-        uploadPhotoTask = eventPosterRef.putFile(event.getPosterURI());
-
-        uploadPhotoTask.addOnSuccessListener(taskSnapshot -> {
-            // Photo is uploaded to the storage; get download URL
-            taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(uri -> {
-                // Update eventMap with the photo URL
+        if (newImageUri != null) {
+            imageController.uploadImage(newImageUri, folderPath, fileName, uri -> {
                 eventMap.put("photo", uri.toString());
-
-                // Update the event document in Firestore with the photo URL
-                eventRef.update("photo", uri.toString())
-                        .addOnSuccessListener(aVoid -> Log.d("EventController", "Photo URL added successfully!"))
-                        .addOnFailureListener(exception -> Log.e("EventController", "Failed to update photo URL: " + exception.getMessage()));
-            }).addOnFailureListener(exception -> Log.e("FirebaseStorage", "Failed to get download URL for event photo: " + exception.getMessage()));
-        }).addOnFailureListener(exception -> Log.e("FirebaseStorage", "Failed to upload event photo: " + exception.getMessage()));
-
-        database.collection("Events").document(EventID)
-                .update(updates)
-                .addOnSuccessListener(unused -> Log.d("DB", "Document successfully updated!")).addOnFailureListener(e -> Log.w("DB ERROR", "Error updating document", e));
+                updateEventDetails.run();
+            }, callback::onError);
+        } else {
+            eventMap.put("photo", event.getPosterURI());
+            updateEventDetails.run();
+            callback.onSuccess(true);
+        }
     }
 
     public void fetchEventOrganizerByRef(DocumentReference eventRef, UserFetchCallback callback) {
@@ -404,22 +357,12 @@ public class EventController {
 
         eventsRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-
                 for (DocumentSnapshot document : task.getResult()) {
                     String documentId = document.getId();
                     documentIds.add(documentId);
                 }
-
                 callback.onSuccess(documentIds);
-
-                for (String id : documentIds) {
-                    Log.d("Document ID", id);
-                }
-            } else {
-                Log.d("Firestore", "Error getting documents: ", task.getException());
             }
         });
-
     }
-
 }

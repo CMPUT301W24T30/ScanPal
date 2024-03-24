@@ -22,7 +22,6 @@ public class Event {
     private String infoAddress;
     private Bitmap qrToEvent;
     private Bitmap qrToCheckIn;
-
     private Long announcementCount;
 
     /**
@@ -127,12 +126,12 @@ public class Event {
         this.qrToCheckIn = qrToCheckIn;
     }
 
-    public void setPosterURI(Uri posterURI) {
-        this.posterURI = posterURI;
-    }
-
     public Uri getPosterURI() {
         return posterURI;
+    }
+
+    public void setPosterURI(Uri posterURI) {
+        this.posterURI = posterURI;
     }
 
     public Long getAnnouncementCount() {
