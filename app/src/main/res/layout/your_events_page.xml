@@ -28,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_marginTop="16dp"
-        android:text="Events"
+        android:text="Your Events"
         android:textColor="@color/white"
         android:textSize="30dp"
         android:theme="@style/Theme.AppCompat"
@@ -49,14 +49,6 @@
         android:paddingRight="10dp"
         android:verticalSpacing="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/browser_select" />
-
-    <Spinner
-        android:id="@+id/browser_select"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_add_event" />
