@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -22,16 +23,26 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.common.api.Status;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.Arrays;
 
 /**
  * Fragment for editing an existing event.
  */
 public class EditEventFragment extends Fragment {
 
+    AutocompleteSupportFragment autocompleteFragment;
     private Button saveButton, editImageButton;
     private FloatingActionButton backButton;
-    private EditText eventNameForm, eventLocationForm, eventDescriptionForm, attendeesForm;
+    private EditText eventNameForm, eventDescriptionForm, attendeesForm;
+    private TextView pageHeader;
     private ImageView eventImageView;
     private Uri newImageUri;
     protected ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
@@ -44,25 +55,45 @@ public class EditEventFragment extends Fragment {
             });
     private Uri existingImageUri;
     private Long announcementCount;
+    private PlacesClient placesClient;
     private ProgressBar progressBar;
     private EventController eventController;
-    private String eventID;
+    private String eventID, eventLocation;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.add_edit_event, container, false);
         ((MainActivity) requireActivity()).setNavbarVisibility(false);
-
         initializeUI(view);
+        pageHeader.setText("Edit Event");
 
         eventController = new EventController();
         eventID = requireArguments().getString("event_id");
+
+        // Initialize Places.
+        Places.initialize(requireContext(), BuildConfig.MAPS_API_KEY);
+        // Create a new PlacesClient instance
+        placesClient = Places.createClient(requireActivity());
         setupEventDetails(eventID);
 
         editImageButton.setOnClickListener(v -> openGallery());
         saveButton.setOnClickListener(v -> saveEventChanges());
         backButton.setOnClickListener(v -> navigateBack());
+
+        if (autocompleteFragment != null) {
+            autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+                @Override
+                public void onPlaceSelected(@NonNull Place place) {
+                    eventLocation = place.getName();
+                }
+
+                @Override
+                public void onError(@NonNull Status status) {
+                }
+            });
+        }
 
         return view;
     }
@@ -74,15 +105,17 @@ public class EditEventFragment extends Fragment {
      * @param view The root view of the fragment's layout.
      */
     private void initializeUI(View view) {
+        pageHeader = view.findViewById(R.id.add_edit_event_Header);
         saveButton = view.findViewById(R.id.add_edit_save_button);
         backButton = view.findViewById(R.id.add_edit_backButton);
         editImageButton = view.findViewById(R.id.add_edit_event_imageButton);
         eventNameForm = view.findViewById(R.id.add_edit_event_Name);
-        eventLocationForm = view.findViewById(R.id.add_edit_event_Location);
         eventDescriptionForm = view.findViewById(R.id.add_edit_event_description);
         attendeesForm = view.findViewById(R.id.add_edit_event_Attendees);
         eventImageView = view.findViewById(R.id.add_edit_event_ImageView);
         progressBar = view.findViewById(R.id.progressBar);
+        autocompleteFragment = (AutocompleteSupportFragment)
+                getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
     }
 
     /**
@@ -96,7 +129,7 @@ public class EditEventFragment extends Fragment {
             @Override
             public void onSuccess(Event event) {
                 eventNameForm.setText(event.getName());
-                eventLocationForm.setText(event.getLocation());
+                autocompleteFragment.setText(event.getLocation());
                 eventDescriptionForm.setText(event.getDescription());
                 attendeesForm.setText(String.valueOf(event.getMaximumAttendees()));
                 existingImageUri = event.getPosterURI();
@@ -120,11 +153,10 @@ public class EditEventFragment extends Fragment {
      */
     private void saveEventChanges() {
         String eventName = eventNameForm.getText().toString();
-        String eventLocation = eventLocationForm.getText().toString();
         String eventDescription = eventDescriptionForm.getText().toString();
         int maxAttendees = Integer.parseInt(attendeesForm.getText().toString());
 
-        if (eventName.isEmpty() || eventLocation.isEmpty() || eventDescription.isEmpty()) {
+        if (eventName.isEmpty() || eventLocation == null || eventDescription.isEmpty()) {
             Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
             return;
         }
