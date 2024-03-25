@@ -24,6 +24,8 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 /**
  * A Fragment for adding new events to the Firestore database. It allows users to input
@@ -37,6 +39,8 @@ public class AddEventFragment extends Fragment {
     Button editImageButton;
     Button GenerateQrCodeButton;
     Button CustomQrCodeButton;
+    Boolean QrChoice = Boolean.FALSE;
+    String QrID;
     EditText attendeesForm;
     EditText eventNameForm;
     EditText eventLocationForm;
@@ -48,6 +52,7 @@ public class AddEventFragment extends Fragment {
     private Uri imageUri;
     private ImageView profileImageView;
     private ImageController imageController;
+    private ActivityResultLauncher<ScanOptions> qrCodeScanner;
 
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -100,6 +105,16 @@ public class AddEventFragment extends Fragment {
             }
         });
 
+        // Initialize QR Code Scanner
+        qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
+            if (result.getContents() != null) {
+                QrID = result.getContents();
+                QrChoice = Boolean.TRUE;
+            } else {
+                Toast.makeText(view.getContext(), "Invalid QR Code", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         this.newEvent = new Event(this.Organizer, "", "");
 
         saveButton.setOnClickListener(v -> {
@@ -109,7 +124,8 @@ public class AddEventFragment extends Fragment {
                     eventLocationForm.getText().toString().isEmpty() ||
                     eventDescriptionForm.getText().toString().isEmpty() ||
                     attendeesForm.getText().toString().isEmpty() ||
-                    null == imageUri) {
+                    null == imageUri ||
+                    QrChoice != Boolean.TRUE) {
 
                 Toast.makeText(view.getContext(), "Please input all Information", Toast.LENGTH_LONG).show();
 
@@ -123,7 +139,7 @@ public class AddEventFragment extends Fragment {
                 newEvent.setPosterURI(imageUri);
                 newEvent.setAnnouncementCount(0L);
 
-                eventController.addEvent(newEvent, null);
+                eventController.addEvent(newEvent, QrID);
 
                 NavController navController = NavHostFragment.findNavController(AddEventFragment.this);
                 navController.navigate(R.id.addEditEventComplete);
@@ -142,14 +158,21 @@ public class AddEventFragment extends Fragment {
         // Qr code buttons
         this.GenerateQrCodeButton = view.findViewById(R.id.generate_qr_code);
         GenerateQrCodeButton.setOnClickListener(v -> {
-            GenerateQrCodeButton.setSelected(true);
-            CustomQrCodeButton.setSelected(false);
+            QrChoice = Boolean.TRUE;
+            QrID = null;
+            this.GenerateQrCodeButton.setVisibility(View.GONE);
+            this.CustomQrCodeButton.setVisibility(View.GONE);
         });
 
         this.CustomQrCodeButton = view.findViewById(R.id.custom_qr_code);
         CustomQrCodeButton.setOnClickListener(v -> {
-            CustomQrCodeButton.setSelected(true);
-            GenerateQrCodeButton.setSelected(false);
+            // Request to scan qr code
+            qrCodeScanner.launch(QrScannerController.getOptions());
+
+            if (QrChoice) {
+                this.GenerateQrCodeButton.setVisibility(View.GONE);
+                this.CustomQrCodeButton.setVisibility(View.GONE);
+            }
         });
 
         return view;
