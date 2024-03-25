@@ -1,7 +1,21 @@
+import java.util.Properties
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        load(localPropertiesFile.inputStream())
+    }
+}
+
+val mapsApiKey = localProperties.getProperty("MAPS_API_KEY") ?: System.getenv("MAPS_API_KEY")
+?: throw Exception("MAPS_API_KEY not found in local.properties or environment variables.")
+
+
 plugins {
     id("com.android.application")
     id("androidx.navigation.safeargs")
     id("com.google.gms.google-services")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -16,6 +30,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
+
     }
 
     buildTypes {
@@ -31,6 +48,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
+        
+    }
 }
 
 dependencies {
@@ -41,8 +63,14 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
+    implementation("com.google.android.gms:play-services-location:18.0.0")
     implementation("com.google.firebase:firebase-messaging")
     implementation("com.google.firebase:firebase-analytics")
+
+    // google maps
+    implementation("com.google.android.libraries.places:places:3.3.0")
+    implementation("com.google.android.gms:play-services-maps:17.0.1")
+
 
 
 
@@ -80,6 +108,7 @@ dependencies {
     implementation("com.google.zxing:javase:3.4.0")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("androidx.core:core-splashscreen:1.1.0-alpha02")
+    implementation("androidx.core:core:1.3.2")
 
     implementation("de.hdodenhof:circleimageview:3.1.0")
 }

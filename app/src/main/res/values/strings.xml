@@ -1,10 +1,12 @@
 <resources>
     <string name="app_name">ScanPal</string>
-    <string name="addUsername">Enter Username</string>
+    <string name="addUsername">Username</string>
     <string name="addFirstName">Enter First Name</string>
     <string name="addLastName">Enter Last Name</string>
     <string name="continueButton">Continue</string>
     <string name="addUserImage">User Image</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="google_maps_key">AIzaSyCh19g4KfRz1i4zrW_oRr0y312qhD3Fw-g</string>
     <string-array name="browser_select_array">
         <item>Events Browser</item>
         <item>Image Browser</item>

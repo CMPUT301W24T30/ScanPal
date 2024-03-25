@@ -7,27 +7,14 @@
     android:background="#16181F"
     android:padding="8dp">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout3"
-        android:theme="@style/TextInput"
+    <fragment
+        android:id="@+id/autocomplete_fragment"
+        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:boxBackgroundColor="#0A0C16"
-        android:textColorHint="@color/grey"
-        app:layout_constraintBottom_toTopOf="@+id/event_description_title"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_location_title"
-        app:layout_constraintVertical_bias="0.3">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/add_edit_event_Location"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:hint="Enter Event Location"
-            android:textColor="@color/white" />
-    </com.google.android.material.textfield.TextInputLayout>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
         android:id="@+id/add_edit_event_ImageView"
@@ -113,29 +100,29 @@
 
     <TextView
         android:id="@+id/event_location_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Event Location"
         android:textColor="#797474"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textInputLayout"
+        app:layout_constraintBottom_toTopOf="@id/autocomplete_fragment"
+        android:layout_marginTop="8dp" />
+
 
     <TextView
         android:id="@+id/event_description_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
         android:text="Event Description"
         android:textColor="#797474"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout3" />
+        app:layout_constraintTop_toBottomOf="@id/autocomplete_fragment"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/add_edit_event_Attendees"
@@ -226,22 +213,24 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout2"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="0dp"
-        android:layout_height="140dp"
+        android:layout_height="wrap_content"
         android:textColorHint="@color/grey"
         android:layout_marginBottom="50dp"
         app:boxBackgroundColor="#0A0C16"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/event_description_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.459"
         android:theme="@style/TextInput"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_description_title">
+        app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/add_edit_event_description"
             android:layout_width="match_parent"
-            android:layout_height="134dp"
+            android:layout_height="wrap_content"
+            android:gravity="start|top"
             android:hint="Event Description Goes Here"
             android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
