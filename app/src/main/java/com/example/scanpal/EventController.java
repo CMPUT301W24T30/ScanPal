@@ -29,8 +29,9 @@ import java.util.UUID;
  */
 public class EventController {
 
-    protected FirebaseFirestore database;
-    protected FirebaseStorage storage;
+    private final FirebaseFirestore database;
+    private final FirebaseStorage storage;
+    private static final String TAG = "EventController";
     protected ImageController imageController;
 
     /**
@@ -308,23 +309,47 @@ public class EventController {
     }
 
     public void fetchEventOrganizerByRef(DocumentReference eventRef, UserFetchCallback callback) {
+        if (eventRef == null) {
+            // Early return or callback error if the DocumentReference is null
+            Log.e(TAG, "Event Reference is null.");
+            callback.onError(new NullPointerException("Event Reference is null."));
+            return;
+        }
 
         eventRef.get().addOnCompleteListener(task -> {
-
-            if (task.isSuccessful()) {
+            if (task.isSuccessful() && task.getResult() != null) {
                 DocumentSnapshot organizerDoc = task.getResult();
-
                 if (organizerDoc.exists()) {
-                    User organizer = new User(organizerDoc.getId(),
-                            Objects.requireNonNull(organizerDoc.get("firstName")).toString(), Objects.requireNonNull(organizerDoc.get("lastName")).toString(),
-                            Objects.requireNonNull(organizerDoc.get("deviceToken")).toString());
-                    organizer.setAdministrator((boolean) organizerDoc.get("administrator"));
-                    organizer.setPhoto(Objects.requireNonNull(organizerDoc.get("photo")).toString());
-                    callback.onSuccess(organizer);
+                    // Assuming all the fields are correctly spelled and present in the document
+                    String firstName = organizerDoc.getString("firstName");
+                    String lastName = organizerDoc.getString("lastName");
+                    String deviceToken = organizerDoc.getString("deviceToken");
+                    Boolean administrator = organizerDoc.getBoolean("administrator");
+                    String photo = organizerDoc.getString("photo");
+
+                    if (firstName != null && lastName != null && deviceToken != null && administrator != null && photo != null) {
+                        User organizer = new User(organizerDoc.getId(), firstName, lastName, deviceToken);
+                        organizer.setAdministrator(administrator);
+                        organizer.setPhoto(photo);
+                        callback.onSuccess(organizer);
+                    } else {
+                        // Handle the case where one of the fields is null
+                        Log.e(TAG, "One of the user fields is missing or null.");
+                        callback.onError(new IllegalArgumentException("One of the user fields is missing or null."));
+                    }
+                } else {
+                    // Handle the case where the organizer document doesn't exist
+                    Log.e(TAG, "Organizer document does not exist.");
+                    callback.onError(new IllegalArgumentException("Organizer document does not exist."));
                 }
+            } else {
+                // Handle the case where the task was not successful
+                Log.e(TAG, "Task failed to fetch organizer document.");
+                callback.onError(task.getException());
             }
         });
     }
+
 
     public void getAllEventIds(EventIDsFetchCallback callback) {
         CollectionReference eventsRef = database.collection("Events");

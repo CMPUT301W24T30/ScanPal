@@ -1,8 +1,10 @@
 package com.example.scanpal;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
@@ -57,6 +60,8 @@ public class EventDetailsFragment extends Fragment {
     private FloatingActionButton eventEditButton;
     private ImageView organizerImage;
     private Button viewSignedUpUsersBtn;
+    private MaterialButton mapButton;
+
 
     /**
      * Required empty public constructor for instantiating the fragment.
@@ -75,12 +80,27 @@ public class EventDetailsFragment extends Fragment {
         updateRSVPStatus(eventID);
     }
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.event_details, container, false);
-        eventID = requireArguments().getString("event_id");
+
+        mapButton = view.findViewById(R.id.map_button);
+        mapButton.setVisibility(View.GONE); // Initially hide the button
+        mapButton.setOnClickListener(v -> {
+            Log.d("EventDetailsFragment", "Sending eventID to MapActivity: " + eventID);
+            Intent intent = new Intent(getActivity(), MapsActivity.class);
+            String eventID = getArguments().getString("event_id");
+            intent.putExtra("event_id", eventID);
+            startActivity(intent);
+        });
+
+        // Retrieve and display event details
+        assert getArguments() != null;
+        eventID = getArguments().getString("event_id");
         fetchEventDetails(eventID);
 
 
@@ -97,11 +117,13 @@ public class EventDetailsFragment extends Fragment {
         UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
         attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), getContext());
 
+
         if (userController.fetchStoredUsername() != null) {
             userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
                 @Override
                 public void onSuccess(User user) {
                     userDetails = user;
+                    adjustMapButtonVisibility();
                 }
 
                 @Override
@@ -191,6 +213,17 @@ public class EventDetailsFragment extends Fragment {
         return view;
     }
 
+    private void adjustMapButtonVisibility() {
+        boolean isUserOrganizer = userDetails.getUsername().equals(getEventOrganizerUserName);
+        boolean isUserAdmin = userDetails.isAdministrator();
+
+        if (isUserOrganizer || isUserAdmin) {
+            mapButton.setVisibility(View.VISIBLE);
+        } else {
+            mapButton.setVisibility(View.GONE);
+        }
+    }
+
 
     /**
      * Fetches the organizer's details based on the provided user reference.
@@ -233,6 +266,9 @@ public class EventDetailsFragment extends Fragment {
                             viewSignedUpUsersBtn.setVisibility(View.VISIBLE);
                         }
                     }
+                    adjustMapButtonVisibility();
+                } else {
+                    Log.d("TAG", "Organizer document does not exist");
                 }
             }
         });
