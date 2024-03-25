@@ -127,6 +127,7 @@ public class AddEventFragment extends Fragment {
         // Initialize QR Code Scanner
         qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
             if (result.getContents() != null) {
+                Toast.makeText(view.getContext(), "QR Code Scanned", Toast.LENGTH_SHORT).show();
                 QrID = result.getContents();
                 QrChoice = Boolean.TRUE;
             } else {
@@ -179,6 +180,7 @@ public class AddEventFragment extends Fragment {
         GenerateQrCodeButton.setOnClickListener(v -> {
             QrChoice = Boolean.TRUE;
             QrID = null;
+            Toast.makeText(view.getContext(), "Generated QR Code", Toast.LENGTH_SHORT).show();
             this.GenerateQrCodeButton.setVisibility(View.GONE);
             this.CustomQrCodeButton.setVisibility(View.GONE);
         });
@@ -187,7 +189,6 @@ public class AddEventFragment extends Fragment {
         CustomQrCodeButton.setOnClickListener(v -> {
             // Request to scan qr code
             qrCodeScanner.launch(QrScannerController.getOptions());
-
             if (QrChoice) {
                 this.GenerateQrCodeButton.setVisibility(View.GONE);
                 this.CustomQrCodeButton.setVisibility(View.GONE);
