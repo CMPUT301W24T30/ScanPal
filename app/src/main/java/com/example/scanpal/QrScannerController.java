@@ -36,7 +36,7 @@ public class QrScannerController {
      */
     public void handleResult(String qrId, String username) {
         if (qrId.startsWith("check-in-")) {
-            String eventId = qrId.substring(1);
+            String eventId = qrId.substring(9);
             String attendeeId = username + eventId;
             Log.d("ATTENDEE", attendeeId);
 
