@@ -1,7 +1,5 @@
 package com.example.scanpal;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -10,22 +8,23 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.bumptech.glide.Glide;
+import com.example.scanpal.databinding.ActivityMapsBinding;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.example.scanpal.databinding.ActivityMapsBinding;
 
 import java.io.IOException;
 import java.util.List;
@@ -33,55 +32,9 @@ import java.util.List;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    protected FirebaseFirestore db = FirebaseFirestore.getInstance();
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-    private class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
-        private final View mWindow;
-
-        public CustomInfoWindowAdapter() {
-            mWindow = getLayoutInflater().inflate(R.layout.info_window_layout, null);
-        }
-
-        private void renderWindowText(Marker marker, View view) {
-            String imageUrl = (String) marker.getTag();
-            ImageView infoWindowImage = view.findViewById(R.id.info_window_image);
-
-            // Load the image with Glide and apply a circular transformation
-            Glide.with(getApplicationContext())
-                    .load(imageUrl)
-                    .circleCrop()
-                    .into(infoWindowImage);
-        }
-
-        @Override
-        public View getInfoWindow(Marker marker) {
-            if ("eventLocation".equals(marker.getTag())) {
-                View eventInfoWindow = getLayoutInflater().inflate(R.layout.event_info_window, null);
-                TextView titleView = eventInfoWindow.findViewById(R.id.title);
-                titleView.setText(marker.getTitle());
-                return eventInfoWindow;
-            } else {
-                View attendeeInfoWindow = getLayoutInflater().inflate(R.layout.info_window_layout, null);
-                renderWindowText(marker, attendeeInfoWindow);
-                return attendeeInfoWindow;
-            }
-        }
-
-        @Override
-        public View getInfoContents(Marker marker) {
-            if ("eventLocation".equals(marker.getTag())) {
-                View view = getLayoutInflater().inflate(R.layout.event_info_window, null);
-                TextView titleView = view.findViewById(R.id.title);
-                titleView.setText(marker.getTitle());
-                return view;
-            } else {
-                // For attendee markers, we could customize the contents as well if needed
-                return null;
-            }
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,7 +87,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void geocodeLocation(String locationName) {
-        String apiKey = getString(R.string.google_maps_key); // Your API key
+        String apiKey = BuildConfig.MAPS_API_KEY; // Your API key
 
         Geocoder geocoder = new Geocoder(this);
         try {
@@ -214,5 +167,51 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 })
                 .addOnFailureListener(e -> Log.e("MapsActivity", "Error fetching attendee locations", e));
+    }
+
+    private class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+        private final View mWindow;
+
+        public CustomInfoWindowAdapter() {
+            mWindow = getLayoutInflater().inflate(R.layout.info_window_layout, null);
+        }
+
+        private void renderWindowText(Marker marker, View view) {
+            String imageUrl = (String) marker.getTag();
+            ImageView infoWindowImage = view.findViewById(R.id.info_window_image);
+
+            // Load the image with Glide and apply a circular transformation
+            Glide.with(getApplicationContext())
+                    .load(imageUrl)
+                    .circleCrop()
+                    .into(infoWindowImage);
+        }
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+            if ("eventLocation".equals(marker.getTag())) {
+                View eventInfoWindow = getLayoutInflater().inflate(R.layout.event_info_window, null);
+                TextView titleView = eventInfoWindow.findViewById(R.id.title);
+                titleView.setText(marker.getTitle());
+                return eventInfoWindow;
+            } else {
+                View attendeeInfoWindow = getLayoutInflater().inflate(R.layout.info_window_layout, null);
+                renderWindowText(marker, attendeeInfoWindow);
+                return attendeeInfoWindow;
+            }
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+            if ("eventLocation".equals(marker.getTag())) {
+                View view = getLayoutInflater().inflate(R.layout.event_info_window, null);
+                TextView titleView = view.findViewById(R.id.title);
+                titleView.setText(marker.getTitle());
+                return view;
+            } else {
+                // For attendee markers, we could customize the contents as well if needed
+                return null;
+            }
+        }
     }
 }

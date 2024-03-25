@@ -22,13 +22,13 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.gms.common.api.Status;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
@@ -41,6 +41,7 @@ import java.util.Arrays;
  * and interacts with Firestore through {@link EventController} to store the event data.
  */
 public class AddEventFragment extends Fragment {
+    private static final String TAG = "AddEditEvent";
     Button saveButton;
     FloatingActionButton backButton;
     Button deleteButton;
@@ -74,6 +75,8 @@ public class AddEventFragment extends Fragment {
                     uploadImageToFirebase(imageUri);
                 }
             });
+    private PlacesClient placesClient;
+    private String selectedLocationName;
 
 
     public AddEventFragment() {
@@ -84,7 +87,7 @@ public class AddEventFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // SDK init
-        Places.initialize(requireContext(), getString(R.string.google_maps_key));
+        Places.initialize(requireContext(), BuildConfig.MAPS_API_KEY);
         // Create a new Places client instance
         placesClient = Places.createClient(requireActivity());
     }
@@ -92,7 +95,7 @@ public class AddEventFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.add_edit_event, null, false);
+        View view = inflater.inflate(R.layout.add_edit_event, container, false);
         ((MainActivity) requireActivity()).setNavbarVisibility(false);
 
         TextView pageHeader = view.findViewById(R.id.add_edit_event_Header);
@@ -196,7 +199,7 @@ public class AddEventFragment extends Fragment {
         });
         // Initialize Places and AutocompleteSupportFragment
         if (!Places.isInitialized()) {
-            Places.initialize(requireContext(), getString(R.string.google_maps_key));
+            Places.initialize(requireContext(), BuildConfig.MAPS_API_KEY);
         }
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);

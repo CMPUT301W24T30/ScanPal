@@ -8,13 +8,14 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/map_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_width="180dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="50dp"
         android:text="View Map"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/join_button" />
+        app:layout_constraintTop_toBottomOf="@id/view_signed_up_users_button" />
 
 
     <TextView
@@ -44,26 +45,24 @@
         android:id="@+id/join_button"
         android:layout_width="182dp"
         android:layout_height="49dp"
-        android:layout_marginStart="114dp"
         android:layout_marginTop="25dp"
-        android:layout_marginEnd="115dp"
         android:backgroundTint="#0D6EFD"
         android:text="Join Event"
         android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@id/view_signed_up_users_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_description" />
 
     <Button
         android:id="@+id/view_signed_up_users_button"
-        android:layout_width="182dp"
-        android:layout_height="49dp"
+        android:layout_width="180dp"
+        android:layout_height="50dp"
         android:backgroundTint="#0D6EFD"
-        android:text="Signed Up Users"
+        android:text="View Attendees"
         android:textColor="@color/white"
-
-
         android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/map_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/join_button" />
