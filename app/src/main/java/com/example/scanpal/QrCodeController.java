@@ -103,7 +103,7 @@ public class QrCodeController {
         // Creating bitmap for qrcode check-in
         Bitmap qr_to_checkin = null;
         if (isCustom) {
-            qr_to_checkin = QrCodeController.generate(event.getId());
+            qr_to_checkin = QrCodeController.generate("https://" + event.getId());
         } else {
             qr_to_checkin = QrCodeController.generate("check-in-" + event.getId());
         }

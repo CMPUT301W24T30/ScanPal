@@ -67,6 +67,7 @@ public class QrScannerController {
 
         } else {
             // Custom check in code --> eventId == qrId
+            qrId = "https://" + qrId;
             String attendeeId = username + qrId;
             Log.d("ATTENDEE", attendeeId);
 

@@ -63,6 +63,8 @@ public class EventController {
             UUID uuid = UUID.randomUUID();
             ID = uuid.toString();
             isCustom = Boolean.FALSE;
+        } else {
+            ID = ID.substring(8);  // delete the https part to ensure the link can be saved
         }
         event.setId(ID);
         eventMap.put("name", event.getName());
