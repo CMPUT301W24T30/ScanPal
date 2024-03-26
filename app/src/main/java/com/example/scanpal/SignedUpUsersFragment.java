@@ -41,7 +41,7 @@ public class SignedUpUsersFragment extends Fragment {
             eventID = bundle.getString("eventID");
             Log.d("SignedUpUsersFragment", eventID);
         }
-        attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), getContext());
+        attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
         navController = NavHostFragment.findNavController(this);
 
         backButton = view.findViewById(R.id.button_go_back);

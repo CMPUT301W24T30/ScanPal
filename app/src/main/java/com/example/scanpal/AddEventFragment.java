@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,20 +57,20 @@ public class AddEventFragment extends Fragment {
     Event newEvent;
     EventController eventController;
     UserController userController;
+    ProgressBar progressBar;
     User Organizer;
     private Uri imageUri;
     private ImageView profileImageView;
-    private ImageController imageController;
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                     imageUri = result.getData().getData();
                     profileImageView.setImageURI(imageUri);
-                    uploadImageToFirebase(imageUri);
                 }
             });
     private ActivityResultLauncher<ScanOptions> qrCodeScanner;
+    private ImageController imageController;
     private PlacesClient placesClient;
     private String selectedLocationName;
 
@@ -106,6 +107,7 @@ public class AddEventFragment extends Fragment {
         this.eventNameForm = view.findViewById(R.id.add_edit_event_Name);
         this.eventDescriptionForm = view.findViewById(R.id.add_edit_event_description);
         this.profileImageView = view.findViewById(R.id.add_edit_event_ImageView);
+        this.progressBar = view.findViewById(R.id.progressBar);
 
         imageController = new ImageController();
         userController = new UserController(FirebaseFirestore.getInstance(), view.getContext());
@@ -150,6 +152,7 @@ public class AddEventFragment extends Fragment {
             } else if (Integer.parseInt(attendeesForm.getText().toString()) < 1) {
                 Toast.makeText(view.getContext(), "Please allow at least 1 Attendee", Toast.LENGTH_LONG).show();
             } else {
+                progressBar.setVisibility(View.VISIBLE);
                 newEvent.setName(eventNameForm.getText().toString());
                 newEvent.setLocation(selectedLocationName);
                 newEvent.setDescription(eventDescriptionForm.getText().toString());
@@ -157,8 +160,10 @@ public class AddEventFragment extends Fragment {
                 newEvent.setPosterURI(imageUri);
                 newEvent.setAnnouncementCount(0L);
 
-                eventController.addEvent(newEvent, QrID);
+                eventController.addEvent(newEvent);
+                uploadImageToFirebase(imageUri);
 
+                progressBar.setVisibility(View.GONE);
                 NavController navController = NavHostFragment.findNavController(AddEventFragment.this);
                 navController.navigate(R.id.addEditEventComplete);
                 ((MainActivity) requireActivity()).setNavbarVisibility(true);

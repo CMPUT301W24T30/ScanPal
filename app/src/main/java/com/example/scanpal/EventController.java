@@ -26,9 +26,9 @@ import java.util.UUID;
  */
 public class EventController {
 
+    private static final String TAG = "EventController";
     private final FirebaseFirestore database;
     private final FirebaseStorage storage;
-    private static final String TAG = "EventController";
     protected ImageController imageController;
 
     /**
@@ -374,4 +374,13 @@ public class EventController {
 
     }
 
+    public void deleteEvent(String eventID, EventDeleteCallback callback) {
+        imageController.deleteImage("events", "event_" + eventID + ".jpg");
+        imageController.deleteImage("qr-codes", eventID + "-check-in.png");
+        imageController.deleteImage("qr-codes", eventID + "-event.png");
+        DocumentReference eventRef = database.collection("Events").document(eventID);
+        eventRef.delete()
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(callback::onError);
+    }
 }

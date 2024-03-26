@@ -1,16 +1,10 @@
 package com.example.scanpal;
 
-import android.content.Context;
-
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,17 +17,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AttendeeController {
     private final FirebaseFirestore database;
-    private final Context context;
 
     /**
      * Instantiates a controller for managing attendee data.
      *
      * @param database The Firestore database instance for data operations.
-     * @param context  The application's context for internal file operations.
      */
-    public AttendeeController(FirebaseFirestore database, Context context) {
+    public AttendeeController(FirebaseFirestore database) {
         this.database = database;
-        this.context = context;
     }
 
     /**
@@ -46,7 +37,7 @@ public class AttendeeController {
     }
 
     /**
-     * Adds an attendee to both Firestore and local storage.
+     * Adds an attendee to Firestore.
      * <p>
      * Serializes the {@link Attendee} object for local storage and creates a map
      * of attendee properties for Firestore. Handles the success or error of the addition process.
@@ -55,16 +46,6 @@ public class AttendeeController {
      * @param callback Callback to handle the outcome of the addition process.
      */
     public void addAttendee(Attendee attendee, AttendeeAddCallback callback) {
-
-        try {
-            FileOutputStream fos = context.openFileOutput(attendee.getId() + ".ser", Context.MODE_PRIVATE);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(attendee);
-            oos.close();
-            fos.close();
-        } catch (Exception e) {
-            callback.onError(e);
-        }
 
         Map<String, Object> attendeeMap = new HashMap<>();
         attendeeMap.put("location", attendee.getLocation());
@@ -85,26 +66,13 @@ public class AttendeeController {
     /**
      * Fetches the details of an attendee by their ID.
      * <p>
-     * Tries to retrieve the attendee from local storage. If not found, attempts to
-     * fetch from Firestore. Utilizes callback to handle the result or any errors.
+     * Retrieve the attendee from Firestore. Utilizes callback to handle the result or any errors.
      *
      * @param attendeeId The unique ID of the attendee to fetch.
      * @param callback   Callback to handle the fetched attendee or errors.
      */
     public void fetchAttendee(String attendeeId, AttendeeFetchCallback callback) {
 
-        try {
-            FileInputStream fis = context.openFileInput(attendeeId + ".ser");
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            Attendee attendee = (Attendee) ois.readObject();
-            ois.close();
-            fis.close();
-            callback.onSuccess(attendee);
-            return;
-        } catch (Exception ignored) {
-        }
-
-        // Attempt to fetch from Firestore if internal fetch fails
         database.collection("Attendees").document(attendeeId).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
@@ -144,25 +112,15 @@ public class AttendeeController {
 
 
     /**
-     * Updates the details of an existing attendee in both Firestore and local storage.
+     * Updates the details of an existing attendee in Firestore.
      * <p>
-     * Serializes the updated {@link Attendee} object for local storage and updates
-     * the attendee's details in Firestore. Uses callback to handle success or errors.
+     * Updates the attendee's details in Firestore. Uses callback to handle success or errors.
      *
      * @param attendee The updated attendee object.
      * @param callback Callback to handle the outcome of the update process.
      */
     public void updateAttendee(Attendee attendee, AttendeeUpdateCallback callback) {
 
-        try {
-            FileOutputStream fos = context.openFileOutput(attendee.getId() + ".ser", Context.MODE_PRIVATE);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(attendee);
-            oos.close();
-            fos.close();
-        } catch (Exception e) {
-            callback.onError(e);
-        }
         Map<String, Object> updated = new HashMap<>();
         updated.put("location", attendee.getLocation());
         updated.put("checkedIn", attendee.isCheckedIn());
@@ -181,19 +139,14 @@ public class AttendeeController {
     }
 
     /**
-     * Deletes an attendee's record from both Firestore and local storage by their unique ID.
+     * Deletes an attendee's record from Firestore by their unique ID.
      * <p>
-     * Removes the serialized attendee object from local storage and deletes their
-     * record from Firestore. Uses callback to manage success or error outcomes.
+     * Deletes the attendee record from Firestore. Uses callback to manage success or error outcomes.
      *
      * @param attendeeId The unique ID of the attendee to delete.
      * @param callback   Callback to handle the outcome of the deletion process.
      */
     public void deleteAttendee(String attendeeId, final AttendeeDeleteCallback callback) {
-        try {
-            context.deleteFile(attendeeId + ".ser");
-        } catch (Exception ignored) {
-        }
         database.collection("Attendees").document(attendeeId)
                 .delete()
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
@@ -281,10 +234,35 @@ public class AttendeeController {
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         DocumentReference attendeeRef = database.collection("Attendees").document(document.getId());
                         batch.delete(attendeeRef);
-                        context.deleteFile(document.getId() + ".ser");
                     }
                     batch.commit().addOnSuccessListener(aVoid -> callback.onSuccess()).addOnFailureListener(callback::onError);
                 })
                 .addOnFailureListener(callback::onError);
     }
+
+    /**
+     * Deletes all attendees for a specific event from Firestore.
+     *
+     * @param eventID  The unique ID of the event.
+     * @param callback Callback to handle the outcome of the deletion process.
+     */
+    public void deleteAllAttendeesForEvent(String eventID, final DeleteAllAttendeesCallback callback) {
+        DocumentReference eventRef = database.collection("Events").document(eventID);
+
+        database.collection("Attendees")
+                .whereEqualTo("eventID", eventRef)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    WriteBatch batch = database.batch();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        DocumentReference attendeeRef = document.getReference();
+                        batch.delete(attendeeRef);
+                    }
+                    batch.commit()
+                            .addOnSuccessListener(aVoid -> callback.onSuccess())
+                            .addOnFailureListener(callback::onError);
+                })
+                .addOnFailureListener(callback::onError);
+    }
 }
+

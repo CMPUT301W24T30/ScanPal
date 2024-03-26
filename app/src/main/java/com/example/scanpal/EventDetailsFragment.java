@@ -115,7 +115,7 @@ public class EventDetailsFragment extends Fragment {
 
         // Setup user and attendee controllers
         UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
-        attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), getContext());
+        attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
 
 
         if (userController.fetchStoredUsername() != null) {
