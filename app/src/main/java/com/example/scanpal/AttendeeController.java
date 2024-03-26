@@ -239,5 +239,30 @@ public class AttendeeController {
                 })
                 .addOnFailureListener(callback::onError);
     }
+
+    /**
+     * Deletes all attendees for a specific event from Firestore.
+     *
+     * @param eventID  The unique ID of the event.
+     * @param callback Callback to handle the outcome of the deletion process.
+     */
+    public void deleteAllAttendeesForEvent(String eventID, final DeleteAllAttendeesCallback callback) {
+        DocumentReference eventRef = database.collection("Events").document(eventID);
+
+        database.collection("Attendees")
+                .whereEqualTo("eventID", eventRef)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    WriteBatch batch = database.batch();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        DocumentReference attendeeRef = document.getReference();
+                        batch.delete(attendeeRef);
+                    }
+                    batch.commit()
+                            .addOnSuccessListener(aVoid -> callback.onSuccess())
+                            .addOnFailureListener(callback::onError);
+                })
+                .addOnFailureListener(callback::onError);
+    }
 }
 
