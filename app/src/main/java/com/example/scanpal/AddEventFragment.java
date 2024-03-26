@@ -60,12 +60,6 @@ public class AddEventFragment extends Fragment {
     private Uri imageUri;
     private ImageView profileImageView;
     private ImageController imageController;
-    private ActivityResultLauncher<ScanOptions> qrCodeScanner;
-    private PlacesClient placesClient;
-    private String selectedLocationName;
-    private static final String TAG = "AddEditEvent";
-
-
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -75,6 +69,7 @@ public class AddEventFragment extends Fragment {
                     uploadImageToFirebase(imageUri);
                 }
             });
+    private ActivityResultLauncher<ScanOptions> qrCodeScanner;
     private PlacesClient placesClient;
     private String selectedLocationName;
 
