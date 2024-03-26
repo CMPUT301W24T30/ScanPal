@@ -62,7 +62,7 @@ public class User implements Serializable {
      * @return A string representing the URL to the generated default profile image.
      */
     public String createProfileImage(String username) {
-        return "https://www.gravatar.com/avatar/" + username + "?s=100&d=identicon&r=PG";
+        return "https://www.gravatar.com/avatar/" + username + "?s=400&d=wavatar&r=x";
     }
 
     public String getUsername() {
