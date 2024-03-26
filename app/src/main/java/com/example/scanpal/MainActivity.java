@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void setupButtonListeners() {
 
-        AttendeeController attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), this);
+        AttendeeController attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
         qrScannerController = new QrScannerController(attendeeController);
 
         // Initialize QR Code Scanner and set up scan button.

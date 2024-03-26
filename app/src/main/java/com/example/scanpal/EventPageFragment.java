@@ -80,7 +80,7 @@ public class EventPageFragment extends Fragment {
 
         fetchAllEvents();
 
-        AttendeeController attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), getContext());
+        AttendeeController attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
 
         // Set up button to add new events.
         FloatingActionButton addEventButton = view.findViewById(R.id.button_add_event);
