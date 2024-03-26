@@ -92,7 +92,7 @@ public class EditProfileFragment extends Fragment {
 
         imageController = new ImageController();
         userController = new UserController(FirebaseFirestore.getInstance(), getContext());
-        attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), getContext());
+        attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
 
         uploadButton.setOnClickListener(v -> openGallery());
 

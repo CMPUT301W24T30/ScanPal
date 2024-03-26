@@ -53,7 +53,7 @@ public class NotificationsFragment extends Fragment {
         //need a list of all eventIDs
         notificationsList.clear();
         AnnouncementController announcementController = new AnnouncementController();
-        AttendeeController attendeeController = new AttendeeController(FirebaseFirestore.getInstance(), this.getContext());
+        AttendeeController attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
         UserController userController = new UserController(FirebaseFirestore.getInstance(), this.getContext());
         String userName = userController.fetchStoredUsername();
 

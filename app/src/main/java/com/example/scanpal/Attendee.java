@@ -1,14 +1,11 @@
 package com.example.scanpal;
 
-import java.io.Serializable;
-
 /**
  * Represents an attendee of an event. This class encapsulates the data related to a user's
  * participation in an event, including their RSVP status and whether they have checked in.
  * Instances of this class are used to manage and track event attendees' interactions.
  */
-public class Attendee implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class Attendee {
     private String id;
     private User user;
     private String eventID;
