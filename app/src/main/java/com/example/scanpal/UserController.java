@@ -224,4 +224,22 @@ public class UserController {
         }
         return false;
     }
+
+    public void isUserSignedUp(String username, String eventID, UserSignedUpCallback callback) {
+        String attendeeID = username + eventID;
+        AttendeeController attendeeController = new AttendeeController(database);
+
+        attendeeController.fetchAttendee(attendeeID, new AttendeeFetchCallback() {
+            @Override
+            public void onSuccess(Attendee attendee) {
+                callback.onResult(attendee.isRsvp());
+            }
+
+            @Override
+            public void onError(Exception e) {
+                callback.onResult(false);
+            }
+        });
+    }
+
 }
