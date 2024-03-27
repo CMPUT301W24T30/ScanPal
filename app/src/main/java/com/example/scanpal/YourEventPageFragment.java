@@ -21,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Fragment for displaying a list of events. Allows users to navigate to event details,
@@ -35,10 +36,9 @@ public class YourEventPageFragment extends Fragment {
                     Toast.makeText(getContext(), "Notifications cannot be sent since the permission is disabled.", Toast.LENGTH_LONG).show();
                 }
             });
-    private final List<Event> eventsList = new ArrayList<>();
-    private ArrayList<String> testList;
-    private ArrayList<String> EventIDs;
-    private QrScannerController qrScannerController;
+    protected List<Event> eventsList = new ArrayList<>();
+    protected List<Event> allEvents = new ArrayList<>();
+
     private GridView gridView;
     private EventGridAdapter adapter;
     private EventController eventController;
@@ -48,7 +48,6 @@ public class YourEventPageFragment extends Fragment {
      * Default constructor for EventPageFragment.
      */
     public YourEventPageFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -72,15 +71,13 @@ public class YourEventPageFragment extends Fragment {
         });
 
         gridView.setOnItemClickListener((parent, view1, position, id) -> {
-            Event event = eventsList.get(position);
+            Event event = allEvents.get(position);
             Bundle bundle = new Bundle();
             bundle.putString("event_id", event.getId());
             NavHostFragment.findNavController(this).navigate(R.id.eventDetailsPage, bundle);
         });
 
-
-        askNotificationPermission();//ask the user for perms
-        // Fetch events from Firebase and update the grid
+        askNotificationPermission();
         fetchEventsAndUpdateGrid();
 
         return view;
@@ -94,15 +91,41 @@ public class YourEventPageFragment extends Fragment {
             eventController.getEventsByUser(new View(getContext()), new EventFetchByUserCallback() {
                 @Override
                 public void onSuccess(List<Event> events) {
-                    eventsList.clear();
-                    eventsList.addAll(events);
-                    adapter.setEvents(eventsList);
+                    allEvents.clear();
+                    allEvents.addAll(events);
+
+                    CountDownLatch latch = new CountDownLatch(allEvents.size());
+
+                    for (Event event : allEvents) {
+                        userController.isUserSignedUp(username, event.getId(), new UserSignedUpCallback() {
+                            @Override
+                            public void onResult(boolean isSignedUp) {
+                                event.setUserSignedUp(isSignedUp);
+                                latch.countDown();
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                latch.countDown();
+                            }
+                        });
+                    }
+
+                    new Thread(() -> {
+                        try {
+                            latch.await();
+                            requireActivity().runOnUiThread(() -> {
+                                allEvents.sort((o1, o2) -> Boolean.compare(o2.isUserSignedUp(), o1.isUserSignedUp()));
+                                adapter.setEvents(allEvents);
+                            });
+                        } catch (InterruptedException ignored) {
+                        }
+                    }).start();
                 }
 
                 @Override
                 public void onError(Exception e) {
-                    // Handle the error, possibly by showing a toast message
-                    Toast.makeText(getContext(), "Error fetching your events.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Error fetching all events.", Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
@@ -132,22 +155,10 @@ public class YourEventPageFragment extends Fragment {
      * only ask once, when the user first gets to this fragment
      */
     private void askNotificationPermission() {
-        // This is only necessary for API level >= 33 (TIRAMISU)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.POST_NOTIFICATIONS) ==
-                    PackageManager.PERMISSION_GRANTED) {
-
-                // FCM SDK and app can post notifications.
-            } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS)) {
-                // TODO: display an educational UI explaining to the user the features that will be enabled
-                //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
-                //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
-                //       If the user selects "No thanks," allow the user to continue without notifications.
-            } else {
-                // Directly ask for the user's permission
+            if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS);
             }
         }
-
     }
 }
