@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Fragment for displaying a list of events. Allows users to navigate to event details,
@@ -37,22 +38,15 @@ public class EventPageFragment extends Fragment {
                     Toast.makeText(getContext(), "Notifications cannot be sent since the permission is disabled.", Toast.LENGTH_LONG).show();
                 }
             });
-    private final List<Event> eventsList = new ArrayList<>();
-    private final List<Event> allEvents = new ArrayList<>();
-    private final List<Event> userEvents = new ArrayList<>();
-    private ArrayList<String> testList;
-    private ArrayList<String> EventIDs;
-    private QrScannerController qrScannerController;
-    private GridView gridView;
+    protected List<Event> eventsList = new ArrayList<>();
+    protected List<Event> allEvents = new ArrayList<>();
     private EventGridAdapter adapter;
     private EventController eventController;
-
 
     /**
      * Default constructor for EventPageFragment.
      */
     public EventPageFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -60,7 +54,7 @@ public class EventPageFragment extends Fragment {
         View view = inflater.inflate(R.layout.events_page, container, false);
 
         adapter = new EventGridAdapter(getContext(), new ArrayList<>());
-        gridView = view.findViewById(R.id.event_grid);
+        GridView gridView = view.findViewById(R.id.event_grid);
         gridView.setAdapter(adapter);
 
         // init eventController
@@ -80,8 +74,6 @@ public class EventPageFragment extends Fragment {
 
         fetchAllEvents();
 
-        AttendeeController attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
-
         // Set up button to add new events.
         FloatingActionButton addEventButton = view.findViewById(R.id.button_add_event);
         addEventButton.setOnClickListener(v -> {
@@ -90,15 +82,13 @@ public class EventPageFragment extends Fragment {
         });
 
         gridView.setOnItemClickListener((parent, view1, position, id) -> {
-            Event event = eventsList.get(position);
+            Event event = allEvents.get(position);
             Bundle bundle = new Bundle();
             bundle.putString("event_id", event.getId());
             NavHostFragment.findNavController(this).navigate(R.id.select_event, bundle);
         });
 
-
-        askNotificationPermission();//ask the user for perms
-        // Fetch events from Firebase and update the grid
+        askNotificationPermission();
         fetchEventsAndUpdateGrid();
 
         return view;
@@ -106,29 +96,49 @@ public class EventPageFragment extends Fragment {
 
 
     private void fetchAllEvents() {
+        UserController userController = new UserController(FirebaseFirestore.getInstance(), this.getContext());
         eventController.fetchAllEvents(new EventsFetchCallback() {
             @Override
             public void onSuccess(List<Event> events) {
                 allEvents.clear();
                 allEvents.addAll(events);
-                adapter.setEvents(allEvents);
+
+                CountDownLatch latch = new CountDownLatch(allEvents.size());
+
+                for (Event event : allEvents) {
+                    userController.isUserSignedUp(userController.fetchStoredUsername(), event.getId(), new UserSignedUpCallback() {
+                        @Override
+                        public void onResult(boolean isSignedUp) {
+                            event.setUserSignedUp(isSignedUp);
+                            latch.countDown();
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            latch.countDown();
+                        }
+                    });
+                }
+
+                new Thread(() -> {
+                    try {
+                        latch.await();
+                        requireActivity().runOnUiThread(() -> {
+                            allEvents.sort((o1, o2) -> Boolean.compare(o2.isUserSignedUp(), o1.isUserSignedUp()));
+                            adapter.setEvents(allEvents);
+                        });
+                    } catch (InterruptedException ignored) {
+                    }
+                }).start();
             }
 
             @Override
             public void onError(Exception e) {
-                // Handle the error, possibly by showing a toast message
                 Toast.makeText(getContext(), "Error fetching all events.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void showAllEvents() {
-        adapter.setEvents(allEvents);
-    }
-
-    private void showYourEvents() {
-        adapter.setEvents(userEvents);
-    }
 
     private void fetchEventsAndUpdateGrid() {
         EventController eventController = new EventController();
@@ -152,22 +162,10 @@ public class EventPageFragment extends Fragment {
      * only ask once, when the user first gets to this fragment
      */
     private void askNotificationPermission() {
-        // This is only necessary for API level >= 33 (TIRAMISU)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.POST_NOTIFICATIONS) ==
-                    PackageManager.PERMISSION_GRANTED) {
-
-                // FCM SDK and app can post notifications.
-            } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS)) {
-                // TODO: display an educational UI explaining to the user the features that will be enabled
-                //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
-                //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
-                //       If the user selects "No thanks," allow the user to continue without notifications.
-            } else {
-                // Directly ask for the user's permission
+            if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS);
             }
         }
-
     }
 }
