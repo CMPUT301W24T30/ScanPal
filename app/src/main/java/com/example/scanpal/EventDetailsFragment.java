@@ -137,7 +137,7 @@ public class EventDetailsFragment extends Fragment {
         // Navigate back to the events page
         backButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
-            navController.navigate(R.id.eventsPage);
+            navController.popBackStack();
         });
 
         // Implement event edit functionality
