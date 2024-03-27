@@ -15,9 +15,10 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Manages user data interactions with a Firestore database, including adding,
- * updating, and fetching user details.
+ * Handles interactions with the Firestore database for user-related operations. This includes
+ * adding, updating, fetching, and removing user data, as well as managing user sessions locally.
  */
+
 public class UserController {
     private final FirebaseFirestore database;
     private final Context context;
@@ -38,7 +39,7 @@ public class UserController {
      * username already exists in the database, an error is reported through the
      * callback.
      *
-     * @param user     The User object to add to the database.
+     * @param user     The User object to add.
      * @param callback The callback to report success or failure.
      */
     public void addUser(User user, UserAddCallback callback) {
@@ -225,6 +226,16 @@ public class UserController {
         return false;
     }
 
+    /**
+     * Checks if a user is signed up for a specific event based on the user's username and the event ID.
+     * Utilizes the AttendeeController to fetch attendee information and determine their RSVP status.
+     *
+     * @param username The username of the user whose sign-up status is to be checked.
+     * @param eventID  The unique identifier of the event.
+     * @param callback A UserSignedUpCallback instance to handle the result or error of the check.
+     *                 The callback's onResult method is invoked with true if the user has RSVP'd
+     *                 to the event, or false otherwise.
+     */
     public void isUserSignedUp(String username, String eventID, UserSignedUpCallback callback) {
         String attendeeID = username + eventID;
         AttendeeController attendeeController = new AttendeeController(database);
@@ -241,5 +252,4 @@ public class UserController {
             }
         });
     }
-
 }

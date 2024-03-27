@@ -45,7 +45,7 @@ public class YourEventPageFragment extends Fragment {
 
 
     /**
-     * Default constructor for EventPageFragment.
+     * Default constructor. Initializes the fragment.
      */
     public YourEventPageFragment() {
     }
@@ -83,6 +83,10 @@ public class YourEventPageFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Fetches all events organized by the user from the data source and updates the grid view accordingly.
+     * Applies filters based on user sign-up status and sorts events.
+     */
     private void fetchYourEvents() {
         UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
         String username = userController.fetchStoredUsername();
@@ -133,6 +137,10 @@ public class YourEventPageFragment extends Fragment {
         }
     }
 
+    /**
+     * Fetches events from the data source and updates the grid view.
+     * This method differs from fetchYourEvents by focusing on updating the existing list.
+     */
     private void fetchEventsAndUpdateGrid() {
         EventController eventController = new EventController();
         eventController.fetchAllEvents(new EventsFetchCallback() {
@@ -151,8 +159,8 @@ public class YourEventPageFragment extends Fragment {
     }
 
     /**
-     * Sends a pop to the user asking for notifications permissions
-     * only ask once, when the user first gets to this fragment
+     * Requests the POST_NOTIFICATIONS permission from the user at runtime.
+     * This method is only relevant for devices running on Android Tiramisu (API level 33) or above.
      */
     private void askNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

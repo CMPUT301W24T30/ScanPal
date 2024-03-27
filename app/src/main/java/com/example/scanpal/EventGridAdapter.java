@@ -16,25 +16,52 @@ import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
 
+/**
+ * Adapter for displaying event data in a grid format. This adapter binds event data to views
+ * represented by grid items in a GridView.
+ */
 public class EventGridAdapter extends BaseAdapter {
     protected Context context;
     protected List<Event> events;
 
+    /**
+     * Constructs an EventGridAdapter with the specified context and event list.
+     *
+     * @param context The current context. Used to inflate layout files and access resources.
+     * @param events  A list of event models to be displayed in the grid.
+     */
     public EventGridAdapter(Context context, List<Event> events) {
         this.context = context;
         this.events = events;
     }
 
+    /**
+     * Returns the number of events in the dataset represented by this Adapter.
+     *
+     * @return Count of events.
+     */
     @Override
     public int getCount() {
         return events.size();
     }
 
+    /**
+     * Gets the data item associated with the specified position in the data set.
+     *
+     * @param position Position of the item within the adapter's data set whose data we want.
+     * @return The Event object at the specified position.
+     */
     @Override
     public Object getItem(int position) {
         return events.get(position);
     }
 
+    /**
+     * Get the row id associated with the specified position in the list.
+     *
+     * @param position The position of the item within the adapter's data set.
+     * @return The id of the item at the specified position.
+     */
     @Override
     public long getItemId(int position) {
         return position;
@@ -68,9 +95,14 @@ public class EventGridAdapter extends BaseAdapter {
         return convertView;
     }
 
+    /**
+     * Updates the events list of the adapter and notifies the GridView to refresh the data set.
+     *
+     * @param newEvents The new list of events to replace the old one.
+     */
     public void setEvents(List<Event> newEvents) {
         this.events.clear();
         this.events.addAll(newEvents);
-        notifyDataSetChanged(); // Notify the grid that the data has changed
+        notifyDataSetChanged();
     }
 }
