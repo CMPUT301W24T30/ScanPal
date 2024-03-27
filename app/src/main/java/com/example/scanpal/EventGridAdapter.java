@@ -1,6 +1,7 @@
 package com.example.scanpal;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,15 +9,16 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.google.android.material.card.MaterialCardView;
+
 import java.util.List;
 
-
-
 public class EventGridAdapter extends BaseAdapter {
-    private Context context;
-    private List<Event> events;
+    protected Context context;
+    protected List<Event> events;
 
     public EventGridAdapter(Context context, List<Event> events) {
         this.context = context;
@@ -48,19 +50,20 @@ public class EventGridAdapter extends BaseAdapter {
 
         ImageView imageView = convertView.findViewById(R.id.event_image);
         TextView textView = convertView.findViewById(R.id.event_title);
-
+        MaterialCardView cardView = convertView.findViewById(R.id.cardview);
 
         // Log the poster URI
         Log.d("EventGridAdapter", "Loading image for event: " + event.getName() + " | URI: " + event.getPosterURI());
 
-
-        // Use a library like Glide or Picasso to load images from URLs
         Glide.with(context)
                 .load(event.getPosterURI())
                 .transform(new RoundedCorners(16))
                 .into(imageView);
 
         textView.setText(event.getName());
+
+        int strokeColor = event.isUserSignedUp() ? Color.parseColor("#4CAF50") : Color.parseColor("#0D6EFD");
+        cardView.setStrokeColor(strokeColor);
 
         return convertView;
     }
@@ -71,4 +74,3 @@ public class EventGridAdapter extends BaseAdapter {
         notifyDataSetChanged(); // Notify the grid that the data has changed
     }
 }
-
