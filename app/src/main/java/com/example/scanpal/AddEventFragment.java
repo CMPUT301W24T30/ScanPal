@@ -50,7 +50,7 @@ public class AddEventFragment extends Fragment {
     Button GenerateQrCodeButton;
     Button CustomQrCodeButton;
     Boolean QrChoice = Boolean.FALSE;
-    String QrID;
+    String QrID = null;
     EditText attendeesForm;
     EditText eventNameForm;
     EditText eventDescriptionForm;
@@ -127,9 +127,13 @@ public class AddEventFragment extends Fragment {
         // Initialize QR Code Scanner
         qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
             if (result.getContents() != null) {
-                Toast.makeText(view.getContext(), "QR Code Scanned", Toast.LENGTH_SHORT).show();
-                QrID = result.getContents();
-                QrChoice = Boolean.TRUE;
+                if (result.getContents().startsWith("https://") || result.getContents().startsWith("www")) {
+                    Toast.makeText(view.getContext(), "Invalid QR Code", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(view.getContext(), "QR Code Scanned", Toast.LENGTH_SHORT).show();
+                    QrID = result.getContents();
+                    QrChoice = Boolean.TRUE;
+                }
             } else {
                 Toast.makeText(view.getContext(), "Invalid QR Code", Toast.LENGTH_SHORT).show();
             }
@@ -160,7 +164,7 @@ public class AddEventFragment extends Fragment {
                 newEvent.setPosterURI(imageUri);
                 newEvent.setAnnouncementCount(0L);
 
-                eventController.addEvent(newEvent);
+                eventController.addEvent(newEvent, QrID);
                 uploadImageToFirebase(imageUri);
 
                 progressBar.setVisibility(View.GONE);
