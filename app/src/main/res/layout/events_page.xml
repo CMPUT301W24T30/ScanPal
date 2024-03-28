@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="#0D6EFD"
         android:clickable="true"
+        android:focusable="true"
         android:theme="@style/AppTheme"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,8 +41,9 @@
     <GridView
         android:id="@+id/event_grid"
         android:layout_width="match_parent"
-        android:layout_height="646dp"
+        android:layout_height="0dp"
         android:layout_marginStart="1dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="1dp"
         android:horizontalSpacing="10dp"
         android:numColumns="2"

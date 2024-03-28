@@ -23,6 +23,7 @@ public class Event {
     private Bitmap qrToEvent;
     private Bitmap qrToCheckIn;
     private Long announcementCount;
+    private boolean isUserSignedUp;
 
     /**
      * Constructs an event with an organizer, name, and description.
@@ -140,5 +141,13 @@ public class Event {
 
     public void setAnnouncementCount(Long announcementCount) {
         this.announcementCount = announcementCount;
+    }
+
+    public boolean isUserSignedUp() {
+        return isUserSignedUp;
+    }
+
+    public void setUserSignedUp(boolean userSignedUp) {
+        isUserSignedUp = userSignedUp;
     }
 }
