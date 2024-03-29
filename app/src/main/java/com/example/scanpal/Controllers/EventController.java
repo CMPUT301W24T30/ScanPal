@@ -1,6 +1,5 @@
 package com.example.scanpal.Controllers;
 
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
@@ -95,18 +94,6 @@ public class EventController {
             participantRefs.add(participantRef);
         }
         eventMap.put("participants", participantRefs);
-
-        // Creating bitmap for qrcode and add it to event
-        Bitmap qr_to_event = QrCodeController.generate("E" + event.getId());
-        event.setQrToEvent(qr_to_event);
-
-        // Storing the bitmap into firebase by converting into byte array
-        assert qr_to_event != null;
-        byte[] imageDataEvent = QrCodeController.bitmapToByteArray(qr_to_event);
-
-        // Creating bitmap for qrcode check-in
-        Bitmap qr_to_checkin = QrCodeController.generate("C" + event.getId());
-        event.setQrToCheckIn(qr_to_checkin);
 
         // Generate Qr Code or get custom code
         QrCodeController qrCodeController = new QrCodeController();

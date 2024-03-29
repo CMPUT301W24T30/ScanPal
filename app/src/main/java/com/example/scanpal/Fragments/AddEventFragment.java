@@ -40,6 +40,7 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
@@ -138,12 +139,19 @@ public class AddEventFragment extends Fragment {
         // Initialize QR Code Scanner
         qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
             if (result.getContents() != null) {
-                if (result.getContents().startsWith("https://") || result.getContents().startsWith("www")) {
-                    Toast.makeText(view.getContext(), "Invalid QR Code", Toast.LENGTH_SHORT).show();
+                // Ensure event doesn't already exist
+                FirebaseFirestore database = FirebaseFirestore.getInstance();
+                DocumentSnapshot doc = database.collection("Events").document(result.getContents()).get().getResult();
+                if (doc != null && doc.exists()) {
+                    Toast.makeText(view.getContext(), "Event QR Code is in use", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(view.getContext(), "QR Code Scanned", Toast.LENGTH_SHORT).show();
-                    QrID = result.getContents();
-                    QrChoice = Boolean.TRUE;
+                    if (result.getContents().startsWith("https://") || result.getContents().startsWith("www")) {  // ensure not a url
+                        Toast.makeText(view.getContext(), "Invalid QR Code", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(view.getContext(), "QR Code Scanned", Toast.LENGTH_SHORT).show();
+                        QrID = result.getContents();
+                        QrChoice = Boolean.TRUE;
+                    }
                 }
             } else {
                 Toast.makeText(view.getContext(), "Invalid QR Code", Toast.LENGTH_SHORT).show();
