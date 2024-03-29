@@ -10,6 +10,9 @@ import androidx.core.splashscreen.SplashScreen;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.scanpal.Controllers.AttendeeController;
+import com.example.scanpal.Controllers.QrScannerController;
+import com.example.scanpal.Controllers.UserController;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.ScanContract;
