@@ -35,11 +35,18 @@ public class ShowQrFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.show_qr, container, false);
+        FloatingActionButton backButton = view.findViewById(R.id.button_go_back);
+
         assert getArguments() != null;
 
         String eventID = getArguments().getString("event_id");
         String request = getArguments().getString("request");
         String eventName = getArguments().getString("eventName");
+
+        backButton.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(ShowQrFragment.this);
+            navController.popBackStack();
+        });
 
         // Show either check in code or event code based on request
         if (request == "check-in") {
@@ -49,13 +56,6 @@ public class ShowQrFragment extends Fragment {
             textView.setText("Event Details");
             showEvent(eventID,view,eventName);
         }
-
-        // Back button
-        FloatingActionButton back = view.findViewById(R.id.button_go_back);
-        back.setOnClickListener( v-> {
-            NavController navController = NavHostFragment.findNavController(ShowQrFragment.this);
-            navController.navigate(R.id.show_qr_to_eventDetails);
-        });
 
         return view;
     }
