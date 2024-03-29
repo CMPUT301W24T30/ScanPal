@@ -71,7 +71,7 @@ loadScripts(document, 'script');</script>
 <h1 title="Class EventController" class="title">Class EventController</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">com.example.scanpal.EventController</div>
+<div class="inheritance">com.example.scanpal.Controllers.EventController</div>
 </div>
 <section class="class-description" id="class-description">
 <hr>
@@ -108,21 +108,21 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addEvent(com.example.scanpal.Event)" class="member-name-link">addEvent</a><wbr>(<a href="Event.html" title="class in com.example.scanpal">Event</a>&nbsp;event)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addEvent(com.example.scanpal.Models.Event)" class="member-name-link">addEvent</a><wbr>(<a href="Event.html" title="class in com.example.scanpal">Event</a>&nbsp;event)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Adds a new event to the Firestore database.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#editEventById(java.lang.String,com.example.scanpal.Event)" class="member-name-link">editEventById</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;EventID,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#editEventById(java.lang.String,com.example.scanpal.Models.Event)" class="member-name-link">editEventById</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;EventID,
  <a href="Event.html" title="class in com.example.scanpal">Event</a>&nbsp;event)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">edits an existing event in database given its ID</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fetchAllEvents(com.example.scanpal.EventsFetchCallback)" class="member-name-link">fetchAllEvents</a><wbr>(<a href="EventsFetchCallback.html" title="interface in com.example.scanpal">EventsFetchCallback</a>&nbsp;callback)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fetchAllEvents(com.example.scanpal.Callbacks.EventsFetchCallback)" class="member-name-link">fetchAllEvents</a><wbr>(<a href="EventsFetchCallback.html" title="interface in com.example.scanpal">EventsFetchCallback</a>&nbsp;callback)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fetchEventOrganizerByRef(com.google.firebase.firestore.DocumentReference,com.example.scanpal.UserFetchCallback)" class="member-name-link">fetchEventOrganizerByRef</a><wbr>(com.google.firebase.firestore.DocumentReference&nbsp;eventRef,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fetchEventOrganizerByRef(com.google.firebase.firestore.DocumentReference,com.example.scanpal.Callbacks.UserFetchCallback)" class="member-name-link">fetchEventOrganizerByRef</a><wbr>(com.google.firebase.firestore.DocumentReference&nbsp;eventRef,
  <a href="UserFetchCallback.html" title="interface in com.example.scanpal">UserFetchCallback</a>&nbsp;callback)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.google.firebase.firestore.FirebaseFirestore</code></div>
@@ -131,13 +131,13 @@ loadScripts(document, 'script');</script>
 <div class="block">Retrieves the Firestore database instance used for event operations.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getEventById(java.lang.String,com.example.scanpal.EventFetchCallback)" class="member-name-link">getEventById</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;EventID,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getEventById(java.lang.String,com.example.scanpal.Callbacks.EventFetchCallback)" class="member-name-link">getEventById</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;EventID,
  <a href="EventFetchCallback.html" title="interface in com.example.scanpal">EventFetchCallback</a>&nbsp;callback)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">gives an event object from database given its ID</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getEventsByUser(android.view.View,com.example.scanpal.EventFetchByUserCallback)" class="member-name-link">getEventsByUser</a><wbr>(android.view.View&nbsp;view,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getEventsByUser(android.view.View,com.example.scanpal.Callbacks.EventFetchByUserCallback)" class="member-name-link">getEventsByUser</a><wbr>(android.view.View&nbsp;view,
  <a href="EventFetchByUserCallback.html" title="interface in com.example.scanpal">EventFetchByUserCallback</a>&nbsp;callback)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">This will give back an arrayList of event Type, consisting of events created
@@ -187,7 +187,7 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="addEvent(com.example.scanpal.Event)">
+<section class="detail" id="addEvent(com.example.scanpal.Models.Event)">
 <h3>addEvent</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addEvent</span><wbr><span class="parameters">(<a href="Event.html" title="class in com.example.scanpal">Event</a>&nbsp;event)</span></div>
 <div class="block">Adds a new event to the Firestore database.</div>
@@ -198,13 +198,13 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="fetchAllEvents(com.example.scanpal.EventsFetchCallback)">
+<section class="detail" id="fetchAllEvents(com.example.scanpal.Callbacks.EventsFetchCallback)">
 <h3>fetchAllEvents</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">fetchAllEvents</span><wbr><span class="parameters">(<a href="EventsFetchCallback.html" title="interface in com.example.scanpal">EventsFetchCallback</a>&nbsp;callback)</span></div>
 </section>
 </li>
 <li>
-<section class="detail" id="getEventsByUser(android.view.View,com.example.scanpal.EventFetchByUserCallback)">
+<section class="detail" id="getEventsByUser(android.view.View,com.example.scanpal.Callbacks.EventFetchByUserCallback)">
 <h3>getEventsByUser</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">getEventsByUser</span><wbr><span class="parameters">(android.view.View&nbsp;view,
  <a href="EventFetchByUserCallback.html" title="interface in com.example.scanpal">EventFetchByUserCallback</a>&nbsp;callback)</span></div>
@@ -213,7 +213,7 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getEventById(java.lang.String,com.example.scanpal.EventFetchCallback)">
+<section class="detail" id="getEventById(java.lang.String,com.example.scanpal.Callbacks.EventFetchCallback)">
 <h3>getEventById</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">getEventById</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;EventID,
  <a href="EventFetchCallback.html" title="interface in com.example.scanpal">EventFetchCallback</a>&nbsp;callback)</span></div>
@@ -226,7 +226,7 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="editEventById(java.lang.String,com.example.scanpal.Event)">
+<section class="detail" id="editEventById(java.lang.String,com.example.scanpal.Models.Event)">
 <h3>editEventById</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">editEventById</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;EventID,
  <a href="Event.html" title="class in com.example.scanpal">Event</a>&nbsp;event)</span></div>
@@ -239,7 +239,7 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="fetchEventOrganizerByRef(com.google.firebase.firestore.DocumentReference,com.example.scanpal.UserFetchCallback)">
+<section class="detail" id="fetchEventOrganizerByRef(com.google.firebase.firestore.DocumentReference,com.example.scanpal.Callbacks.UserFetchCallback)">
 <h3>fetchEventOrganizerByRef</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">fetchEventOrganizerByRef</span><wbr><span class="parameters">(com.google.firebase.firestore.DocumentReference&nbsp;eventRef,
  <a href="UserFetchCallback.html" title="interface in com.example.scanpal">UserFetchCallback</a>&nbsp;callback)</span></div>
