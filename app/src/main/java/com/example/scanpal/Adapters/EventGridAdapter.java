@@ -1,4 +1,4 @@
-package com.example.scanpal.Controllers;
+package com.example.scanpal.Adapters;
 
 import android.content.Context;
 import android.graphics.Color;

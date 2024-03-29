@@ -20,7 +20,7 @@ import com.example.scanpal.Controllers.AttendeeController;
 import com.example.scanpal.Callbacks.AttendeeFetchCallback;
 import com.example.scanpal.Controllers.EventController;
 import com.example.scanpal.Callbacks.EventIDsFetchCallback;
-import com.example.scanpal.Controllers.NotificationListAdapter;
+import com.example.scanpal.Adapters.NotificationListAdapter;
 import com.example.scanpal.R;
 import com.example.scanpal.Controllers.UserController;
 import com.google.firebase.firestore.FirebaseFirestore;

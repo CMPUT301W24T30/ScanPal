@@ -18,7 +18,7 @@ import com.example.scanpal.Models.Attendee;
 import com.example.scanpal.Controllers.AttendeeController;
 import com.example.scanpal.Callbacks.AttendeeSignedUpFetchCallback;
 import com.example.scanpal.R;
-import com.example.scanpal.Controllers.UsersAdapter;
+import com.example.scanpal.Adapters.UsersAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 

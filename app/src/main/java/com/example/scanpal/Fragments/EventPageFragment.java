@@ -20,7 +20,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.Controllers.EventController;
-import com.example.scanpal.Controllers.EventGridAdapter;
+import com.example.scanpal.Adapters.EventGridAdapter;
 import com.example.scanpal.Callbacks.EventsFetchCallback;
 import com.example.scanpal.R;
 import com.example.scanpal.Controllers.UserController;
