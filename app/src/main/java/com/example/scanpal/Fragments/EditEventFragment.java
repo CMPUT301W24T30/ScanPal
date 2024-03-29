@@ -54,6 +54,8 @@ import java.util.Arrays;
 public class EditEventFragment extends Fragment {
     private Button saveButton, editImageButton, deleteButton;
     private FloatingActionButton backButton;
+    Button GenerateQrCodeButton;
+    Button CustomQrCodeButton;
     private EditText eventNameForm, eventDescriptionForm, attendeesForm;
     private TextView pageHeader;
     private ImageView eventImageView;
@@ -110,6 +112,10 @@ public class EditEventFragment extends Fragment {
         attendeesForm = view.findViewById(R.id.add_edit_event_Attendees);
         eventImageView = view.findViewById(R.id.add_edit_event_ImageView);
         progressBar = view.findViewById(R.id.progressBar);
+        this.GenerateQrCodeButton = view.findViewById(R.id.generate_qr_code);
+        this.CustomQrCodeButton = view.findViewById(R.id.custom_qr_code);
+        this.GenerateQrCodeButton.setVisibility(View.GONE);
+        this.CustomQrCodeButton.setVisibility(View.GONE);
         autocompleteFragment = (AutocompleteSupportFragment)
                 getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
         Places.initialize(requireContext(), BuildConfig.MAPS_API_KEY);

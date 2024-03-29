@@ -24,14 +24,15 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.scanpal.BuildConfig;
-import com.example.scanpal.Models.Event;
+import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Controllers.EventController;
 import com.example.scanpal.Controllers.ImageController;
-import com.example.scanpal.MainActivity;
-import com.example.scanpal.R;
-import com.example.scanpal.Models.User;
+import com.example.scanpal.Controllers.QrScannerController;
 import com.example.scanpal.Controllers.UserController;
-import com.example.scanpal.Callbacks.UserFetchCallback;
+import com.example.scanpal.MainActivity;
+import com.example.scanpal.Models.Event;
+import com.example.scanpal.Models.User;
+import com.example.scanpal.R;
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -40,6 +41,8 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.Arrays;
 
@@ -54,6 +57,10 @@ public class AddEventFragment extends Fragment {
     FloatingActionButton backButton;
     Button deleteButton;
     Button editImageButton;
+    Button GenerateQrCodeButton;
+    Button CustomQrCodeButton;
+    Boolean QrChoice = Boolean.FALSE;
+    String QrID = null;
     EditText attendeesForm;
     EditText eventNameForm;
     EditText eventDescriptionForm;
@@ -75,6 +82,7 @@ public class AddEventFragment extends Fragment {
     private ImageController imageController;
     private PlacesClient placesClient;
     private String selectedLocationName;
+    private ActivityResultLauncher<ScanOptions> qrCodeScanner;
 
 
     public AddEventFragment() {
@@ -127,6 +135,21 @@ public class AddEventFragment extends Fragment {
             }
         });
 
+        // Initialize QR Code Scanner
+        qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
+            if (result.getContents() != null) {
+                if (result.getContents().startsWith("https://") || result.getContents().startsWith("www")) {
+                    Toast.makeText(view.getContext(), "Invalid QR Code", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(view.getContext(), "QR Code Scanned", Toast.LENGTH_SHORT).show();
+                    QrID = result.getContents();
+                    QrChoice = Boolean.TRUE;
+                }
+            } else {
+                Toast.makeText(view.getContext(), "Invalid QR Code", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         this.newEvent = new Event(this.Organizer, "", "");
 
         saveButton.setOnClickListener(v -> {
@@ -136,7 +159,8 @@ public class AddEventFragment extends Fragment {
                     selectedLocationName == null || selectedLocationName.isEmpty() ||
                     eventDescriptionForm.getText().toString().isEmpty() ||
                     attendeesForm.getText().toString().isEmpty() ||
-                    null == imageUri) {
+                    null == imageUri||
+                    QrChoice != Boolean.TRUE) {
 
                 Toast.makeText(view.getContext(), "Please input all Information", Toast.LENGTH_LONG).show();
 
@@ -151,7 +175,7 @@ public class AddEventFragment extends Fragment {
                 newEvent.setPosterURI(imageUri);
                 newEvent.setAnnouncementCount(0L);
 
-                eventController.addEvent(newEvent);
+                eventController.addEvent(newEvent, QrID);
                 uploadImageToFirebase(imageUri);
 
                 progressBar.setVisibility(View.GONE);
@@ -168,6 +192,26 @@ public class AddEventFragment extends Fragment {
         });
 
         editImageButton.setOnClickListener(v -> openGallery());
+
+        // Qr code buttons
+        this.GenerateQrCodeButton = view.findViewById(R.id.generate_qr_code);
+        GenerateQrCodeButton.setOnClickListener(v -> {
+            QrChoice = Boolean.TRUE;
+            QrID = null;
+            Toast.makeText(view.getContext(), "Generated QR Code", Toast.LENGTH_SHORT).show();
+            this.GenerateQrCodeButton.setVisibility(View.GONE);
+            this.CustomQrCodeButton.setVisibility(View.GONE);
+        });
+
+        this.CustomQrCodeButton = view.findViewById(R.id.custom_qr_code);
+        CustomQrCodeButton.setOnClickListener(v -> {
+            // Request to scan qr code
+            qrCodeScanner.launch(QrScannerController.getOptions());
+            if (QrChoice) {
+                this.GenerateQrCodeButton.setVisibility(View.GONE);
+                this.CustomQrCodeButton.setVisibility(View.GONE);
+            }
+        });
 
         // Initialize Places and AutocompleteSupportFragment
         if (!Places.isInitialized()) {
