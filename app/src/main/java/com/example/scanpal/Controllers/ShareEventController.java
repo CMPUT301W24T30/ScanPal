@@ -12,6 +12,9 @@ import androidx.core.content.FileProvider;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -24,6 +27,7 @@ import java.io.FileOutputStream;
 public class ShareEventController {
 
     private final FirebaseStorage storage = FirebaseStorage.getInstance();
+    FirebaseFirestore database = FirebaseFirestore.getInstance();
     private final Context context;
 
     public ShareEventController(Context context) {
@@ -37,39 +41,46 @@ public class ShareEventController {
      */
     public void shareQrCode(String eventID){
         // Take event id, get image, and put it into bitmap
-        String imageName = eventID + "-event.png";
-        StorageReference imageRef = storage.getReference().child("qr-codes/" + imageName);
+        try {
+            String imageName = eventID + "-event.png";
+            StorageReference imageRef = storage.getReference().child("qr-codes/" + imageName);
+            // download image into bitmap
+            imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    // convert to bitmap
+                    Bitmap imageBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    shareIntent(imageBitmap, eventID);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle error
+                    Toast.makeText(context, "Error Retrieving Image", Toast.LENGTH_SHORT).show();
+                }
 
-        // download image into bitmap
-        imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                // convert to bitmap
-                Bitmap imageBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                shareIntent(imageBitmap);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle error
-                Toast.makeText(context, "Error Retrieving Image", Toast.LENGTH_SHORT).show();
-            }
-
-        });
-
+            });
+        } catch (Exception e) {
+            Toast.makeText(context, "Error Retrieving Image", Toast.LENGTH_SHORT).show();
+        }
     }
     /**
      * Initiates the intent that will pop up the share menu
      *
      * @param imageBitmap The bitmap for the qr code to be shared
+     * @eventID id of the event being shared
      */
-    public void shareIntent(Bitmap imageBitmap) {
+    public void shareIntent(Bitmap imageBitmap, String eventID) {
         Uri uri = getUri(imageBitmap);
         Intent intent = new Intent(Intent.ACTION_SEND);
+        String eventName = null;
+
+        DocumentReference EventDocument = database.collection("Events").document(eventID);
+        DocumentSnapshot doc = EventDocument.get().getResult();
+        eventName = doc.getString("name");
 
         intent.putExtra(Intent.EXTRA_STREAM, uri);
-        intent.putExtra(Intent.EXTRA_TEXT, "Sharing QR Code");
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Join this event!");
+        intent.putExtra(Intent.EXTRA_TEXT, "QR Code for event: " + eventName);
         intent.setType("image/png");
         context.startActivity(Intent.createChooser(intent, "Share via"));
     }
