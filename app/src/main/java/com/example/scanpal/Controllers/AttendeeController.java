@@ -224,6 +224,59 @@ public class AttendeeController {
                 .addOnFailureListener(e -> callback.onFailure(new Exception("Error fetching attendees", e)));
     }
 
+    public void fetchCheckedInUsers(String eventID, AttendeeSignedUpFetchCallback callback) {
+        DocumentReference eventRef = database.collection("Events").document(eventID);
+        ArrayList<Attendee> attendees = new ArrayList<>();
+
+        database.collection("Attendees")
+                .whereEqualTo("eventID", eventRef)
+                .whereEqualTo("checkedIn", true)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        callback.onSuccess(attendees);
+                        return;
+                    }
+
+                    AtomicInteger completedFetches = new AtomicInteger();
+                    int totalAttendees = queryDocumentSnapshots.size();
+
+                    queryDocumentSnapshots.forEach(attendeeDoc -> {
+                        DocumentReference userRef = attendeeDoc.getDocumentReference("user");
+                        if (userRef == null) {
+                            if (completedFetches.incrementAndGet() == totalAttendees) {
+                                callback.onSuccess(attendees);
+                            }
+                            return;
+                        }
+                        userRef.get().addOnSuccessListener(userDocSnapshot -> {
+                            if (userDocSnapshot.exists()) {
+                                User user = new User(
+                                        userDocSnapshot.getId(),
+                                        userDocSnapshot.getString("firstName"),
+                                        userDocSnapshot.getString("lastName"),
+                                        userDocSnapshot.getString("photo"),
+                                        userDocSnapshot.getString("deviceToken")
+                                );
+
+                                Attendee attendee = new Attendee(
+                                        user,
+                                        Objects.requireNonNull(attendeeDoc.getDocumentReference("eventID")).toString(),
+                                        Boolean.TRUE.equals(attendeeDoc.getBoolean("rsvp")),
+                                        Boolean.TRUE.equals(attendeeDoc.getBoolean("checkedIn"))
+                                );
+                                attendee.setLocation(attendeeDoc.getString("location"));
+                                attendees.add(attendee);
+                            }
+                            if (completedFetches.incrementAndGet() == totalAttendees) {
+                                callback.onSuccess(attendees);
+                            }
+                        }).addOnFailureListener(e -> callback.onFailure(new Exception("Error fetching attendee user details", e)));
+                    });
+                })
+                .addOnFailureListener(e -> callback.onFailure(new Exception("Error fetching attendees", e)));
+    }
+
     /**
      * Deletes all attendee records associated with a specific user from Firestore and local storage.
      * <p>
