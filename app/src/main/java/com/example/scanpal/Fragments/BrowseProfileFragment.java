@@ -16,6 +16,7 @@ import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.Models.User;
 import com.example.scanpal.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class BrowseProfileFragment extends Fragment {
@@ -77,6 +78,9 @@ public class BrowseProfileFragment extends Fragment {
                 }
             }
         });
+
+        FloatingActionButton addEventButton = view.findViewById(R.id.button_add_event);
+        addEventButton.setVisibility(View.INVISIBLE);
 
         return view;
     }
