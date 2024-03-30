@@ -80,7 +80,6 @@ public class EventController {
         eventMap.put("announcementCount", 0L);
         eventMap.put("trackLocation", event.isTrackLocation());
         eventMap.put("locationCoords", event.getLocationCoords());
-	    eventMap.put("maxAttendees", event.getMaximumAttendees());
 
         DocumentReference organizerRef = database.collection("Users").document(event.getOrganizer().getUsername());
         eventMap.put("organizer", organizerRef);
@@ -306,7 +305,7 @@ public class EventController {
             eventMap.put("capacity", event.getMaximumAttendees());
             eventMap.put("announcementCount", event.getAnnouncementCount());
             eventMap.put("trackLocation", event.isTrackLocation());
-	        eventMap.put("maxAttendees", event.getMaximumAttendees());
+
 
             DocumentReference eventRef = database.collection("Events").document(event.getId());
             eventRef.update(eventMap).addOnSuccessListener(aVoid -> callback.onSuccess(true)).addOnFailureListener(callback::onError);
