@@ -1,7 +1,17 @@
-package com.example.scanpal;
+package com.example.scanpal.Controllers;
 
+import android.content.Context;
 import android.util.Log;
 
+import com.example.scanpal.Callbacks.AttendeeFetchCallback;
+import com.example.scanpal.Callbacks.AttendeeUpdateCallback;
+import com.example.scanpal.Callbacks.EventFetchCallback;
+import com.example.scanpal.Callbacks.UserFetchCallback;
+import com.example.scanpal.Models.Attendee;
+import com.example.scanpal.Models.Capture;
+import com.example.scanpal.Models.Event;
+import com.example.scanpal.Models.User;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 /**
