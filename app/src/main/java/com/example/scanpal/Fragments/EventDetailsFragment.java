@@ -26,6 +26,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.scanpal.Callbacks.AttendeeSignedUpFetchCallback;
 import com.example.scanpal.Controllers.AnnouncementController;
 import com.example.scanpal.Controllers.AttendeeController;
 import com.example.scanpal.Callbacks.AttendeeAddCallback;
@@ -53,6 +54,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -73,6 +75,7 @@ public class EventDetailsFragment extends Fragment {
     private String eventOrganizer;
     private String getEventOrganizerUserName;
     private String eventLocation;
+    private long eventMaxAttendees;
     private ImageView eventPoster;
     private Long eventAnnouncementCount;
     private String ImageURI;
@@ -232,6 +235,19 @@ public class EventDetailsFragment extends Fragment {
             } else {
                 showConfirmationDialog("Join Event", "Do you want to RSVP to this event?",
                         () -> {
+
+                    attendeeController.fetchSignedUpUsers(eventID, new AttendeeSignedUpFetchCallback() {
+                        @Override
+                        public void onSuccess(ArrayList<Attendee> attendees) {
+                            int currentCount = attendees.size();//how many people are signed up
+
+                            if(currentCount >= eventMaxAttendees) {
+                                // handle here
+                                Toast.makeText(getContext(), "This event is full.", Toast.LENGTH_SHORT).show();
+                                return;
+
+                            }
+
                             if (eventID != null && userDetails != null) {
                                 String attendeeId = userDetails.getUsername() + eventID;
                                 attendee = new Attendee(userDetails, eventID, true, false);
@@ -255,7 +271,18 @@ public class EventDetailsFragment extends Fragment {
                                     }
                                 });
                             }
+
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            Toast.makeText(getContext(), "Failed to Get attendees count", Toast.LENGTH_LONG).show();
+
+                        }
+
                         });
+
+                });
             }
         });
 
@@ -361,6 +388,7 @@ public class EventDetailsFragment extends Fragment {
                     eventLocation = document.getString("location");
                     ImageURI = document.getString("photo");
                     eventAnnouncementCount = document.getLong("announcementCount");
+                    eventMaxAttendees = document.getLong("maxAttendees");
 
                     //since user technically another document
                     fetchOrganizer(Objects.requireNonNull(document.getDocumentReference("organizer")));
