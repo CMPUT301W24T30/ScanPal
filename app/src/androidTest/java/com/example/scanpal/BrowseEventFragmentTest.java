@@ -7,23 +7,23 @@ import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.example.scanpal.Fragments.EventPageFragment;
+import com.example.scanpal.Fragments.BrowseEventFragment;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
-public class EventPageFragmentTest {
+public class BrowseEventFragmentTest {
 
     @Before
     public void setUp() {
-        FragmentScenario<EventPageFragment> scenario = FragmentScenario.launchInContainer(EventPageFragment.class);
+        FragmentScenario<BrowseEventFragment> scenario = FragmentScenario.launchInContainer(BrowseEventFragment.class);
         scenario.moveToState(Lifecycle.State.STARTED);
     }
 
     /**
-     * Tests the UI components' visibility in the EventPageFragment.
+     * Tests the UI components' visibility in the BrowseEventFragment.
      */
     @Test
     public void testUIVisibility() {
