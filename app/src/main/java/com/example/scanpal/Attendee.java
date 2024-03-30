@@ -11,7 +11,7 @@ public class Attendee {
     private String eventID;
     private boolean checkedIn = false;
     private boolean rsvp = false;
-    private String location; //Check in location of the user
+    private String location;
 
     public Attendee() {
     }
