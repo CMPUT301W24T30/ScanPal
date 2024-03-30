@@ -38,34 +38,36 @@ public class ShowQrFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.show_qr, container, false);
+        FloatingActionButton backButton = view.findViewById(R.id.button_go_back);
+
         assert getArguments() != null;
 
         String eventID = getArguments().getString("event_id");
         String request = getArguments().getString("request");
+        String eventName = getArguments().getString("eventName");
 
-        // Show either check in code or event code based on request
-        if (Objects.equals(request, "check-in")) {
-            showCheckIn(eventID);
-        } else if (Objects.equals(request, "event")) {
-            TextView textView = view.findViewById(R.id.show_qr_title);
-            textView.setText("Event Details");
-            showEvent(eventID);
-        }
-
-        // Back button
-        FloatingActionButton back = view.findViewById(R.id.button_go_back);
-        back.setOnClickListener(v -> {
+        backButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(ShowQrFragment.this);
-            navController.navigate(R.id.show_qr_to_eventDetails);
+            navController.popBackStack();
         });
 
+        // Show either check in code or event code based on request
+
+        if (request == "check-in") {
+            showCheckIn(eventID,view,eventName);
+        } else if (request == "event") {
+            TextView textView = view.findViewById(R.id.show_qr_title);
+            textView.setText("Event Details");
+            showEvent(eventID,view,eventName);
+        }
+      
         return view;
     }
 
-    public void showCheckIn(String eventID) {
+    public void showCheckIn(String eventID,View view,String eventName) {
         String imageName = eventID + "-check-in.png";
         StorageReference imageRef = storage.getReference().child("qr-codes/" + imageName);
-        View view = getView();
+        //View view = getView();
         assert view != null;
         ImageView imageView = view.findViewById(R.id.qr_code);
 
@@ -78,6 +80,8 @@ public class ShowQrFragment extends Fragment {
                         Glide.with(ShowQrFragment.this)
                                 .load(bytes)
                                 .into(imageView);
+                        TextView title = view.findViewById(R.id.event_name_qrcode);
+                        title.setText(eventName);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -89,10 +93,10 @@ public class ShowQrFragment extends Fragment {
                 });
     }
 
-    public void showEvent(String eventID) {
+    public void showEvent(String eventID,View view,String eventName) {
         String imageName = eventID + "-event.png";
         StorageReference imageRef = storage.getReference().child("qr-codes/" + imageName);
-        View view = getView();
+        //View view = getView();
         assert view != null;
         ImageView imageView = view.findViewById(R.id.qr_code);
 
@@ -105,6 +109,8 @@ public class ShowQrFragment extends Fragment {
                         Glide.with(ShowQrFragment.this)
                                 .load(bytes)
                                 .into(imageView);
+                        TextView title = view.findViewById(R.id.event_name_qrcode);
+                        title.setText(eventName);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
