@@ -82,6 +82,9 @@
         <action
             android:id="@+id/eventDetailsPage_to_notifications"
             app:destination="@id/notificationsFragment" />
+        <action
+            android:id="@+id/action_eventDetailsPage_to_ShowQrFragment"
+            app:destination="@id/ShowQrFragment" />
     </fragment>
 
     <fragment

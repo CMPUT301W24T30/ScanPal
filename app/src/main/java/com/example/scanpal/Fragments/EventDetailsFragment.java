@@ -1,5 +1,6 @@
 package com.example.scanpal.Fragments;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -8,9 +9,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -107,6 +110,7 @@ public class EventDetailsFragment extends Fragment {
 
         mapButton = view.findViewById(R.id.map_button);
         mapButton.setVisibility(View.GONE); // Initially hide the button
+
         mapButton.setOnClickListener(v -> {
             Log.d("EventDetailsFragment", "Sending eventID to MapActivity: " + eventID);
             Intent intent = new Intent(getActivity(), MapsActivity.class);
@@ -160,11 +164,53 @@ public class EventDetailsFragment extends Fragment {
         // Implement event edit functionality
         eventEditButton.setOnClickListener(v -> {
             MaterialAlertDialogBuilder OrganizerOptions = new MaterialAlertDialogBuilder(this.requireContext());
-            OrganizerOptions.setMessage("Do you want to Edit Event Details or Send an Announcement?");
-            OrganizerOptions.setTitle("Organizer Options");
-            OrganizerOptions.setPositiveButton("Announcement", (dialog, which) -> newAnnouncement(view));
-            OrganizerOptions.setNegativeButton("Edit", (dialog, which) -> navToEditDetails(view));
-            OrganizerOptions.show();
+            String[] OptionsList = {"Edit Event", "Send Announcement","View Attendees", "View Map", "Show Check-In QR", "Show Event Details QR"};
+            //ArrayAdapter<> options  = new ArrayAdapter<String>();
+
+            //OrganizerOptions.setMessage("Do you want to Edit Event Details or Send an Announcement?");
+            //OrganizerOptions.setTitle("Organizer Options");
+            //OrganizerOptions.setPositiveButton("Announcement", (dialog, which) -> newAnnouncement(view));
+            //OrganizerOptions.setNegativeButton("Edit", (dialog, which) -> navToEditDetails(view));
+
+            OrganizerOptions.setTitle("Organizer Options")
+                    .setItems(OptionsList, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Perform actions based on the selected option
+                            switch (which) {
+                                case 0:
+                                    // Edit Event
+                                    navToEditDetails(view);
+                                    break;
+                                case 1:
+                                    // Send Announcement
+                                    newAnnouncement(view);
+                                    break;
+                                case 2:
+                                    // View Attendees
+                                    navToViewAttendees(view);
+                                    break;
+                                case 3:
+                                    // View Map
+                                    navToViewMap(view);
+                                    break;
+                                case 4:
+                                    // Show Check-In QR
+                                    navToShowQr(1,view);
+                                    break;
+                                case 5:
+                                    // Show Event Details QR
+                                    navToShowQr(0,view);
+                                    break;
+                            }
+                        }
+                    })
+                    .show();
+          
+
+            //OrganizerOptions.create().show();
+
+            //OrganizerOptions.show();
         });
 
         joinButton.setOnClickListener(v -> {
@@ -213,12 +259,13 @@ public class EventDetailsFragment extends Fragment {
             }
         });
 
+        /*
         viewSignedUpUsersBtn.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
             Bundle bundle = new Bundle();
             bundle.putString("eventID", eventID);
             navController.navigate(R.id.view_signed_up_users, bundle);
-        });
+        });*/
 
 
         // Share button functionality
@@ -429,6 +476,44 @@ public class EventDetailsFragment extends Fragment {
             bundle.putString("event_id", eventID);
             NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
             navController.navigate(R.id.edit_existing_event, bundle);
+        }
+    }
+
+    void navToViewAttendees(View view) {
+        //viewSignedUpUsersBtn.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
+            Bundle bundle = new Bundle();
+            bundle.putString("eventID", eventID);
+            navController.navigate(R.id.view_signed_up_users, bundle);
+       // });
+    }
+
+    void navToViewMap(View view) {
+        //mapButton.setOnClickListener(v -> {
+            Log.d("EventDetailsFragment", "Sending eventID to MapActivity: " + eventID);
+            Intent intent = new Intent(getActivity(), MapsActivity.class);
+            String eventID = getArguments().getString("event_id");
+            intent.putExtra("event_id", eventID);
+            startActivity(intent);
+        //});
+    }
+
+    void navToShowQr(int type, View view) {
+        if(type == 1) { //check in qr
+            NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
+            Bundle bundle = new Bundle();
+            bundle.putString("event_id", eventID);
+            bundle.putString("request", "check-in");
+            bundle.putString("eventName", eventName);
+            navController.navigate(R.id.action_eventDetailsPage_to_ShowQrFragment, bundle);
+
+        } else { // details qr
+            NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
+            Bundle bundle = new Bundle();
+            bundle.putString("event_id", eventID);
+            bundle.putString("request", "event");
+            bundle.putString("eventName", eventName);
+            navController.navigate(R.id.action_eventDetailsPage_to_ShowQrFragment, bundle);
         }
     }
 
