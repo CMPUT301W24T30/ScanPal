@@ -22,14 +22,16 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.Objects;
+
 
 public class ShowQrFragment extends Fragment {
+
+    private final FirebaseStorage storage = FirebaseStorage.getInstance();
 
     public ShowQrFragment() {
         // Required empty public constructor
     }
-
-    private final FirebaseStorage storage = FirebaseStorage.getInstance();
 
     @Nullable
     @Override
@@ -42,9 +44,9 @@ public class ShowQrFragment extends Fragment {
         String request = getArguments().getString("request");
 
         // Show either check in code or event code based on request
-        if (request == "check-in") {
+        if (Objects.equals(request, "check-in")) {
             showCheckIn(eventID);
-        } else if (request == "event") {
+        } else if (Objects.equals(request, "event")) {
             TextView textView = view.findViewById(R.id.show_qr_title);
             textView.setText("Event Details");
             showEvent(eventID);
@@ -52,7 +54,7 @@ public class ShowQrFragment extends Fragment {
 
         // Back button
         FloatingActionButton back = view.findViewById(R.id.button_go_back);
-        back.setOnClickListener( v-> {
+        back.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(ShowQrFragment.this);
             navController.navigate(R.id.show_qr_to_eventDetails);
         });

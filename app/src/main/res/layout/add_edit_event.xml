@@ -6,27 +6,38 @@
     android:background="#16181F"
     android:padding="8dp">
 
+    <TextView
+        android:id="@+id/attendees_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:text="Max Attendees"
+        android:textColor="#797474"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_edit_event_ImageView" />
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/autocomplete_fragment"
         android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/event_description_title"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_location_title" />
 
     <ImageView
         android:id="@+id/add_edit_event_ImageView"
-        android:layout_width="148dp"
-        android:layout_height="148dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.06"
+        android:layout_width="131dp"
+        android:layout_height="117dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="40dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.19999999"
-        app:layout_constraintVertical_chainStyle="spread"
+        app:layout_constraintTop_toBottomOf="@+id/add_edit_event_Header"
         app:srcCompat="@drawable/ic_launcher_background" />
 
     <Button
@@ -34,17 +45,14 @@
         style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
+        android:layout_marginStart="24dp"
         android:text="Upload Image"
         android:textColor="@color/white"
         android:textSize="10sp"
         app:iconTint="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/add_edit_event_ImageView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.13"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_edit_event_Header"
-        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintBottom_toBottomOf="@+id/add_edit_event_ImageView"
+        app:layout_constraintStart_toEndOf="@+id/add_edit_event_ImageView"
+        app:layout_constraintTop_toTopOf="@+id/add_edit_event_ImageView"
         app:strokeColor="#3580FF" />
 
     <Button
@@ -52,6 +60,8 @@
         style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:paddingLeft="0dp"
         android:paddingTop="0dp"
         android:paddingRight="0dp"
@@ -61,56 +71,31 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:iconTint="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.96"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.03"
         app:strokeWidth="0dp" />
-
-    <Button
-        android:id="@+id/max_attendees"
-        style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Max Attendees:"
-        android:textColor="@color/white"
-        android:textSize="10sp"
-        app:iconTint="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/add_edit_event_ImageView"
-        app:layout_constraintTop_toBottomOf="@+id/add_edit_event_imageButton"
-        app:layout_constraintVertical_bias="0.208"
-        app:strokeColor="#3580FF" />
 
     <TextView
         android:id="@+id/event_name_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
         android:text="Event Name"
         android:textColor="#797474"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_edit_event_ImageView"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/add_edit_event_Attendees" />
 
     <TextView
         android:id="@+id/event_location_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
         android:text="Event Location"
         android:textColor="#797474"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/autocomplete_fragment"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
 
@@ -119,21 +104,20 @@
         android:id="@+id/event_description_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
         android:text="Event Description"
         android:textColor="#797474"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/autocomplete_fragment"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/autocomplete_fragment" />
 
     <EditText
         android:id="@+id/add_edit_event_Attendees"
         android:layout_width="45dp"
         android:layout_height="31dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:background="#0A0C16"
         android:backgroundTint="#0A0C16"
         android:drawableTint="#9C27B0"
@@ -142,41 +126,35 @@
         android:inputType="number"
         android:textColor="@color/white"
         app:boxBackgroundMode="outline"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/add_edit_event_ImageView"
-        app:layout_constraintTop_toBottomOf="@+id/max_attendees"
-        app:layout_constraintVertical_bias="0.02"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/attendees_title"
         app:strokeColor="#3580FF" />
 
     <TextView
         android:id="@+id/add_edit_event_Header"
         android:layout_width="140dp"
         android:layout_height="29dp"
+        android:layout_marginTop="16dp"
         android:text="Event Details"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/add_edit_save_button"
-        app:layout_constraintStart_toEndOf="@+id/add_edit_backButton"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.04000002" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_edit_backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:backgroundTint="#2d3132"
         android:clickable="true"
         android:theme="@style/Theme.AppCompat"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.02"
         app:srcCompat="@drawable/arrow_back"
         app:tint="@color/white" />
 
@@ -184,34 +162,34 @@
         android:id="@+id/add_edit_deleteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:backgroundTint="#AB2222"
         android:text="Delete Event"
         android:textColor="@color/white"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:textColorHint="@color/grey"
         android:theme="@style/TextInput"
         app:boxBackgroundColor="#0A0C16"
         app:boxBackgroundMode="outline"
-        app:layout_constraintBottom_toTopOf="@+id/event_location_title"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.524"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_name_title"
-        app:layout_constraintVertical_bias="0.266">
+        app:layout_constraintTop_toBottomOf="@+id/event_name_title">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/add_edit_event_Name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="46dp"
             android:hint="Enter Event Name"
             android:textColor="@color/white" />
 
@@ -222,19 +200,21 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:textColorHint="@color/grey"
         android:theme="@style/TextInput"
         app:boxBackgroundColor="#0A0C16"
-        app:layout_constraintBottom_toTopOf="@+id/add_edit_deleteButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
+        app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_description_title">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/add_edit_event_description"
             android:layout_width="match_parent"
-            android:layout_height="140dp"
+            android:layout_height="wrap_content"
             android:gravity="start|top"
             android:hint="Event Description Goes Here"
             android:textAlignment="gravity"
