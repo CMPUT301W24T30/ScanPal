@@ -27,15 +27,15 @@
 
     <fragment
         android:id="@+id/yourEvents"
-        android:name="com.example.scanpal.Fragments.YourEventPageFragment"
+        android:name="com.example.scanpal.Fragments.BrowseYourEventFragment"
         android:label="fragment_your_events"
-        tools:layout="@layout/your_events_page" />
+        tools:layout="@layout/browse_events" />
 
     <fragment
         android:id="@+id/eventsPage"
-        android:name="com.example.scanpal.Fragments.EventPageFragment"
+        android:name="com.example.scanpal.Fragments.BrowseEventFragment"
         android:label="fragment_events_page"
-        tools:layout="@layout/events_page">
+        tools:layout="@layout/browse_events">
         <action
             android:id="@+id/addEvent"
             app:destination="@id/addEditEvent" />
@@ -139,6 +139,7 @@
         tools:layout="@layout/attendees_list">
 
     </fragment>
+
     <fragment
         android:id="@+id/notificationsFragment"
         android:name="com.example.scanpal.Fragments.NotificationsFragment"
@@ -151,6 +152,18 @@
             android:id="@+id/notifications_to_profile_fragment"
             app:destination="@id/profile_fragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/browseImageFragment"
+        android:name="com.example.scanpal.Fragments.BrowseImageFragment"
+        android:label="BrowseImageFragment"
+        tools:layout="@layout/browse_events" />
+
+    <fragment
+        android:id="@+id/browseProfileFragment"
+        android:name="com.example.scanpal.Fragments.BrowseProfileFragment"
+        android:label="BrowseProfileFragment"
+        tools:layout="@layout/browse_events" />
 
 
 </navigation>

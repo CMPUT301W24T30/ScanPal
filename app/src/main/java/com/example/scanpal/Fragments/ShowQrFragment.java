@@ -22,14 +22,16 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.Objects;
+
 
 public class ShowQrFragment extends Fragment {
+
+    private final FirebaseStorage storage = FirebaseStorage.getInstance();
 
     public ShowQrFragment() {
         // Required empty public constructor
     }
-
-    private final FirebaseStorage storage = FirebaseStorage.getInstance();
 
     @Nullable
     @Override
@@ -50,6 +52,7 @@ public class ShowQrFragment extends Fragment {
         });
 
         // Show either check in code or event code based on request
+
         if (request == "check-in") {
             showCheckIn(eventID,view,eventName);
         } else if (request == "event") {
@@ -57,7 +60,7 @@ public class ShowQrFragment extends Fragment {
             textView.setText("Event Details");
             showEvent(eventID,view,eventName);
         }
-
+      
         return view;
     }
 
