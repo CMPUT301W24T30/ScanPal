@@ -1,4 +1,4 @@
-package com.example.scanpal;
+package com.example.scanpal.Fragments;
 
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -6,9 +6,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.GridView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -18,6 +19,15 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.scanpal.Adapters.EventGridAdapter;
+import com.example.scanpal.Callbacks.EventsFetchCallback;
+import com.example.scanpal.Callbacks.UserFetchCallback;
+import com.example.scanpal.Callbacks.UserSignedUpCallback;
+import com.example.scanpal.Controllers.EventController;
+import com.example.scanpal.Controllers.UserController;
+import com.example.scanpal.Models.Event;
+import com.example.scanpal.Models.User;
+import com.example.scanpal.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -29,7 +39,7 @@ import java.util.concurrent.CountDownLatch;
  * Fragment for displaying a list of events. Allows users to navigate to event details,
  * add new events, and scan QR codes for event-related actions.
  */
-public class EventPageFragment extends Fragment {
+public class BrowseEventFragment extends Fragment {
 
     //necessary to request user for notification perms
     private final ActivityResultLauncher<String> requestPermissionLauncher =
@@ -46,12 +56,12 @@ public class EventPageFragment extends Fragment {
     /**
      * Default constructor. Initializes the fragment.
      */
-    public EventPageFragment() {
+    public BrowseEventFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.events_page, container, false);
+        View view = inflater.inflate(R.layout.browse_events, container, false);
 
         adapter = new EventGridAdapter(getContext(), new ArrayList<>());
         GridView gridView = view.findViewById(R.id.event_grid);
@@ -60,24 +70,62 @@ public class EventPageFragment extends Fragment {
         // init eventController
         eventController = new EventController();
 
-        Spinner spinner = view.findViewById(R.id.browser_select);
-        // Create an ArrayAdapter using the string array and a default spinner layout.
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+        AutoCompleteTextView dropdown = view.findViewById(R.id.browser_select_autocomplete);
+
+        dropdown.setText("Events Browser");
+
+        // Create an ArrayAdapter using the string array and a default dropdown layout.
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(
                 requireContext(),
-                R.array.browser_select_array,
-                android.R.layout.simple_spinner_item
+                R.layout.browser_list_item,
+                new String[]{"Events Browser", "Image Browser", "Profile Browser"} // Directly input your strings here
         );
-        // Specify the layout to use when the list of choices appears.
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner.
-        spinner.setAdapter(adapter);
+        // Apply the adapter to the dropdown.
+        dropdown.setAdapter(adapter);
+
+        UserController userController = new UserController(FirebaseFirestore.getInstance(), this.getContext());
+        if (userController.fetchStoredUsername() != null) {
+            userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
+                @Override
+                public void onSuccess(User user) {
+                    if (user.isAdministrator()) {
+                        // If user is administrator, browser is visible
+                        view.findViewById(R.id.browser_select).setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Toast.makeText(view.getContext(), "Failed to load user details", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+        dropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Similar handling as above
+                String selectedItem = (String) parent.getItemAtPosition(position);
+                switch (selectedItem) {
+                    case "Events Browser":
+                        NavHostFragment.findNavController(BrowseEventFragment.this).navigate(R.id.eventsPage);
+                        break;
+                    case "Image Browser":
+                        NavHostFragment.findNavController(BrowseEventFragment.this).navigate(R.id.browseImageFragment);
+                        break;
+                    case "Profile Browser":
+                        NavHostFragment.findNavController(BrowseEventFragment.this).navigate(R.id.browseProfileFragment);
+                        break;
+                }
+            }
+        });
 
         fetchAllEvents();
 
         // Set up button to add new events.
         FloatingActionButton addEventButton = view.findViewById(R.id.button_add_event);
         addEventButton.setOnClickListener(v -> {
-            NavController navController = NavHostFragment.findNavController(EventPageFragment.this);
+            NavController navController = NavHostFragment.findNavController(BrowseEventFragment.this);
             navController.navigate(R.id.addEvent);
         });
 
