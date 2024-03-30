@@ -71,7 +71,7 @@ loadScripts(document, 'script');</script>
 <h1 title="Class UserController" class="title">Class UserController</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">com.example.scanpal.UserController</div>
+<div class="inheritance">com.example.scanpal.Controllers.UserController</div>
 </div>
 <section class="class-description" id="class-description">
 <hr>
@@ -110,7 +110,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addUser(com.example.scanpal.User,com.example.scanpal.UserAddCallback)" class="member-name-link">addUser</a><wbr>(<a href="User.html" title="class in com.example.scanpal">User</a>&nbsp;user,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addUser(com.example.scanpal.Models.User,com.example.scanpal.Callbacks.UserAddCallback)" class="member-name-link">addUser</a><wbr>(<a href="User.html" title="class in com.example.scanpal">User</a>&nbsp;user,
  <a href="UserAddCallback.html" title="interface in com.example.scanpal">UserAddCallback</a>&nbsp;callback)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Adds a new user to the Firestore database and stores a local copy.</div>
@@ -121,7 +121,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Retrieves the stored username from internal storage.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getUser(java.lang.String,com.example.scanpal.UserFetchCallback)" class="member-name-link">getUser</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;username,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getUser(java.lang.String,com.example.scanpal.Callbacks.UserFetchCallback)" class="member-name-link">getUser</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;username,
  <a href="UserFetchCallback.html" title="interface in com.example.scanpal">UserFetchCallback</a>&nbsp;callback)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Fetches a user's details from the Firestore database.</div>
@@ -132,19 +132,19 @@ loadScripts(document, 'script');</script>
 <div class="block">Check internal storage to see if user object exists.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isUsernameTaken(java.lang.String,com.example.scanpal.UsernameCheckCallback)" class="member-name-link">isUsernameTaken</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;username,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isUsernameTaken(java.lang.String,com.example.scanpal.Callbacks.UsernameCheckCallback)" class="member-name-link">isUsernameTaken</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;username,
  <a href="UsernameCheckCallback.html" title="interface in com.example.scanpal">UsernameCheckCallback</a>&nbsp;callback)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Checks if the provided username already exists in the Firestore database.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeUser(java.lang.String,com.example.scanpal.UserRemoveCallback)" class="member-name-link">removeUser</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;username,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeUser(java.lang.String,com.example.scanpal.Callbacks.UserRemoveCallback)" class="member-name-link">removeUser</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;username,
  <a href="UserRemoveCallback.html" title="interface in com.example.scanpal">UserRemoveCallback</a>&nbsp;callback)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Removes a user from the Firestore database and deletes the local copy.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#updateUser(com.example.scanpal.User,com.example.scanpal.UserUpdateCallback)" class="member-name-link">updateUser</a><wbr>(<a href="User.html" title="class in com.example.scanpal">User</a>&nbsp;user,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#updateUser(com.example.scanpal.Models.User,com.example.scanpal.Callbacks.UserUpdateCallback)" class="member-name-link">updateUser</a><wbr>(<a href="User.html" title="class in com.example.scanpal">User</a>&nbsp;user,
  <a href="UserUpdateCallback.html" title="interface in com.example.scanpal">UserUpdateCallback</a>&nbsp;callback)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Updates an existing user's details in the Firestore database and updates
@@ -189,7 +189,7 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="addUser(com.example.scanpal.User,com.example.scanpal.UserAddCallback)">
+<section class="detail" id="addUser(com.example.scanpal.Models.User,com.example.scanpal.Callbacks.UserAddCallback)">
 <h3>addUser</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addUser</span><wbr><span class="parameters">(<a href="User.html" title="class in com.example.scanpal">User</a>&nbsp;user,
  <a href="UserAddCallback.html" title="interface in com.example.scanpal">UserAddCallback</a>&nbsp;callback)</span></div>
@@ -204,7 +204,7 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="updateUser(com.example.scanpal.User,com.example.scanpal.UserUpdateCallback)">
+<section class="detail" id="updateUser(com.example.scanpal.Models.User,com.example.scanpal.Callbacks.UserUpdateCallback)">
 <h3>updateUser</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">updateUser</span><wbr><span class="parameters">(<a href="User.html" title="class in com.example.scanpal">User</a>&nbsp;user,
  <a href="UserUpdateCallback.html" title="interface in com.example.scanpal">UserUpdateCallback</a>&nbsp;callback)</span></div>
@@ -218,7 +218,7 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getUser(java.lang.String,com.example.scanpal.UserFetchCallback)">
+<section class="detail" id="getUser(java.lang.String,com.example.scanpal.Callbacks.UserFetchCallback)">
 <h3>getUser</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">getUser</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;username,
  <a href="UserFetchCallback.html" title="interface in com.example.scanpal">UserFetchCallback</a>&nbsp;callback)</span></div>
@@ -232,7 +232,7 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="removeUser(java.lang.String,com.example.scanpal.UserRemoveCallback)">
+<section class="detail" id="removeUser(java.lang.String,com.example.scanpal.Callbacks.UserRemoveCallback)">
 <h3>removeUser</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">removeUser</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;username,
  <a href="UserRemoveCallback.html" title="interface in com.example.scanpal">UserRemoveCallback</a>&nbsp;callback)</span></div>
@@ -245,7 +245,7 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="isUsernameTaken(java.lang.String,com.example.scanpal.UsernameCheckCallback)">
+<section class="detail" id="isUsernameTaken(java.lang.String,com.example.scanpal.Callbacks.UsernameCheckCallback)">
 <h3>isUsernameTaken</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">isUsernameTaken</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;username,
  <a href="UsernameCheckCallback.html" title="interface in com.example.scanpal">UsernameCheckCallback</a>&nbsp;callback)</span></div>

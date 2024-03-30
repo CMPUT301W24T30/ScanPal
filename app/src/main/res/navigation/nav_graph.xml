@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/signupFragment"
-        android:name="com.example.scanpal.SignupFragment"
+        android:name="com.example.scanpal.Fragments.SignupFragment"
         android:label="Signup Screen"
         tools:layout="@layout/signup_page">
         <action
@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/roleSelectPage"
-        android:name="com.example.scanpal.RoleSelectFragment"
+        android:name="com.example.scanpal.Fragments.RoleSelectFragment"
         android:label="fragment_role_select"
         tools:layout="@layout/role_select">
         <action
@@ -27,15 +27,15 @@
 
     <fragment
         android:id="@+id/yourEvents"
-        android:name="com.example.scanpal.YourEventPageFragment"
+        android:name="com.example.scanpal.Fragments.BrowseYourEventFragment"
         android:label="fragment_your_events"
-        tools:layout="@layout/your_events_page" />
+        tools:layout="@layout/browse_events" />
 
     <fragment
         android:id="@+id/eventsPage"
-        android:name="com.example.scanpal.EventPageFragment"
+        android:name="com.example.scanpal.Fragments.BrowseEventFragment"
         android:label="fragment_events_page"
-        tools:layout="@layout/events_page">
+        tools:layout="@layout/browse_events">
         <action
             android:id="@+id/addEvent"
             app:destination="@id/addEditEvent" />
@@ -56,7 +56,7 @@
 
     <fragment
         android:id="@+id/addEditEvent"
-        android:name="com.example.scanpal.AddEventFragment"
+        android:name="com.example.scanpal.Fragments.AddEventFragment"
         android:label="fragment_add_edit_event"
         tools:layout="@layout/add_edit_event">
         <action
@@ -67,7 +67,7 @@
 
     <fragment
         android:id="@+id/eventDetailsPage"
-        android:name="com.example.scanpal.EventDetailsFragment"
+        android:name="com.example.scanpal.Fragments.EventDetailsFragment"
         android:label="fragement_eventDetails"
         tools:layout="@layout/event_details">
         <action
@@ -82,11 +82,14 @@
         <action
             android:id="@+id/eventDetailsPage_to_notifications"
             app:destination="@id/notificationsFragment" />
+        <action
+            android:id="@+id/action_eventDetailsPage_to_ShowQrFragment"
+            app:destination="@id/ShowQrFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/profile_fragment"
-        android:name="com.example.scanpal.ProfileFragment"
+        android:name="com.example.scanpal.Fragments.ProfileFragment"
         android:label="User Profile Page"
         tools:layout="@layout/user_profile_page">
         <action
@@ -102,7 +105,7 @@
 
     <fragment
         android:id="@+id/ShowQrFragment"
-        android:name="com.example.scanpal.ShowQrFragment"
+        android:name="com.example.scanpal.Fragments.ShowQrFragment"
         android:label="Show Qr Code"
         tools:layout="@layout/show_qr">
         <action
@@ -112,7 +115,7 @@
 
     <fragment
         android:id="@+id/edit_profile_fragment"
-        android:name="com.example.scanpal.EditProfileFragment"
+        android:name="com.example.scanpal.Fragments.EditProfileFragment"
         android:label="Edit Profile Page"
         tools:layout="@layout/edit_profile_page">
         <action
@@ -122,7 +125,7 @@
 
     <fragment
         android:id="@+id/editEventFragment"
-        android:name="com.example.scanpal.EditEventFragment"
+        android:name="com.example.scanpal.Fragments.EditEventFragment"
         android:label="EditEventFragment"
         tools:layout="@layout/add_edit_event">
         <action
@@ -131,14 +134,15 @@
     </fragment>
     <fragment
         android:id="@+id/signedUpUsersFragment"
-        android:name="com.example.scanpal.SignedUpUsersFragment"
+        android:name="com.example.scanpal.Fragments.SignedUpUsersFragment"
         android:label="signedUpUsersFragment"
         tools:layout="@layout/attendees_list">
 
     </fragment>
+
     <fragment
         android:id="@+id/notificationsFragment"
-        android:name="com.example.scanpal.NotificationsFragment"
+        android:name="com.example.scanpal.Fragments.NotificationsFragment"
         android:label="NotificationsFragment"
         tools:layout="@layout/notifications_screen">
         <action
@@ -148,6 +152,18 @@
             android:id="@+id/notifications_to_profile_fragment"
             app:destination="@id/profile_fragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/browseImageFragment"
+        android:name="com.example.scanpal.Fragments.BrowseImageFragment"
+        android:label="BrowseImageFragment"
+        tools:layout="@layout/browse_events" />
+
+    <fragment
+        android:id="@+id/browseProfileFragment"
+        android:name="com.example.scanpal.Fragments.BrowseProfileFragment"
+        android:label="BrowseProfileFragment"
+        tools:layout="@layout/browse_events" />
 
 
 </navigation>

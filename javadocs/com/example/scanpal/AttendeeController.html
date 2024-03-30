@@ -71,7 +71,7 @@ loadScripts(document, 'script');</script>
 <h1 title="Class AttendeeController" class="title">Class AttendeeController</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">com.example.scanpal.AttendeeController</div>
+<div class="inheritance">com.example.scanpal.Controllers.AttendeeController</div>
 </div>
 <section class="class-description" id="class-description">
 <hr>
@@ -111,19 +111,19 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addAttendee(com.example.scanpal.Attendee,com.example.scanpal.AttendeeAddCallback)" class="member-name-link">addAttendee</a><wbr>(<a href="Attendee.html" title="class in com.example.scanpal">Attendee</a>&nbsp;attendee,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addAttendee(com.example.scanpal.Models.Attendee,com.example.scanpal.Callbacks.AttendeeAddCallback)" class="member-name-link">addAttendee</a><wbr>(<a href="Attendee.html" title="class in com.example.scanpal">Attendee</a>&nbsp;attendee,
  <a href="AttendeeAddCallback.html" title="interface in com.example.scanpal">AttendeeAddCallback</a>&nbsp;callback)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Adds a new attendee record to the Firestore database and optionally to local storage.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#deleteAllUserAttendees(java.lang.String,com.example.scanpal.DeleteAllAttendeesCallback)" class="member-name-link">deleteAllUserAttendees</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;username,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#deleteAllUserAttendees(java.lang.String,com.example.scanpal.Callbacks.DeleteAllAttendeesCallback)" class="member-name-link">deleteAllUserAttendees</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;username,
  <a href="DeleteAllAttendeesCallback.html" title="interface in com.example.scanpal">DeleteAllAttendeesCallback</a>&nbsp;callback)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Deletes all attendee records associated with a user from Firestore and local storage.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fetchAttendee(java.lang.String,com.example.scanpal.AttendeeFetchCallback)" class="member-name-link">fetchAttendee</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;attendeeId,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#fetchAttendee(java.lang.String,com.example.scanpal.Callbacks.AttendeeFetchCallback)" class="member-name-link">fetchAttendee</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;attendeeId,
  <a href="AttendeeFetchCallback.html" title="interface in com.example.scanpal">AttendeeFetchCallback</a>&nbsp;callback)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Fetches an attendee's details from the Firestore database or local storage if available.</div>
@@ -132,7 +132,7 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDatabase()" class="member-name-link">getDatabase</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#updateAttendee(com.example.scanpal.Attendee,com.example.scanpal.AttendeeUpdateCallback)" class="member-name-link">updateAttendee</a><wbr>(<a href="Attendee.html" title="class in com.example.scanpal">Attendee</a>&nbsp;attendee,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#updateAttendee(com.example.scanpal.Models.Attendee,com.example.scanpal.Callbacks.AttendeeUpdateCallback)" class="member-name-link">updateAttendee</a><wbr>(<a href="Attendee.html" title="class in com.example.scanpal">Attendee</a>&nbsp;attendee,
  <a href="AttendeeUpdateCallback.html" title="interface in com.example.scanpal">AttendeeUpdateCallback</a>&nbsp;callback)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Updates an existing attendee's information in the Firestore database and local storage.</div>
@@ -184,7 +184,7 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="addAttendee(com.example.scanpal.Attendee,com.example.scanpal.AttendeeAddCallback)">
+<section class="detail" id="addAttendee(com.example.scanpal.Models.Attendee,com.example.scanpal.Callbacks.AttendeeAddCallback)">
 <h3>addAttendee</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addAttendee</span><wbr><span class="parameters">(<a href="Attendee.html" title="class in com.example.scanpal">Attendee</a>&nbsp;attendee,
  <a href="AttendeeAddCallback.html" title="interface in com.example.scanpal">AttendeeAddCallback</a>&nbsp;callback)</span></div>
@@ -199,7 +199,7 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="fetchAttendee(java.lang.String,com.example.scanpal.AttendeeFetchCallback)">
+<section class="detail" id="fetchAttendee(java.lang.String,com.example.scanpal.Callbacks.AttendeeFetchCallback)">
 <h3>fetchAttendee</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">fetchAttendee</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;attendeeId,
  <a href="AttendeeFetchCallback.html" title="interface in com.example.scanpal">AttendeeFetchCallback</a>&nbsp;callback)</span></div>
@@ -214,7 +214,7 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="updateAttendee(com.example.scanpal.Attendee,com.example.scanpal.AttendeeUpdateCallback)">
+<section class="detail" id="updateAttendee(com.example.scanpal.Models.Attendee,com.example.scanpal.Callbacks.AttendeeUpdateCallback)">
 <h3>updateAttendee</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">updateAttendee</span><wbr><span class="parameters">(<a href="Attendee.html" title="class in com.example.scanpal">Attendee</a>&nbsp;attendee,
  <a href="AttendeeUpdateCallback.html" title="interface in com.example.scanpal">AttendeeUpdateCallback</a>&nbsp;callback)</span></div>
@@ -229,7 +229,7 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="deleteAllUserAttendees(java.lang.String,com.example.scanpal.DeleteAllAttendeesCallback)">
+<section class="detail" id="deleteAllUserAttendees(java.lang.String,com.example.scanpal.Callbacks.DeleteAllAttendeesCallback)">
 <h3>deleteAllUserAttendees</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">deleteAllUserAttendees</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;username,
  <a href="DeleteAllAttendeesCallback.html" title="interface in com.example.scanpal">DeleteAllAttendeesCallback</a>&nbsp;callback)</span></div>
