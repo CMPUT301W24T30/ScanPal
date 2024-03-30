@@ -78,7 +78,6 @@ public class EventController {
         eventMap.put("photo", event.getPosterURI());
         eventMap.put("capacity", event.getMaximumAttendees());
         eventMap.put("announcementCount", 0L);
-        eventMap.put("maxAttendees", event.getMaximumAttendees());
 
         DocumentReference organizerRef = database.collection("Users").document(event.getOrganizer().getUsername());
         eventMap.put("organizer", organizerRef);
@@ -302,7 +301,6 @@ public class EventController {
             eventMap.put("location", event.getLocation());
             eventMap.put("capacity", event.getMaximumAttendees());
             eventMap.put("announcementCount", event.getAnnouncementCount());
-            eventMap.put("maxAttendees", event.getMaximumAttendees());
 
 
             DocumentReference eventRef = database.collection("Events").document(event.getId());
