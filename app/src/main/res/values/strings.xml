@@ -6,6 +6,7 @@
     <string name="continueButton">Continue</string>
     <string name="addUserImage">User Image</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="trackLocation">Track Location?</string>
     <string-array name="browser_select_array">
         <item>Events Browser</item>
         <item>Image Browser</item>

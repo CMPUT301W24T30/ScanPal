@@ -3,6 +3,7 @@ package com.example.scanpal;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,20 +11,22 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.Spinner;
 import android.widget.Toast;
-
+import android.Manifest;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+
 
 /**
  * Fragment for displaying a list of events. Allows users to navigate to event details,
@@ -38,10 +41,22 @@ public class EventPageFragment extends Fragment {
                     Toast.makeText(getContext(), "Notifications cannot be sent since the permission is disabled.", Toast.LENGTH_LONG).show();
                 }
             });
+
+    private final ActivityResultLauncher<String> locationPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    logUserLocation();
+                } else {
+                    Toast.makeText(getContext(), "Location access is required to use this feature.", Toast.LENGTH_LONG).show();
+                }
+            });
+
     protected List<Event> eventsList = new ArrayList<>();
     protected List<Event> allEvents = new ArrayList<>();
     private EventGridAdapter adapter;
     private EventController eventController;
+    private FusedLocationProviderClient fusedLocationClient;
+
 
     /**
      * Default constructor. Initializes the fragment.
@@ -50,7 +65,15 @@ public class EventPageFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+
         View view = inflater.inflate(R.layout.events_page, container, false);
 
         adapter = new EventGridAdapter(getContext(), new ArrayList<>());
@@ -88,6 +111,7 @@ public class EventPageFragment extends Fragment {
             NavHostFragment.findNavController(this).navigate(R.id.select_event, bundle);
         });
 
+        askLocationPermissionAndLogLocation();
         askNotificationPermission();
         fetchEventsAndUpdateGrid();
 
@@ -174,4 +198,50 @@ public class EventPageFragment extends Fragment {
             }
         }
     }
+
+    private void askLocationPermissionAndLogLocation() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+        } else {
+            logUserLocation();
+        }
+    }
+
+    private void logUserLocation() {
+        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation().addOnSuccessListener(requireActivity(), location -> {
+                if (location != null) {
+                    String locationStr = location.getLatitude() + "," + location.getLongitude();
+
+                    // Fetch current user's username
+                    UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
+                    String currentUsername = userController.fetchStoredUsername();
+
+                    // Update user location
+                    if (currentUsername != null) {
+                        userController.updateUserLocation(currentUsername, locationStr, new UserUpdateCallback() {
+                            @Override
+                            public void onSuccess() {
+                                Log.d("EventPageFragment", "User location updated successfully");
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                Log.e("EventPageFragment", "Failed to update user location", e);
+                            }
+                        });
+                    }
+                } else {
+                    Log.d("EventPageFragment", "No location detected.");
+                }
+            });
+        }
+    }
+
+
+
+
+
 }

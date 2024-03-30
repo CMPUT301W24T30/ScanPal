@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupButtonListeners() {
 
         AttendeeController attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
-        qrScannerController = new QrScannerController(attendeeController);
+        qrScannerController = new QrScannerController(this, attendeeController);
 
         // Initialize QR Code Scanner and set up scan button.
         qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
@@ -86,8 +86,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Invalid QR Code", Toast.LENGTH_SHORT).show();
             }
         });
-
-        buttonScan.setOnClickListener(v -> qrCodeScanner.launch(QrScannerController.getOptions()));
 
         buttonScan.setOnClickListener(v -> {
             qrCodeScanner.launch(QrScannerController.getOptions());

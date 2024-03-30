@@ -125,16 +125,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Fetch the event details to get the location name for geocoding
         eventRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
-                String eventLocationName = documentSnapshot.getString("location");
-                if (eventLocationName != null && !eventLocationName.isEmpty()) {
-                    geocodeLocation(eventLocationName);
+                String locationCoords = documentSnapshot.getString("locationCoords");
+                if (locationCoords != null && !locationCoords.isEmpty()) {
+                    String[] latLng = locationCoords.split(",");
+                    if (latLng.length == 2) {
+                        try {
+                            double latitude = Double.parseDouble(latLng[0]);
+                            double longitude = Double.parseDouble(latLng[1]);
+                            LatLng eventLocation = new LatLng(latitude, longitude);
+                            addMarkerToMap(eventLocation, documentSnapshot.getString("name")); // Adjust the title as needed
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLocation, 15));
+                        } catch (NumberFormatException e) {
+                            Log.e("MapsActivity", "Failed to parse event locationCoords string: " + locationCoords, e);
+                        }
+                    }
                 } else {
-                    Log.d("MapActivity", "Event location name is null or empty");
+                    Log.d("MapsActivity", "Event locationCoords is null or empty");
                 }
             } else {
-                Log.d("MapActivity", "No event found with ID: " + eventId);
+                Log.d("MapsActivity", "No event found with ID: " + eventId);
             }
-        }).addOnFailureListener(e -> Log.e("MapActivity", "Error fetching event details", e));
+        }).addOnFailureListener(e -> Log.e("MapsActivity", "Error fetching event details", e));
+
 
         db.collection("Attendees")
                 .whereEqualTo("eventID", eventRef)
