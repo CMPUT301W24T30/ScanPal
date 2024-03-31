@@ -10,11 +10,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 
+import com.example.scanpal.Callbacks.EventFetchCallback;
+import com.example.scanpal.Models.Event;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -27,9 +26,8 @@ import java.io.FileOutputStream;
 public class ShareEventController {
 
     private final FirebaseStorage storage = FirebaseStorage.getInstance();
-    FirebaseFirestore database = FirebaseFirestore.getInstance();
     private final Context context;
-    public String eventName = null;
+    private Event eventItem;
 
     public ShareEventController(Context context) {
         this.context = context;
@@ -74,20 +72,20 @@ public class ShareEventController {
     public void shareIntent(Bitmap imageBitmap, String eventID) {
         Uri uri = getUri(imageBitmap);
         Intent intent = new Intent(Intent.ACTION_SEND);
+        EventController eventController = new EventController();
+        String eventName;
 
-        DocumentReference EventDocument = database.collection("Events").document(eventID);
-        EventDocument.get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            eventName = document.getString("name");
-                        } else {
-                            Toast.makeText(context, "Error Retrieving Event", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(context, "Error Retrieving Event", Toast.LENGTH_SHORT).show();
-                    }
-                });
+        eventController.getEventById(eventID, new EventFetchCallback() {
+            @Override
+            public void onSuccess(Event event) {
+                eventItem = event;
+            }
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(context, "Error Retrieving Event", Toast.LENGTH_SHORT).show();
+            }
+        });
+        eventName = eventItem.getName();
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         intent.putExtra(Intent.EXTRA_TEXT, "QR Code for event: " + eventName);
         intent.setType("image/png");
