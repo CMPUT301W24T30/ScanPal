@@ -203,6 +203,7 @@ public class AttendeeController {
                                         userDocSnapshot.getString("firstName"),
                                         userDocSnapshot.getString("lastName"),
                                         userDocSnapshot.getString("photo"),
+                                        userDocSnapshot.getString("homepage"),
                                         userDocSnapshot.getString("deviceToken")
                                 );
 
@@ -256,6 +257,7 @@ public class AttendeeController {
                                         userDocSnapshot.getString("firstName"),
                                         userDocSnapshot.getString("lastName"),
                                         userDocSnapshot.getString("photo"),
+                                        userDocSnapshot.getString("homepage"),
                                         userDocSnapshot.getString("deviceToken")
                                 );
 
