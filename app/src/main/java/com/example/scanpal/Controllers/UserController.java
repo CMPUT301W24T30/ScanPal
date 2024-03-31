@@ -9,6 +9,7 @@ import com.example.scanpal.Callbacks.UserRemoveCallback;
 import com.example.scanpal.Callbacks.UserSignedUpCallback;
 import com.example.scanpal.Callbacks.UserUpdateCallback;
 import com.example.scanpal.Callbacks.UsernameCheckCallback;
+import com.example.scanpal.Callbacks.UsersFetchCallback;
 import com.example.scanpal.Controllers.AttendeeController;
 import com.example.scanpal.Models.Attendee;
 import com.example.scanpal.Models.User;
@@ -20,7 +21,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -262,4 +265,27 @@ public class UserController {
             }
         });
     }
+
+    public void fetchAllUsers(UsersFetchCallback callback) {
+        database.collection("Users").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                List<User> users = new ArrayList<>();
+                for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                    // Assuming User has a constructor that accepts a Map<String, Object>. Adjust as needed.
+                    User user = new User(
+                            document.getId(), // Username as document ID
+                            (String) document.get("firstName"),
+                            (String) document.get("lastName"),
+                            (String) document.get("deviceToken")
+                    );
+                    user.setPhoto(String.valueOf(document.get("photo"))); // Adjust if your user model handles photos differently
+                    users.add(user);
+                }
+                callback.onSuccess(users);
+            } else {
+                callback.onError(new Exception("Error fetching users", task.getException()));
+            }
+        }).addOnFailureListener(callback::onError);
+    }
+
 }

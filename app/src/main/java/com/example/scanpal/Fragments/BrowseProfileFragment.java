@@ -19,7 +19,15 @@ import com.example.scanpal.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BrowseProfileFragment extends Fragment {
+
+    private List<User> usersList = new ArrayList<>();
+    private UserGridAdapter adapter;
+    private UserController userController;
+
     /**
      * Default constructor. Initializes the fragment.
      */
