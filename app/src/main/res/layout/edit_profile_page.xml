@@ -12,13 +12,14 @@
         android:layout_height="wrap_content"
         android:backgroundTint="#2d3132"
         android:clickable="true"
+        android:focusable="true"
         android:theme="@style/Theme.AppCompat"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.045"
+        app:layout_constraintHorizontal_bias="0.04"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023"
+        app:layout_constraintVertical_bias="0.02"
         app:srcCompat="@drawable/arrow_back"
         app:tint="@color/white" />
 
@@ -26,18 +27,18 @@
         android:id="@+id/heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:text="Edit Profile"
         android:textColor="@color/white"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/reset_button"
-        app:layout_constraintStart_toEndOf="@+id/button_go_back"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/profile_page_image"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_marginTop="32dp"
         android:adjustViewBounds="false"
         android:scaleType="fitXY"
@@ -45,59 +46,61 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/heading"
-        app:layout_constraintVertical_bias="0.203"
         tools:srcCompat="@tools:sample/avatars" />
 
     <Button
         android:id="@+id/save_button"
-        android:layout_width="300dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:backgroundTint="#204916"
         android:text="Save Changes"
-        android:theme="@style/Theme.AppCompat"
         android:textColor="@color/white"
-        android:textSize="20dp"
+        android:textSize="20sp"
+        android:theme="@style/Theme.AppCompat"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/geolocation" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/username"
-        android:layout_width="350dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:theme="@style/TextInput"
         app:boxBackgroundColor="#0A0C16"
-        android:textColorHint="@color/grey"
         app:boxStrokeColor="@color/input_layout_stroke_color"
-        app:hintTextColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/first_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_page_image"
+        app:startIconDrawable="@drawable/profile_icon">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Username"
-            android:textColor="@color/grey" />
+            android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/first_name"
-        android:layout_width="350dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:textColorHint="@color/grey"
+        android:theme="@style/TextInput"
         app:boxBackgroundColor="#0A0C16"
         app:boxStrokeColor="@color/input_layout_stroke_color"
         app:hintTextColor="@color/white"
-        android:theme="@style/TextInput"
-        android:textColorHint="@color/grey"
         app:layout_constraintBottom_toTopOf="@+id/last_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username"
+        app:startIconDrawable="@drawable/short_text">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/first_name_edittext"
@@ -110,18 +113,20 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/last_name"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_width="0dp"
+        android:layout_height="59dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:textColorHint="@color/grey"
+        android:theme="@style/TextInput"
         app:boxBackgroundColor="#0A0C16"
         app:boxStrokeColor="@color/input_layout_stroke_color"
         app:hintTextColor="@color/white"
-        android:theme="@style/TextInput"
-        android:textColorHint="@color/grey"
-        app:layout_constraintBottom_toTopOf="@+id/about_me"
+        app:layout_constraintBottom_toTopOf="@+id/homepage"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/first_name"
+        app:startIconDrawable="@drawable/short_text">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/last_name_edittext"
@@ -132,33 +137,37 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/about_me"
-        android:layout_width="350dp"
+        android:id="@+id/homepage"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:textColorHint="@color/grey"
+        android:theme="@style/TextInput"
         app:boxBackgroundColor="#0A0C16"
         app:boxStrokeColor="@color/input_layout_stroke_color"
         app:hintTextColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/geolocation"
         app:layout_constraintEnd_toEndOf="parent"
-        android:theme="@style/TextInput"
-        android:textColorHint="@color/grey"
-        app:layout_constraintHorizontal_bias="0.508"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/last_name"
+        app:startIconDrawable="@drawable/link_icon">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/about_me_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="About Me"
+            android:hint="Homepage"
             android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Switch
         android:id="@+id/geolocation"
-        android:layout_width="289dp"
-        android:layout_height="51dp"
-        android:layout_marginBottom="16dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="64dp"
+        android:singleLine="true"
         android:text="Geo-location Tracking"
         android:textColor="#848A94"
         android:textSize="18sp"
@@ -167,19 +176,23 @@
         android:trackTintMode="add"
         app:layout_constraintBottom_toTopOf="@+id/save_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/homepage" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/upload_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
+        android:focusable="true"
         android:theme="@style/Theme.AppCompat"
         app:backgroundTint="#3580FF"
         app:layout_constraintBottom_toTopOf="@+id/username"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/profile_page_image"
         app:layout_constraintTop_toBottomOf="@+id/heading"
+        app:layout_constraintVertical_bias="0.9"
         app:srcCompat="@drawable/upload_icon" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -187,28 +200,33 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
+        android:focusable="true"
         android:theme="@style/Theme.AppCompat"
-        app:backgroundTint="#3580FF"
+        app:backgroundTint="#F44336"
         app:layout_constraintBottom_toTopOf="@+id/username"
         app:layout_constraintEnd_toStartOf="@+id/profile_page_image"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/heading"
+        app:layout_constraintVertical_bias="0.9"
         app:srcCompat="@drawable/delete_icon" />
 
-    <Button
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/reset_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="#F44336"
-        android:text="Reset"
-        android:textColor="@color/white"
-        android:textStyle="bold"
+        android:clickable="true"
+        android:focusable="true"
+        android:theme="@style/Theme.AppCompat"
+        app:backgroundTint="#FFEB3B"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.96"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.03" />
+        app:layout_constraintVertical_bias="0.02"
+        app:srcCompat="@drawable/warning_icon"
+        app:tint="@color/black" />
 
     <ProgressBar
         android:id="@+id/progressBar"
