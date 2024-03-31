@@ -74,7 +74,7 @@ public class ProfileFragment extends Fragment {
 
         initializeViews(view);
 
-        userController = new UserController( getContext());
+        userController = new UserController(getContext());
 
         String username = "";
         if (getArguments() != null) {

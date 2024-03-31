@@ -10,9 +10,12 @@ import androidx.core.splashscreen.SplashScreen;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Controllers.AttendeeController;
 import com.example.scanpal.Controllers.QrScannerController;
 import com.example.scanpal.Controllers.UserController;
+import com.example.scanpal.Fragments.BrowseEventFragment;
+import com.example.scanpal.Models.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.ScanContract;
@@ -38,6 +41,22 @@ public class MainActivity extends AppCompatActivity {
         initializeViews();
         setupButtonListeners();
         setupNavController();
+
+        // In case user has been deleted on firebase.
+        new UserController(this).getUserFirebaseOnly(
+                new UserController(this).fetchStoredUsername(),
+                new UserFetchCallback() {
+                    @Override
+                    public void onSuccess(User user) {
+                        // Continue
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        navController.navigate(R.id.signupFragment);
+                    }
+                }
+        );
 
     }
 

@@ -185,6 +185,50 @@ public class UserController {
     }
 
     /**
+     * Fetches a user's details from the Firestore database. If the user is not
+     * found in Firestore, attempts to retrieve a local copy.
+     *
+     * @param username The username of the user to fetch.
+     * @param callback The callback to report the fetched user or failure.
+     */
+    public void getUserFirebaseOnly(String username, UserFetchCallback callback) {
+        if (Objects.equals(username, "") || username == null) {
+            callback.onError(new Exception("User does not exist"));
+            return;
+        }
+        DocumentReference docRef = database.collection("Users").document(username);
+
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document != null && document.exists()) {
+                    Log.d("UserController", "Fetched user from Firestore: " + document.getData());
+                    Map<String, Object> data = document.getData();
+                    if (data != null) {
+                        User user = new User(username,
+                                (String) data.get("firstName"),
+                                (String) data.get("lastName"),
+                                (String) data.get("photo"),
+                                (String) data.get("homepage"),
+                                (String) data.get("deviceToken"));
+                        user.setLocation(String.valueOf(data.get("location")));
+                        callback.onSuccess(user);
+                    } else {
+                        Log.e("UserController", "Failed to parse user data from Firestore");
+                        callback.onError(new Exception("Failed to parse user data"));
+                    }
+                } else {
+                    Log.e("UserController", "User does not exist in Firestore");
+                    callback.onError(new Exception("User does not exist"));
+                }
+            } else {
+                Log.e("UserController", "Error fetching user from Firestore", task.getException());
+                callback.onError(new Exception("Error fetching user", task.getException()));
+            }
+        });
+    }
+
+    /**
      * Removes a user from the Firestore database and deletes the local copy.
      *
      * @param username The username of the user to remove.
@@ -192,9 +236,11 @@ public class UserController {
      */
     public void removeUser(String username, UserRemoveCallback callback) {
         // delete user locally
-        try {
-            context.deleteFile("user.ser");
-        } catch (Exception ignored) {
+        if (Objects.equals(username, fetchStoredUsername())) {
+            try {
+                context.deleteFile("user.ser");
+            } catch (Exception ignored) {
+            }
         }
 
         // delete user from Firestore

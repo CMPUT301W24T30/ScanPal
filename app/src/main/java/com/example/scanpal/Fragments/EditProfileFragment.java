@@ -116,24 +116,19 @@ public class EditProfileFragment extends Fragment {
                     .into(profileImageView);
         });
 
+        fetchUserDetails();
+
         saveButton.setOnClickListener(v -> saveUserDetails());
         goBack.setOnClickListener(v -> {
             // This is to make it send back to the right profile in admin
             Bundle bundle = new Bundle();
-            String currentUsername = "";
-            if (getArguments() != null) {
-                currentUsername = getArguments().getString("username", "");
-            }
-            if (Objects.equals(currentUsername, "")) {
-                currentUsername = userController.fetchStoredUsername();
-            }
-            bundle.putString("username", currentUsername);
+            bundle.putString("username", existingUser.getUsername());
             NavController navController = NavHostFragment.findNavController(EditProfileFragment.this);
             navController.navigate(R.id.save_profile_edits, bundle);
             ((MainActivity) requireActivity()).setNavbarVisibility(true);
         });
         resetButton.setOnClickListener(v -> showDeleteConfirmation());
-        fetchUserDetails();
+
     }
 
     /**
@@ -190,10 +185,10 @@ public class EditProfileFragment extends Fragment {
     private void saveUserDetails() {
         progressBar.setVisibility(View.VISIBLE);
 
-        String storedUsername = userController.fetchStoredUsername();
-        userController.getUser(storedUsername, new UserFetchCallback() {
+        userController.getUser(existingUser.getUsername(), new UserFetchCallback() {
             @Override
             public void onSuccess(User existingUser) {
+
                 User updatedUser = new User(Objects.requireNonNull(username.getText()).toString(),
                         Objects.requireNonNull(firstName.getText()).toString(),
                         Objects.requireNonNull(lastName.getText()).toString(),
@@ -201,9 +196,13 @@ public class EditProfileFragment extends Fragment {
                         Objects.requireNonNull(homepage.getText()).toString(),
                         existingUser.getDeviceToken());
 
+                if (existingUser.isAdministrator()) {
+                    updatedUser.setAdministrator(true);
+                }
+
                 if (imageUri != null) {
                     String folderPath = "profile_images";
-                    String fileName = storedUsername + ".jpg";
+                    String fileName = existingUser.getUsername() + ".jpg";
 
                     imageController.uploadImage(imageUri, folderPath, fileName, uri -> {
                         updatedUser.setPhoto(uri.toString());
@@ -268,17 +267,24 @@ public class EditProfileFragment extends Fragment {
      * Handles the user & linked attendees deletion process.
      */
     private void deleteUser() {
-        String storedUsername = userController.fetchStoredUsername();
-        if (storedUsername != null) {
-            attendeeController.deleteAllUserAttendees(storedUsername, new DeleteAllAttendeesCallback() {
+        String username = existingUser.getUsername();
+        if (username != null) {
+            String oldUsername = userController.fetchStoredUsername();
+            attendeeController.deleteAllUserAttendees(username, new DeleteAllAttendeesCallback() {
                 @Override
                 public void onSuccess() {
-                    userController.removeUser(storedUsername, new UserRemoveCallback() {
+                    userController.removeUser(username, new UserRemoveCallback() {
                         @Override
                         public void onSuccess() {
                             Toast.makeText(getContext(), "Profile reset successfully", Toast.LENGTH_SHORT).show();
                             NavController navController = NavHostFragment.findNavController(EditProfileFragment.this);
-                            navController.navigate(R.id.signupFragment);
+                            if (Objects.equals(oldUsername, username)) {
+                                navController.navigate(R.id.signupFragment);
+                            } else {
+                                navController.navigate(R.id.eventsPage);
+                                ((MainActivity) requireActivity()).setNavbarVisibility(true);
+                            }
+
                         }
 
                         @Override
