@@ -92,22 +92,14 @@ public class AttendeeController {
 
                         DocumentReference userRef = documentSnapshot.getDocumentReference("user");
                         DocumentReference eventRef = documentSnapshot.getDocumentReference("eventID");
+
                         if (userRef != null && eventRef != null) {
                             userRef.get().addOnSuccessListener(userDoc -> {
-                                if (userDoc.exists()) {
-                                    User user = userDoc.toObject(User.class);
-                                    if (user != null) {
-                                        user.setUsername(userDoc.getId());
-                                        attendee.setUser(user);
-                                        attendee.setEventID(eventRef.getId());
-                                        callback.onSuccess(attendee);
-                                    } else {
-                                        callback.onError(new Exception("Failed to deserialize user"));
-                                    }
-                                } else {
-                                    callback.onError(new Exception("User document not found"));
-                                }
+                                User user = userDoc.toObject(User.class);
+                                attendee.setUser(user);
                             }).addOnFailureListener(callback::onError);
+                            attendee.setEventID(eventRef.getId());
+                            callback.onSuccess(attendee);
                         } else {
                             callback.onError(new Exception("User reference or Event reference not found in attendee document"));
                         }
@@ -203,6 +195,7 @@ public class AttendeeController {
                                         userDocSnapshot.getString("firstName"),
                                         userDocSnapshot.getString("lastName"),
                                         userDocSnapshot.getString("photo"),
+                                        userDocSnapshot.getString("homepage"),
                                         userDocSnapshot.getString("deviceToken")
                                 );
 
@@ -256,6 +249,7 @@ public class AttendeeController {
                                         userDocSnapshot.getString("firstName"),
                                         userDocSnapshot.getString("lastName"),
                                         userDocSnapshot.getString("photo"),
+                                        userDocSnapshot.getString("homepage"),
                                         userDocSnapshot.getString("deviceToken")
                                 );
 
