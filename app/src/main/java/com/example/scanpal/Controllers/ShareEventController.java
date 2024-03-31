@@ -29,6 +29,7 @@ public class ShareEventController {
     private final FirebaseStorage storage = FirebaseStorage.getInstance();
     FirebaseFirestore database = FirebaseFirestore.getInstance();
     private final Context context;
+    public String eventName = null;
 
     public ShareEventController(Context context) {
         this.context = context;
@@ -73,18 +74,25 @@ public class ShareEventController {
     public void shareIntent(Bitmap imageBitmap, String eventID) {
         Uri uri = getUri(imageBitmap);
         Intent intent = new Intent(Intent.ACTION_SEND);
-        String eventName = null;
 
         DocumentReference EventDocument = database.collection("Events").document(eventID);
-        DocumentSnapshot doc = EventDocument.get().getResult();
-        eventName = doc.getString("name");
-
+        EventDocument.get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            eventName = document.getString("name");
+                        } else {
+                            Toast.makeText(context, "Error Retrieving Event", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(context, "Error Retrieving Event", Toast.LENGTH_SHORT).show();
+                    }
+                });
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         intent.putExtra(Intent.EXTRA_TEXT, "QR Code for event: " + eventName);
         intent.setType("image/png");
         context.startActivity(Intent.createChooser(intent, "Share via"));
     }
-
 
     /**
      * Takes the bitmap of the qr code and returns a uri
