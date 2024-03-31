@@ -78,6 +78,8 @@ public class EventController {
         eventMap.put("photo", event.getPosterURI());
         eventMap.put("capacity", event.getMaximumAttendees());
         eventMap.put("announcementCount", 0L);
+        eventMap.put("trackLocation", event.isTrackLocation());
+        eventMap.put("locationCoords", event.getLocationCoords());
 
         DocumentReference organizerRef = database.collection("Users").document(event.getOrganizer().getUsername());
         eventMap.put("organizer", organizerRef);
@@ -261,6 +263,7 @@ public class EventController {
 
                             event.setLocation(Objects.requireNonNull(eventDoc.get("location")).toString());
                             event.setMaximumAttendees((long) eventDoc.get("capacity"));
+                            event.setTrackLocation(eventDoc.getBoolean("trackLocation"));
 
                             Uri imageURI = Uri.parse(Objects.requireNonNull(eventDoc.get("photo")).toString());
                             event.setPosterURI(imageURI);
@@ -301,6 +304,7 @@ public class EventController {
             eventMap.put("location", event.getLocation());
             eventMap.put("capacity", event.getMaximumAttendees());
             eventMap.put("announcementCount", event.getAnnouncementCount());
+            eventMap.put("trackLocation", event.isTrackLocation());
 
 
             DocumentReference eventRef = database.collection("Events").document(event.getId());

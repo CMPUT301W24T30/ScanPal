@@ -33,12 +33,14 @@ import com.example.scanpal.Models.User;
 import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
@@ -75,6 +77,8 @@ public class AddEventFragment extends Fragment {
     private ImageController imageController;
     private PlacesClient placesClient;
     private String selectedLocationName;
+    private String locationCoords;
+    private SwitchMaterial trackLocationSwitch;
 
 
     public AddEventFragment() {
@@ -95,6 +99,15 @@ public class AddEventFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.add_edit_event, container, false);
         ((MainActivity) requireActivity()).setNavbarVisibility(false);
+
+        trackLocationSwitch = view.findViewById(R.id.track_location_switch);
+
+        trackLocationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            // Here, you can directly update your event's trackLocation property
+            if (newEvent != null) {
+                newEvent.setTrackLocation(isChecked);
+            }
+        });
 
         TextView pageHeader = view.findViewById(R.id.add_edit_event_Header);
         pageHeader.setText("Create Event");
@@ -153,6 +166,7 @@ public class AddEventFragment extends Fragment {
 
                 newEvent.setPosterURI(imageUri);
                 newEvent.setAnnouncementCount(0L);
+                newEvent.setLocationCoords(locationCoords);
 
                 eventController.addEvent(newEvent);
                 uploadImageToFirebase(imageUri);
@@ -179,12 +193,17 @@ public class AddEventFragment extends Fragment {
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
         if (autocompleteFragment != null) {
-            autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+            autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
             autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
                 @Override
                 public void onPlaceSelected(@NonNull Place place) {
-                    // Handle the selected place
                     selectedLocationName = place.getName();
+                    LatLng latLng = place.getLatLng();
+                    if (latLng != null) {
+                        selectedLocationName = place.getName();
+                        locationCoords = place.getLatLng().latitude + "," + place.getLatLng().longitude;
+                        newEvent.setLocationCoords(locationCoords);
+                    }
                 }
 
                 @Override
