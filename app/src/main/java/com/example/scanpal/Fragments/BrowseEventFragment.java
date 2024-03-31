@@ -81,6 +81,8 @@ public class BrowseEventFragment extends Fragment {
     private ImageController imageController;
     private UserController userController;
 
+    private GridView gridView;
+
     /**
      * Default constructor. Initializes the fragment.
      */
@@ -99,7 +101,10 @@ public class BrowseEventFragment extends Fragment {
         View view = inflater.inflate(R.layout.browse_events, container, false);
 
         eventGridAdapter = new EventGridAdapter(getContext());
-        GridView gridView = view.findViewById(R.id.event_grid);
+        profileGridAdapter = new ProfileGridAdapter(getContext());
+        imageGridAdapter = new ImageGridAdapter(getContext());
+
+        gridView = view.findViewById(R.id.event_grid);
         gridView.setAdapter(eventGridAdapter);
 
         // init eventController
@@ -147,14 +152,13 @@ public class BrowseEventFragment extends Fragment {
                 String selectedItem = (String) parent.getItemAtPosition(position);
                 switch (selectedItem) {
                     case "Events Browser":
-                        NavHostFragment.findNavController(BrowseEventFragment.this).navigate(R.id.eventsPage);
                         fetchAllEvents();
                         break;
                     case "Image Browser":
-                        //setImages();
+                        fetchAllImages();
                         break;
                     case "Profile Browser":
-                        //setProfiles();
+                        fetchAllUsers();
                         break;
                 }
             }
@@ -278,6 +282,8 @@ public class BrowseEventFragment extends Fragment {
                 allUsers.clear();
                 allUsers.addAll(user);
                 profileGridAdapter.setUsers(allUsers);
+
+                gridView.setAdapter(profileGridAdapter);
             }
 
             @Override
