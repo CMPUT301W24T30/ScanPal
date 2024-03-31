@@ -148,19 +148,22 @@ public class AddEventFragment extends Fragment {
             if (eventNameForm.getText().toString().isEmpty() ||
                     selectedLocationName == null || selectedLocationName.isEmpty() ||
                     eventDescriptionForm.getText().toString().isEmpty() ||
-                    attendeesForm.getText().toString().isEmpty() ||
                     null == imageUri) {
 
-                Toast.makeText(view.getContext(), "Please input all Information", Toast.LENGTH_LONG).show();
+                Toast.makeText(view.getContext(), "Please input all Required Information", Toast.LENGTH_LONG).show();
 
-            } else if (Integer.parseInt(attendeesForm.getText().toString()) < 1) {
-                Toast.makeText(view.getContext(), "Please allow at least 1 Attendee", Toast.LENGTH_LONG).show();
             } else {
                 progressBar.setVisibility(View.VISIBLE);
                 newEvent.setName(eventNameForm.getText().toString());
                 newEvent.setLocation(selectedLocationName);
                 newEvent.setDescription(eventDescriptionForm.getText().toString());
-                newEvent.setMaximumAttendees(Integer.parseInt(attendeesForm.getText().toString()));
+
+                if(attendeesForm.getText().toString().isEmpty()) {
+                    newEvent.setMaximumAttendees(0L);//treat zero as 'no limit'
+                } else {
+                    newEvent.setMaximumAttendees(Integer.parseInt(attendeesForm.getText().toString()));
+                }
+
                 newEvent.setPosterURI(imageUri);
                 newEvent.setAnnouncementCount(0L);
                 newEvent.setLocationCoords(locationCoords);

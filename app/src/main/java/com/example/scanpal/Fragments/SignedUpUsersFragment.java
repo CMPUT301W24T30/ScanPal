@@ -3,6 +3,7 @@ package com.example.scanpal.Fragments;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
@@ -21,6 +22,7 @@ import com.example.scanpal.Callbacks.AttendeeSignedUpFetchCallback;
 import com.example.scanpal.Controllers.AttendeeController;
 import com.example.scanpal.Models.Attendee;
 import com.example.scanpal.R;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -73,15 +75,55 @@ public class SignedUpUsersFragment extends Fragment {
         attendeeController.fetchSignedUpUsers(eventID, new AttendeeSignedUpFetchCallback() {
             @Override
             public void onSuccess(ArrayList<Attendee> attendees) {
+                //Log.d("SignedUpUsersFragment", eventID);
+
                 // upcast to User
                 usersAdapter = new UsersAdapter(getContext(), new ArrayList<>());//to empty it(bless the garbage collector)
                 usersList.setAdapter(usersAdapter);
 
                 title.setText("Signed Up");
 
+                MaterialAlertDialogBuilder OrganizerOptions = new MaterialAlertDialogBuilder(getContext());
+
+
                 for (Attendee attendee : attendees) {
                     usersAdapter.addUser(attendee.getUser());
                 }
+
+                usersList.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+                    @Override
+                    public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                        View child = rv.findChildViewUnder(e.getX(), e.getY());
+                        //Log.wtf("GETTING USER","TOUCH");
+
+                        if (child != null ) {
+                            int position = rv.getChildAdapterPosition(child);
+
+                            //mListener.onItemClick(position);
+                            usersAdapter.getAt(position);
+                            OrganizerOptions.setTitle(usersAdapter.getAt(position).getUsername() + "'s Info");
+                            OrganizerOptions.setMessage("Check In Count:" + Long.toString( attendees.get(position).getCheckinCount()));
+
+
+
+
+                            OrganizerOptions.show();
+                            //Log.wtf("GETTING USER",usersAdapter.getAt(position).getUsername());
+                            return true;
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                        //DO NOTHING
+                    }
+
+                    @Override
+                    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+                        //DO NOTHING
+                    }
+                });
             }
 
             @Override
@@ -111,6 +153,7 @@ public class SignedUpUsersFragment extends Fragment {
                                 usersAdapter.addUser(attendee.getUser());
                                 usersAdapter.notifyDataSetChanged();
                             }
+
                         }
 
                         @Override

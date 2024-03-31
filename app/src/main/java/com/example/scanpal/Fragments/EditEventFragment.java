@@ -154,7 +154,14 @@ public class EditEventFragment extends Fragment {
                 eventNameForm.setText(event.getName());
                 autocompleteFragment.setText(event.getLocation());
                 eventDescriptionForm.setText(event.getDescription());
-                attendeesForm.setText(String.valueOf(event.getMaximumAttendees()));
+
+                // otherwise eventLocation field stays null and you cant save the event without re-selecting location
+                eventLocation = event.getLocation();
+
+                if(event.getMaximumAttendees() != 0) {
+                    attendeesForm.setText(String.valueOf(event.getMaximumAttendees()));
+                }
+
                 existingImageUri = event.getPosterURI();
                 announcementCount = event.getAnnouncementCount();
 
@@ -177,7 +184,6 @@ public class EditEventFragment extends Fragment {
     private void saveEventChanges() {
         String eventName = eventNameForm.getText().toString();
         String eventDescription = eventDescriptionForm.getText().toString();
-        int maxAttendees = Integer.parseInt(attendeesForm.getText().toString());
 
         if (eventName.isEmpty() || eventLocation == null || eventDescription.isEmpty()) {
             Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
@@ -190,7 +196,14 @@ public class EditEventFragment extends Fragment {
 
         Event event = new Event(null, eventName, eventDescription);
         event.setLocation(eventLocation);
-        event.setMaximumAttendees(maxAttendees);
+
+        if(attendeesForm.getText().toString().isEmpty()) {
+            event.setMaximumAttendees(0L);//treat zero as 'no limit'
+        } else {
+            int maxAttendees = Integer.parseInt(attendeesForm.getText().toString());
+            event.setMaximumAttendees(maxAttendees);
+        }
+
         event.setId(eventID);
         event.setPosterURI(existingImageUri);
         event.setAnnouncementCount(announcementCount);
