@@ -166,6 +166,10 @@ public class ProfileFragment extends Fragment {
      * Opens a given URL in the web browser.
      */
     private void openWebPage() {
+        if (url == null) {
+            Toast.makeText(getContext(), "Set homepage in profile settings ⚙️", Toast.LENGTH_LONG).show();
+            return;
+        }
         Uri webpage = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
         if (intent.resolveActivity(requireActivity().getPackageManager()) != null) {
