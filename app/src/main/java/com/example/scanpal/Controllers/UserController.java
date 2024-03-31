@@ -187,6 +187,8 @@ public class UserController {
         docRef.delete()
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(callback::onError);
+        ImageController imageController = new ImageController();
+        imageController.deleteImage("profile_images", username + ".jpg");
     }
 
     /**
