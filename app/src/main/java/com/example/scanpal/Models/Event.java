@@ -24,6 +24,8 @@ public class Event {
     private Bitmap qrToCheckIn;
     private Long announcementCount;
     private boolean isUserSignedUp;
+    private boolean trackLocation = false;
+    private String locationCoords; // "lat,lon" format
 
     /**
      * Constructs an event with an organizer, name, and description.
@@ -39,12 +41,28 @@ public class Event {
         participants = new ArrayList<>();
     }
 
+    public boolean isTrackLocation() {
+        return trackLocation;
+    }
+
+    public void setTrackLocation(boolean trackLocation) {
+        this.trackLocation = trackLocation;
+    }
+
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getLocationCoords() {
+        return locationCoords;
+    }
+
+    public void setLocationCoords(String coord) {
+        this.locationCoords = coord;
     }
 
     public String getName() {
