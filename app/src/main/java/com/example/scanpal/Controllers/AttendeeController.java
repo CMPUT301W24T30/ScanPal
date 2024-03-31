@@ -1,5 +1,7 @@
 package com.example.scanpal.Controllers;
 
+import android.util.Log;
+
 import com.example.scanpal.Callbacks.AttendeeAddCallback;
 import com.example.scanpal.Callbacks.AttendeeDeleteCallback;
 import com.example.scanpal.Callbacks.AttendeeFetchCallback;
@@ -59,6 +61,7 @@ public class AttendeeController {
         attendeeMap.put("location", attendee.getLocation());
         attendeeMap.put("checkedIn", attendee.isCheckedIn());
         attendeeMap.put("rsvp", attendee.isRsvp());
+        attendeeMap.put("checkInCount", attendee.getCheckinCount());
 
         DocumentReference userRef = database.collection("Users").document(attendee.getUser().getUsername());
         attendeeMap.put("user", userRef);
@@ -89,25 +92,23 @@ public class AttendeeController {
                         attendee.setLocation(documentSnapshot.getString("location"));
                         attendee.setCheckedIn(Boolean.TRUE.equals(documentSnapshot.getBoolean("checkedIn")));
                         attendee.setRsvp(Boolean.TRUE.equals(documentSnapshot.getBoolean("rsvp")));
+                        attendee.setCheckinCount((long)documentSnapshot.get("checkInCount"));
+
 
                         DocumentReference userRef = documentSnapshot.getDocumentReference("user");
                         DocumentReference eventRef = documentSnapshot.getDocumentReference("eventID");
+
                         if (userRef != null && eventRef != null) {
                             userRef.get().addOnSuccessListener(userDoc -> {
-                                if (userDoc.exists()) {
-                                    User user = userDoc.toObject(User.class);
-                                    if (user != null) {
-                                        user.setUsername(userDoc.getId());
-                                        attendee.setUser(user);
-                                        attendee.setEventID(eventRef.getId());
-                                        callback.onSuccess(attendee);
-                                    } else {
-                                        callback.onError(new Exception("Failed to deserialize user"));
-                                    }
-                                } else {
-                                    callback.onError(new Exception("User document not found"));
-                                }
+                                User user = userDoc.toObject(User.class);
+                                user.setUsername( userRef.getId() );
+
+                                attendee.setUser(user);
+                                attendee.setEventID(eventRef.getId());
+                                callback.onSuccess(attendee);
                             }).addOnFailureListener(callback::onError);
+
+
                         } else {
                             callback.onError(new Exception("User reference or Event reference not found in attendee document"));
                         }
@@ -133,6 +134,15 @@ public class AttendeeController {
         updated.put("location", attendee.getLocation());
         updated.put("checkedIn", attendee.isCheckedIn());
         updated.put("rsvp", attendee.isRsvp());
+        updated.put("checkInCount", attendee.getCheckinCount());
+        if( attendee.getUser() == null) {
+            Log.wtf("CHECKED IN!", "crash here loc:"  + attendee.getLocation());
+        }
+
+
+
+
+        Log.wtf("CHECKED IN!", "path: User/"  + attendee.getUser().getUsername());
 
         DocumentReference userRef = database.collection("Users").document(attendee.getUser().getUsername());
         updated.put("user", userRef);
@@ -203,6 +213,7 @@ public class AttendeeController {
                                         userDocSnapshot.getString("firstName"),
                                         userDocSnapshot.getString("lastName"),
                                         userDocSnapshot.getString("photo"),
+                                        userDocSnapshot.getString("homepage"),
                                         userDocSnapshot.getString("deviceToken")
                                 );
 
@@ -210,7 +221,8 @@ public class AttendeeController {
                                         user,
                                         Objects.requireNonNull(attendeeDoc.getDocumentReference("eventID")).toString(),
                                         Boolean.TRUE.equals(attendeeDoc.getBoolean("rsvp")),
-                                        Boolean.TRUE.equals(attendeeDoc.getBoolean("checkedIn"))
+                                        Boolean.TRUE.equals(attendeeDoc.getBoolean("checkedIn")),
+                                        (long)attendeeDoc.get("checkInCount")
                                 );
                                 attendee.setLocation(attendeeDoc.getString("location"));
                                 attendees.add(attendee);
@@ -256,6 +268,7 @@ public class AttendeeController {
                                         userDocSnapshot.getString("firstName"),
                                         userDocSnapshot.getString("lastName"),
                                         userDocSnapshot.getString("photo"),
+                                        userDocSnapshot.getString("homepage"),
                                         userDocSnapshot.getString("deviceToken")
                                 );
 
@@ -263,7 +276,8 @@ public class AttendeeController {
                                         user,
                                         Objects.requireNonNull(attendeeDoc.getDocumentReference("eventID")).toString(),
                                         Boolean.TRUE.equals(attendeeDoc.getBoolean("rsvp")),
-                                        Boolean.TRUE.equals(attendeeDoc.getBoolean("checkedIn"))
+                                        Boolean.TRUE.equals(attendeeDoc.getBoolean("checkedIn")),
+                                        (long) attendeeDoc.get("checkInCount")
                                 );
                                 attendee.setLocation(attendeeDoc.getString("location"));
                                 attendees.add(attendee);

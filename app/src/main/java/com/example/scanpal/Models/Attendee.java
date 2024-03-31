@@ -11,16 +11,19 @@ public class Attendee {
     private String eventID;
     private boolean checkedIn = false;
     private boolean rsvp = false;
-    private String location; //Check in location of the user
+    private String location;
+
+    private long checkinCount;
 
     public Attendee() {
     }
 
-    public Attendee(User user, String eventID, boolean rsvp, boolean checkedIn) {
+    public Attendee(User user, String eventID, boolean rsvp, boolean checkedIn, long checkinCount) {
         this.user = user;
         this.eventID = eventID;
         this.rsvp = rsvp;
         this.checkedIn = checkedIn;
+        this.checkinCount = checkinCount;
     }
 
     public User getUser() {
@@ -69,5 +72,13 @@ public class Attendee {
 
     public void setRsvp(boolean rsvp) {
         this.rsvp = rsvp;
+    }
+
+    public long getCheckinCount() {
+        return this.checkinCount;
+    }
+
+    public void setCheckinCount(long checkinCount) {
+        this.checkinCount = checkinCount;
     }
 }
