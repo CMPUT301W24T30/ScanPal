@@ -260,6 +260,7 @@ public class EventController {
             eventMap.put("capacity", event.getMaximumAttendees());
             eventMap.put("announcementCount", event.getAnnouncementCount());
 
+
             DocumentReference eventRef = database.collection("Events").document(event.getId());
             eventRef.update(eventMap).addOnSuccessListener(aVoid -> callback.onSuccess(true)).addOnFailureListener(callback::onError);
         };
