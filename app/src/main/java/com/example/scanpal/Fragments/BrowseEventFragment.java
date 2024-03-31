@@ -4,6 +4,7 @@ import android.content.pm.PackageManager;
 import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -27,17 +29,21 @@ import com.example.scanpal.Callbacks.EventsFetchCallback;
 import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Callbacks.UserSignedUpCallback;
 import com.example.scanpal.Callbacks.UsersFetchCallback;
+import com.example.scanpal.Callbacks.UserUpdateCallback;
 import com.example.scanpal.Controllers.EventController;
 import com.example.scanpal.Controllers.ImageController;
 import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.Models.User;
 import com.example.scanpal.R;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import android.Manifest;
 
 /**
  * Fragment for displaying a list of events. Allows users to navigate to event details,
@@ -52,6 +58,17 @@ public class BrowseEventFragment extends Fragment {
                     Toast.makeText(getContext(), "Notifications cannot be sent since the permission is disabled.", Toast.LENGTH_LONG).show();
                 }
             });
+
+    private final ActivityResultLauncher<String> locationPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    logUserLocation();
+                    askNotificationPermission();
+                } else {
+                    Toast.makeText(getContext(), "Location access is required to use this feature.", Toast.LENGTH_LONG).show();
+                }
+            });
+    protected List<Event> eventsList = new ArrayList<>();
     protected List<Event> allEvents = new ArrayList<>();
     protected List<User> allUsers = new ArrayList<>();
     protected List<Image> allImages = new ArrayList<>();
@@ -59,6 +76,7 @@ public class BrowseEventFragment extends Fragment {
     private ProfileGridAdapter profileGridAdapter;
     private ImageGridAdapter imageGridAdapter;
     private EventController eventController;
+    private FusedLocationProviderClient fusedLocationClient;
     private ImageController imageController;
     private UserController userController;
 
@@ -69,7 +87,14 @@ public class BrowseEventFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         View view = inflater.inflate(R.layout.browse_events, container, false);
 
         eventGridAdapter = new EventGridAdapter(getContext());
@@ -150,7 +175,7 @@ public class BrowseEventFragment extends Fragment {
             NavHostFragment.findNavController(this).navigate(R.id.select_event, bundle);
         });
 
-        askNotificationPermission();
+        askLocationPermissionAndLogLocation();
 
         return view;
     }
@@ -201,6 +226,92 @@ public class BrowseEventFragment extends Fragment {
             }
         });
     }
+
+    private void askLocationPermissionAndLogLocation() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+        } else {
+            logUserLocation();
+        }
+    }
+
+    private void logUserLocation() {
+        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation().addOnSuccessListener(requireActivity(), location -> {
+                if (location != null) {
+                    String locationStr = location.getLatitude() + "," + location.getLongitude();
+
+                    // Fetch current user's username
+                    UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
+                    String currentUsername = userController.fetchStoredUsername();
+
+                    // Update user location
+                    if (currentUsername != null) {
+                        userController.updateUserLocation(currentUsername, locationStr, new UserUpdateCallback() {
+                            @Override
+                            public void onSuccess() {
+                                Log.d("EventPageFragment", "User location updated successfully");
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                Log.e("EventPageFragment", "Failed to update user location", e);
+                            }
+                        });
+                    }
+                } else {
+                    Log.d("EventPageFragment", "No location detected.");
+                }
+            });
+        }
+    }
+
+
+
+    private void askLocationPermissionAndLogLocation() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+        } else {
+            logUserLocation();
+        }
+    }
+
+    private void logUserLocation() {
+        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation().addOnSuccessListener(requireActivity(), location -> {
+                if (location != null) {
+                    String locationStr = location.getLatitude() + "," + location.getLongitude();
+
+                    // Fetch current user's username
+                    UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
+                    String currentUsername = userController.fetchStoredUsername();
+
+                    // Update user location
+                    if (currentUsername != null) {
+                        userController.updateUserLocation(currentUsername, locationStr, new UserUpdateCallback() {
+                            @Override
+                            public void onSuccess() {
+                                Log.d("EventPageFragment", "User location updated successfully");
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                Log.e("EventPageFragment", "Failed to update user location", e);
+                            }
+                        });
+                    }
+                } else {
+                    Log.d("EventPageFragment", "No location detected.");
+                }
+            });
+        }
+    }
+
+
 
     private void fetchAllUsers() {
         userController.fetchAllUsers(new UsersFetchCallback() {

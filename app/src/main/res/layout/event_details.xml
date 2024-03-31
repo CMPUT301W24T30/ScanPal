@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -6,168 +5,22 @@
     android:layout_height="match_parent"
     android:background="#16181F">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/map_button"
-        android:layout_width="180dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="50dp"
-        android:text="View Map"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/view_signed_up_users_button" />
-
-
-    <TextView
-        android:id="@+id/event_description"
-        android:layout_width="295dp"
-        android:layout_height="89dp"
-        android:layout_marginStart="44dp"
-        android:layout_marginTop="70dp"
-        android:layout_marginEnd="72dp"
-        android:text="You will meet us in the back alley of CSC no further questions asked. A tall slender man will provide pizza for you and those you came with. He will appear through the wall and return within 2 minutes of dropping off the pizza"
-        android:textColor="#C1BABA"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_share" />
-
     <ImageView
         android:id="@+id/event_detail_imageView"
         android:layout_width="0dp"
-        android:layout_height="274dp"
+        android:layout_height="250dp"
+        android:contentDescription="@string/content_description"
         android:scaleType="fitXY"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@drawable/ic_launcher_background" />
-
-    <Button
-        android:id="@+id/join_button"
-        android:layout_width="182dp"
-        android:layout_height="49dp"
-        android:layout_marginTop="25dp"
-        android:backgroundTint="#0D6EFD"
-        android:text="Join Event"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@id/view_signed_up_users_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_description" />
-
-    <Button
-        android:id="@+id/view_signed_up_users_button"
-        android:layout_width="180dp"
-        android:layout_height="50dp"
-        android:backgroundTint="#0D6EFD"
-        android:text="View Attendees"
-        android:textColor="@color/white"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/map_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/join_button" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/event_details_backButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#2d3132"
-        android:clickable="true"
-        android:theme="@style/Theme.AppCompat"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.045"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023"
-        app:srcCompat="@drawable/arrow_back"
-        app:tint="@color/white" />
-
-    <TextView
-        android:id="@+id/event_description_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
-        android:layout_marginTop="30dp"
-        android:text="About Event"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/organizer_image" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/event_shareButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="39dp"
-        android:layout_marginEnd="31dp"
-        android:clickable="true"
-        android:theme="@style/Theme.AppCompat"
-        app:backgroundTint="#0D6EFD"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_Title"
-        app:srcCompat="@drawable/share_icon" />
-
-    <TextView
-        android:id="@+id/event_share"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="58dp"
-        android:layout_marginEnd="8dp"
-        android:text="Share"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/event_shareButton"
-        app:layout_constraintTop_toBottomOf="@+id/event_Title" />
-
-    <ImageView
-        android:id="@+id/organizer_image"
-        android:layout_width="37dp"
-        android:layout_height="39dp"
-        android:layout_marginTop="48dp"
-        app:layout_constraintEnd_toStartOf="@+id/event_orgName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_Title"
         tools:srcCompat="@tools:sample/avatars" />
-
-    <TextView
-        android:id="@+id/event_orgName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="34dp"
-        android:layout_marginEnd="8dp"
-        android:text="Mr. OnPhone"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/event_description_title"
-        app:layout_constraintEnd_toStartOf="@+id/event_share"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_Location"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/event_editButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="23dp"
-        android:clickable="true"
-        android:theme="@style/Theme.AppCompat"
-        android:visibility="invisible"
-        app:backgroundTint="#0D6EFD"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/edit_icon" />
 
     <TextView
         android:id="@+id/event_Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="79dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="79dp"
+        android:layout_marginTop="16dp"
         android:text="Back Alley CSC Meetup"
         android:textColor="@color/white"
         android:textSize="24sp"
@@ -178,16 +31,154 @@
 
     <TextView
         android:id="@+id/event_Location"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="153dp"
-        android:layout_marginTop="7dp"
-        android:layout_marginEnd="159dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:singleLine="true"
         android:text="CSC, Edmonton"
+        android:textAlignment="center"
         android:textColor="#A09B9B"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/organizer_section"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_Title" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/organizer_section"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/event_Location">
+
+        <ImageView
+            android:id="@+id/organizer_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:contentDescription="@string/content_description"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/onphone" />
+
+        <TextView
+            android:id="@+id/event_orgName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Mr. OnPhone"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/event_shareButton"
+            app:layout_constraintStart_toEndOf="@+id/organizer_image"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/event_shareButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            app:backgroundTint="#0D6EFD"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/share_icon" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/event_description_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="About Event"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/event_description_card"
+        app:layout_constraintEnd_toEndOf="@+id/event_description_card"
+        app:layout_constraintStart_toStartOf="@+id/event_description_card"
+        app:layout_constraintTop_toBottomOf="@+id/organizer_section" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/event_description_card"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="4dp"
+        android:minHeight="175dp"
+        app:cardBackgroundColor="@color/black"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:contentPadding="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/join_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/event_description_title"
+        app:strokeColor="@color/white"
+        app:strokeWidth="2dp">
+
+        <TextView
+            android:id="@+id/event_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="You will meet us in the back alley of CSC no further questions asked. A tall slender man will provide pizza for you and those you came with. He will appear through the wall and return within 2 minutes of dropping off the pizza"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/join_button"
+        android:layout_width="182dp"
+        android:layout_height="49dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="#0D6EFD"
+        android:text="Signup"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/event_details_backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#2d3132"
+        android:clickable="true"
+        android:focusable="true"
+        android:theme="@style/Theme.AppCompat"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.04"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.02"
+        app:srcCompat="@drawable/arrow_back"
+        app:tint="@color/white" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/event_editButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:theme="@style/Theme.AppCompat"
+        android:visibility="invisible"
+        app:backgroundTint="#0D6EFD"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.96"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.02"
+        app:srcCompat="@drawable/menu_icon"
+        app:tint="@color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

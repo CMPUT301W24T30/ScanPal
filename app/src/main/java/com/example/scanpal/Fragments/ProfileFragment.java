@@ -1,5 +1,9 @@
 package com.example.scanpal.Fragments;
 
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,16 +14,17 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.scanpal.R;
-import com.example.scanpal.Models.User;
-import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.Callbacks.UserFetchCallback;
+import com.example.scanpal.Controllers.UserController;
+import com.example.scanpal.Models.User;
+import com.example.scanpal.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -35,8 +40,9 @@ public class ProfileFragment extends Fragment {
 
     private ImageView profileImageView;
     private FloatingActionButton buttonGoBack, buttonEditProfile;
-    private TextView addUsername, firstName, lastName;
+    private TextView addUsername, firstName, lastName, homepage;
     private UserController userController;
+    private String url;
 
     /**
      * Inflates the layout for the user's profile page.
@@ -57,8 +63,13 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        ConstraintLayout layout = view.findViewById(R.id.profile_page);
+        AnimationDrawable animationDrawable = (AnimationDrawable) layout.getBackground();
+        animationDrawable.setEnterFadeDuration(10);
+        animationDrawable.setExitFadeDuration(5000);
+        animationDrawable.start();
+
         initializeViews(view);
-        setupButtonListeners();
 
         userController = new UserController( getContext());
 
@@ -68,6 +79,8 @@ public class ProfileFragment extends Fragment {
         } else {
             Toast.makeText(getContext(), "No username found in internal storage", Toast.LENGTH_SHORT).show();
         }
+
+        setupButtonListeners();
     }
 
     /**
@@ -78,6 +91,7 @@ public class ProfileFragment extends Fragment {
     public void onResume() {
         super.onResume();
         String username = userController.fetchStoredUsername();
+        homepage.setTextColor(Color.parseColor("#0D6EFD"));
         if (username != null) {
             fetchUserDetails(username);
         } else {
@@ -97,6 +111,7 @@ public class ProfileFragment extends Fragment {
         addUsername = view.findViewById(R.id.addUsername);
         firstName = view.findViewById(R.id.first_name);
         lastName = view.findViewById(R.id.last_name);
+        homepage = view.findViewById(R.id.homepage);
     }
 
     /**
@@ -113,6 +128,8 @@ public class ProfileFragment extends Fragment {
             NavController navController = NavHostFragment.findNavController(ProfileFragment.this);
             navController.navigate(R.id.edit_profile);
         });
+
+        homepage.setOnClickListener(v -> openWebPage());
     }
 
     /**
@@ -125,9 +142,13 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onSuccess(User user) {
                 requireActivity().runOnUiThread(() -> {
-                    addUsername.setText(user.getUsername());
-                    firstName.setText(user.getFirstName());
-                    lastName.setText(user.getLastName());
+                    addUsername.setText("@ " + user.getUsername());
+                    firstName.setText("☞ " + user.getFirstName());
+                    lastName.setText("☞ " + user.getLastName());
+                    homepage.setText("⚡ ️My Homepage!");
+                    homepage.setTextColor(Color.parseColor("#0D6EFD"));
+                    url = user.getHomepage();
+
                     Glide.with(ProfileFragment.this)
                             .load(user.getPhoto())
                             .apply(new RequestOptions().circleCrop())
@@ -139,5 +160,23 @@ public class ProfileFragment extends Fragment {
             public void onError(Exception e) {
             }
         });
+    }
+
+    /**
+     * Opens a given URL in the web browser.
+     */
+    private void openWebPage() {
+        if (url == null) {
+            Toast.makeText(getContext(), "Set homepage in profile settings ⚙️", Toast.LENGTH_LONG).show();
+            return;
+        }
+        Uri webpage = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+        if (intent.resolveActivity(requireActivity().getPackageManager()) != null) {
+            homepage.setTextColor(Color.parseColor("#7D297C"));
+            startActivity(intent);
+        } else {
+            Toast.makeText(getContext(), "Invalid URL", Toast.LENGTH_LONG).show();
+        }
     }
 }
