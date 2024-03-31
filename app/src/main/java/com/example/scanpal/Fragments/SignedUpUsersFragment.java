@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,12 +16,13 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.scanpal.Models.Attendee;
-import com.example.scanpal.Controllers.AttendeeController;
-import com.example.scanpal.Callbacks.AttendeeSignedUpFetchCallback;
-import com.example.scanpal.R;
 import com.example.scanpal.Adapters.UsersAdapter;
+import com.example.scanpal.Callbacks.AttendeeSignedUpFetchCallback;
+import com.example.scanpal.Controllers.AttendeeController;
+import com.example.scanpal.Models.Attendee;
+import com.example.scanpal.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class SignedUpUsersFragment extends Fragment {
     private NavController navController;
     private String eventID;
     private FloatingActionButton backButton;
-    private Switch listSwitch;
+    private MaterialSwitch listSwitch;
     private RecyclerView usersList;
     private TextView title;
     private UsersAdapter usersAdapter;
@@ -45,10 +45,10 @@ public class SignedUpUsersFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.attendees_list, null, false);
+        View view = inflater.inflate(R.layout.attendees_list, container, false);
         Bundle bundle = getArguments();
         if (bundle != null) {
-            eventID = bundle.getString("eventID");
+            eventID = bundle.getString("event_id");
             Log.d("SignedUpUsersFragment", eventID);
         }
         attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
@@ -60,7 +60,6 @@ public class SignedUpUsersFragment extends Fragment {
         usersAdapter = new UsersAdapter(getContext(), new ArrayList<>());
         usersList.setAdapter(usersAdapter);
         listSwitch = view.findViewById(R.id.listSwitch1);
-        listSwitch.setText("Toggle");
         title = view.findViewById(R.id.attendeesList_title);
 
         return view;
@@ -71,7 +70,6 @@ public class SignedUpUsersFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-
         attendeeController.fetchSignedUpUsers(eventID, new AttendeeSignedUpFetchCallback() {
             @Override
             public void onSuccess(ArrayList<Attendee> attendees) {
@@ -79,7 +77,7 @@ public class SignedUpUsersFragment extends Fragment {
                 usersAdapter = new UsersAdapter(getContext(), new ArrayList<>());//to empty it(bless the garbage collector)
                 usersList.setAdapter(usersAdapter);
 
-                title.setText("Signed Up Users");
+                title.setText("Signed Up");
 
                 for (Attendee attendee : attendees) {
                     usersAdapter.addUser(attendee.getUser());
@@ -97,7 +95,7 @@ public class SignedUpUsersFragment extends Fragment {
         listSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
+                if (isChecked) {
                     //listSwitch.setChecked(false);
 
 
@@ -107,7 +105,7 @@ public class SignedUpUsersFragment extends Fragment {
                             usersAdapter = new UsersAdapter(getContext(), new ArrayList<>());//to empty it(bless the garbage collector)
                             usersList.setAdapter(usersAdapter);
 
-                            title.setText("Checked-In Users");
+                            title.setText("Checked-In");
 
                             for (Attendee attendee : attendees) {
                                 usersAdapter.addUser(attendee.getUser());
@@ -121,8 +119,7 @@ public class SignedUpUsersFragment extends Fragment {
                         }
                     });
 
-                }
-                else {
+                } else {
                     //listSwitch.setChecked(true);
 
                     attendeeController.fetchSignedUpUsers(eventID, new AttendeeSignedUpFetchCallback() {
@@ -132,7 +129,7 @@ public class SignedUpUsersFragment extends Fragment {
                             usersAdapter = new UsersAdapter(getContext(), new ArrayList<>());//to empty it(bless the garbage collector)
                             usersList.setAdapter(usersAdapter);
 
-                            title.setText("Signed Up Users");
+                            title.setText("Signed Up");
 
                             for (Attendee attendee : attendees) {
                                 usersAdapter.addUser(attendee.getUser());
