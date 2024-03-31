@@ -59,6 +59,7 @@ public class BrowseEventFragment extends Fragment {
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
                     logUserLocation();
+                    askNotificationPermission();
                 } else {
                     Toast.makeText(getContext(), "Location access is required to use this feature.", Toast.LENGTH_LONG).show();
                 }
@@ -159,7 +160,7 @@ public class BrowseEventFragment extends Fragment {
             NavHostFragment.findNavController(this).navigate(R.id.select_event, bundle);
         });
 
-        askNotificationPermission();
+        askLocationPermissionAndLogLocation();
         fetchEventsAndUpdateGrid();
 
         return view;
