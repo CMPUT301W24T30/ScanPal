@@ -11,15 +11,16 @@
         android:id="@+id/button_add_event"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:backgroundTint="#0D6EFD"
         android:clickable="true"
         android:focusable="true"
         android:theme="@style/AppTheme"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.954"
+        app:layout_constraintHorizontal_bias="0.96"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.02"
         app:srcCompat="@drawable/add_button"
         app:tint="@color/white" />
 
@@ -33,6 +34,7 @@
         android:theme="@style/Theme.AppCompat"
         app:layout_constraintBottom_toTopOf="@+id/browser_select"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

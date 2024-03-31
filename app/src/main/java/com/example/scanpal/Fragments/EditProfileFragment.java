@@ -22,16 +22,16 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.scanpal.Controllers.AttendeeController;
 import com.example.scanpal.Callbacks.DeleteAllAttendeesCallback;
-import com.example.scanpal.Controllers.ImageController;
-import com.example.scanpal.MainActivity;
-import com.example.scanpal.R;
-import com.example.scanpal.Models.User;
-import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Callbacks.UserRemoveCallback;
 import com.example.scanpal.Callbacks.UserUpdateCallback;
+import com.example.scanpal.Controllers.AttendeeController;
+import com.example.scanpal.Controllers.ImageController;
+import com.example.scanpal.Controllers.UserController;
+import com.example.scanpal.MainActivity;
+import com.example.scanpal.Models.User;
+import com.example.scanpal.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -51,7 +51,7 @@ public class EditProfileFragment extends Fragment {
     protected User existingUser;
     private ImageView profileImageView;
     private ProgressBar progressBar;
-    private TextInputEditText username, firstName, lastName;
+    private TextInputEditText username, firstName, lastName, homepage;
     private boolean isDeleteIntent = false;
     private ImageController imageController;
     private Uri imageUri;
@@ -90,7 +90,7 @@ public class EditProfileFragment extends Fragment {
         FloatingActionButton deleteButton = view.findViewById(R.id.delete_button);
         Button saveButton = view.findViewById(R.id.save_button);
         FloatingActionButton goBack = view.findViewById(R.id.button_go_back);
-        Button resetButton = view.findViewById(R.id.reset_button);
+        FloatingActionButton resetButton = view.findViewById(R.id.reset_button);
         progressBar = view.findViewById(R.id.progressBar);
 
         username = (TextInputEditText) ((TextInputLayout) view.findViewById(R.id.username)).getEditText();
@@ -99,6 +99,7 @@ public class EditProfileFragment extends Fragment {
         }
         firstName = (TextInputEditText) ((TextInputLayout) view.findViewById(R.id.first_name)).getEditText();
         lastName = (TextInputEditText) ((TextInputLayout) view.findViewById(R.id.last_name)).getEditText();
+        homepage = (TextInputEditText) ((TextInputLayout) view.findViewById(R.id.homepage)).getEditText();
 
         imageController = new ImageController();
         userController = new UserController(FirebaseFirestore.getInstance(), getContext());
@@ -147,6 +148,7 @@ public class EditProfileFragment extends Fragment {
                     username.setText(user.getUsername());
                     firstName.setText(user.getFirstName());
                     lastName.setText(user.getLastName());
+                    homepage.setText(user.getHomepage());
 
                     if (user.getPhoto() != null) {
                         Glide.with(EditProfileFragment.this)
@@ -178,11 +180,13 @@ public class EditProfileFragment extends Fragment {
                 User updatedUser = new User(Objects.requireNonNull(username.getText()).toString(),
                         Objects.requireNonNull(firstName.getText()).toString(),
                         Objects.requireNonNull(lastName.getText()).toString(),
+                        null,
+                        Objects.requireNonNull(homepage.getText()).toString(),
                         existingUser.getDeviceToken());
 
                 if (imageUri != null) {
                     String folderPath = "profile_images";
-                    String fileName = storedUsername + "_" + System.currentTimeMillis() + ".jpg";
+                    String fileName = storedUsername + ".jpg";
 
                     imageController.uploadImage(imageUri, folderPath, fileName, uri -> {
                         updatedUser.setPhoto(uri.toString());
@@ -235,10 +239,11 @@ public class EditProfileFragment extends Fragment {
      */
     private void showDeleteConfirmation() {
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Confirm Delete")
-                .setMessage("Are you sure you want to reset your profile? This action cannot be undone.")
+                .setTitle("Delete Profile?")
+                .setMessage("Are you sure you want to delete your profile? This action cannot be undone.")
                 .setPositiveButton("Delete", (dialog, which) -> deleteUser())
                 .setNegativeButton("Cancel", null)
+                .setIcon(R.drawable.danger_icon)
                 .show();
     }
 

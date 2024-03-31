@@ -334,14 +334,14 @@ public class EventController {
                     // Assuming all the fields are correctly spelled and present in the document
                     String firstName = organizerDoc.getString("firstName");
                     String lastName = organizerDoc.getString("lastName");
+                    String homepage = organizerDoc.getString("homepage");
                     String deviceToken = organizerDoc.getString("deviceToken");
                     Boolean administrator = organizerDoc.getBoolean("administrator");
                     String photo = organizerDoc.getString("photo");
 
                     if (firstName != null && lastName != null && deviceToken != null && administrator != null && photo != null) {
-                        User organizer = new User(organizerDoc.getId(), firstName, lastName, deviceToken);
+                        User organizer = new User(organizerDoc.getId(), firstName, lastName, photo, homepage, deviceToken);
                         organizer.setAdministrator(administrator);
-                        organizer.setPhoto(photo);
                         callback.onSuccess(organizer);
                     } else {
                         // Handle the case where one of the fields is null

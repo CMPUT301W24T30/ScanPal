@@ -9,7 +9,6 @@ import com.example.scanpal.Callbacks.UserRemoveCallback;
 import com.example.scanpal.Callbacks.UserSignedUpCallback;
 import com.example.scanpal.Callbacks.UserUpdateCallback;
 import com.example.scanpal.Callbacks.UsernameCheckCallback;
-import com.example.scanpal.Controllers.AttendeeController;
 import com.example.scanpal.Models.Attendee;
 import com.example.scanpal.Models.User;
 import com.google.firebase.firestore.DocumentReference;
@@ -64,14 +63,13 @@ public class UserController {
             callback.onError(e);
         }
 
-        //user.setDeviceToken( FirebaseMessaging.getInstance().getToken().getResult() );
-
         // Prepare user data for Firestore
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("administrator", user.isAdministrator());
         userMap.put("firstName", user.getFirstName());
         userMap.put("lastName", user.getLastName());
         userMap.put("photo", user.getPhoto());
+        userMap.put("homepage", user.getHomepage());
         userMap.put("deviceToken", user.getDeviceToken());
 
         // Attempt to add user to Firestore
@@ -116,6 +114,7 @@ public class UserController {
         userMap.put("firstName", user.getFirstName());
         userMap.put("lastName", user.getLastName());
         userMap.put("photo", user.getPhoto());
+        userMap.put("homepage", user.getHomepage());
 
         // Attempt to update user in Firestore
         DocumentReference docRef = database.collection("Users").document(user.getUsername());
@@ -152,8 +151,12 @@ public class UserController {
                 if (document != null && document.exists()) {
                     Map<String, Object> data = document.getData();
                     if (data != null) {
-                        User user = new User(username, (String) data.get("firstName"), (String) data.get("lastName"), (String) data.get("deviceToken"));
-                        user.setPhoto(String.valueOf(data.get("photo")));
+                        User user = new User(username,
+                                (String) data.get("firstName"),
+                                (String) data.get("lastName"),
+                                (String) data.get("photo"),
+                                (String) data.get("homepage"),
+                                (String) data.get("deviceToken"));
                         callback.onSuccess(user);
                     } else {
                         callback.onError(new Exception("Failed to parse user data"));
@@ -177,9 +180,7 @@ public class UserController {
         // delete user locally
         try {
             context.deleteFile("user.ser");
-        } catch (Exception e) {
-            callback.onError(e);
-            return;
+        } catch (Exception ignored) {
         }
 
         // delete user from Firestore
@@ -187,6 +188,8 @@ public class UserController {
         docRef.delete()
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(callback::onError);
+        ImageController imageController = new ImageController();
+        imageController.deleteImage("profile_images", username + ".jpg");
     }
 
     /**
