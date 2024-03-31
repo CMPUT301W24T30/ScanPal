@@ -1,6 +1,7 @@
 package com.example.scanpal.Fragments;
 
 import android.content.pm.PackageManager;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,7 +24,9 @@ import com.example.scanpal.Adapters.EventGridAdapter;
 import com.example.scanpal.Callbacks.EventsFetchCallback;
 import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Callbacks.UserSignedUpCallback;
+import com.example.scanpal.Callbacks.UsersFetchCallback;
 import com.example.scanpal.Controllers.EventController;
+import com.example.scanpal.Controllers.ImageController;
 import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.Models.User;
@@ -48,10 +51,13 @@ public class BrowseEventFragment extends Fragment {
                     Toast.makeText(getContext(), "Notifications cannot be sent since the permission is disabled.", Toast.LENGTH_LONG).show();
                 }
             });
-    protected List<Event> eventsList = new ArrayList<>();
     protected List<Event> allEvents = new ArrayList<>();
+    protected List<User> allUsers = new ArrayList<>();
+    protected List<Image> allImages = new ArrayList<>();
     private EventGridAdapter adapter;
     private EventController eventController;
+    private ImageController imageController;
+    private UserController userController;
 
     /**
      * Default constructor. Initializes the fragment.
@@ -63,12 +69,14 @@ public class BrowseEventFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.browse_events, container, false);
 
-        adapter = new EventGridAdapter(getContext(), new ArrayList<>());
+        adapter = new EventGridAdapter(getContext());
         GridView gridView = view.findViewById(R.id.event_grid);
         gridView.setAdapter(adapter);
 
         // init eventController
         eventController = new EventController();
+        userController = new UserController(this.getContext());
+        imageController = new ImageController();
 
         AutoCompleteTextView dropdown = view.findViewById(R.id.browser_select_autocomplete);
 
@@ -83,7 +91,7 @@ public class BrowseEventFragment extends Fragment {
         // Apply the adapter to the dropdown.
         dropdown.setAdapter(adapter);
 
-        UserController userController = new UserController(FirebaseFirestore.getInstance(), this.getContext());
+        UserController userController = new UserController(this.getContext());
         if (userController.fetchStoredUsername() != null) {
             userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
                 @Override
@@ -109,12 +117,13 @@ public class BrowseEventFragment extends Fragment {
                 switch (selectedItem) {
                     case "Events Browser":
                         NavHostFragment.findNavController(BrowseEventFragment.this).navigate(R.id.eventsPage);
+                        //setEvents();
                         break;
                     case "Image Browser":
-                        NavHostFragment.findNavController(BrowseEventFragment.this).navigate(R.id.browseImageFragment);
+                        //setImages();
                         break;
                     case "Profile Browser":
-                        NavHostFragment.findNavController(BrowseEventFragment.this).navigate(R.id.browseProfileFragment);
+                        //setProfiles();
                         break;
                 }
             }
@@ -137,7 +146,6 @@ public class BrowseEventFragment extends Fragment {
         });
 
         askNotificationPermission();
-        fetchEventsAndUpdateGrid();
 
         return view;
     }
@@ -147,7 +155,6 @@ public class BrowseEventFragment extends Fragment {
      * Applies filters based on user sign-up status and sorts events.
      */
     private void fetchAllEvents() {
-        UserController userController = new UserController(FirebaseFirestore.getInstance(), this.getContext());
         eventController.fetchAllEvents(new EventsFetchCallback() {
             @Override
             public void onSuccess(List<Event> events) {
@@ -190,25 +197,25 @@ public class BrowseEventFragment extends Fragment {
         });
     }
 
-    /**
-     * Fetches events from the data source and updates the grid view.
-     * This method differs from fetchAllEvents by focusing on updating the existing list.
-     */
-    private void fetchEventsAndUpdateGrid() {
-        EventController eventController = new EventController();
-        eventController.fetchAllEvents(new EventsFetchCallback() {
+    private void fetchAllUsers() {
+        userController.fetchAllUsers(new UsersFetchCallback() {
             @Override
-            public void onSuccess(List<Event> events) {
-                eventsList.clear();
-                eventsList.addAll(events);
-                adapter.notifyDataSetChanged();
+            public void onSuccess(List<User> user) {
+                // Do something with the user
+                allUsers.clear();
+                allUsers.addAll(user);
+                adapter.setUsers(allUsers);
             }
 
             @Override
             public void onError(Exception e) {
-                Toast.makeText(getContext(), "Error fetching events: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Error fetching all events.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void fetchAllImages() {
+
     }
 
     /**

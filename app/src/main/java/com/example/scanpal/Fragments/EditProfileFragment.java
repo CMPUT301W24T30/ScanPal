@@ -101,7 +101,7 @@ public class EditProfileFragment extends Fragment {
         lastName = (TextInputEditText) ((TextInputLayout) view.findViewById(R.id.last_name)).getEditText();
 
         imageController = new ImageController();
-        userController = new UserController(FirebaseFirestore.getInstance(), getContext());
+        userController = new UserController( getContext());
         attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
 
         uploadButton.setOnClickListener(v -> openGallery());

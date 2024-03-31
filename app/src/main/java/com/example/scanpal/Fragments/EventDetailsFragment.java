@@ -138,7 +138,7 @@ public class EventDetailsFragment extends Fragment {
         viewSignedUpUsersBtn = view.findViewById(R.id.view_signed_up_users_button);
 
         // Setup user and attendee controllers
-        UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
+        UserController userController = new UserController( getContext());
         attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
 
 

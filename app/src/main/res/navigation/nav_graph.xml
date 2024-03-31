@@ -153,18 +153,6 @@
             app:destination="@id/profile_fragment" />
     </fragment>
 
-    <fragment
-        android:id="@+id/browseImageFragment"
-        android:name="com.example.scanpal.Fragments.BrowseImageFragment"
-        android:label="BrowseImageFragment"
-        tools:layout="@layout/browse_events" />
-
-    <fragment
-        android:id="@+id/browseProfileFragment"
-        android:name="com.example.scanpal.Fragments.BrowseProfileFragment"
-        android:label="BrowseProfileFragment"
-        tools:layout="@layout/browse_events" />
-
 
 </navigation>
 

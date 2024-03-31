@@ -60,7 +60,7 @@ public class ProfileFragment extends Fragment {
         initializeViews(view);
         setupButtonListeners();
 
-        userController = new UserController(FirebaseFirestore.getInstance(), getContext());
+        userController = new UserController( getContext());
 
         String username = userController.fetchStoredUsername();
         if (username != null) {

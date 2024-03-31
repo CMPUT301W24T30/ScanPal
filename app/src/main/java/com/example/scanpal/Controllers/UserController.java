@@ -10,7 +10,6 @@ import com.example.scanpal.Callbacks.UserSignedUpCallback;
 import com.example.scanpal.Callbacks.UserUpdateCallback;
 import com.example.scanpal.Callbacks.UsernameCheckCallback;
 import com.example.scanpal.Callbacks.UsersFetchCallback;
-import com.example.scanpal.Controllers.AttendeeController;
 import com.example.scanpal.Models.Attendee;
 import com.example.scanpal.Models.User;
 import com.google.firebase.firestore.DocumentReference;
@@ -39,11 +38,10 @@ public class UserController {
     /**
      * Initializes a new UserController instance.
      *
-     * @param database The Firestore database instance used for user operations.
      * @param context  The application's context, used for file operations.
      */
-    public UserController(FirebaseFirestore database, Context context) {
-        this.database = database;
+    public UserController(Context context) {
+        this.database = FirebaseFirestore.getInstance();
         this.context = context;
     }
 

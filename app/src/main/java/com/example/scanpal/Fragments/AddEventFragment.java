@@ -113,7 +113,7 @@ public class AddEventFragment extends Fragment {
         this.progressBar = view.findViewById(R.id.progressBar);
 
         imageController = new ImageController();
-        userController = new UserController(FirebaseFirestore.getInstance(), view.getContext());
+        userController = new UserController( view.getContext());
         eventController = new EventController();
 
         userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {

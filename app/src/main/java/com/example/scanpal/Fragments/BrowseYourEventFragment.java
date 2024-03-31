@@ -66,7 +66,7 @@ public class BrowseYourEventFragment extends Fragment {
 
         ((TextView) view.findViewById(R.id.event_page_title)).setText("Your Events");
 
-        adapter = new EventGridAdapter(getContext(), new ArrayList<>());
+        adapter = new EventGridAdapter(getContext());
         gridView = view.findViewById(R.id.event_grid);
         gridView.setAdapter(adapter);
 
@@ -100,7 +100,7 @@ public class BrowseYourEventFragment extends Fragment {
      * Applies filters based on user sign-up status and sorts events.
      */
     private void fetchYourEvents() {
-        UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
+        UserController userController = new UserController( getContext());
         String username = userController.fetchStoredUsername();
         if (username != null) {
             // Use EventController to fetch user-specific events

@@ -40,7 +40,7 @@ public class RoleSelectFragment extends Fragment {
         String firstName = getArguments().getString("firstName", "");
         String lastName = getArguments().getString("lastName", "");
 
-        UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
+        UserController userController = new UserController( getContext());
 
         //String deviceToken = "a";
 

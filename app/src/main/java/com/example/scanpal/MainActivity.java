@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         assert navHostFragment != null;
         navController = navHostFragment.getNavController();
 
-        UserController userController = new UserController(FirebaseFirestore.getInstance(), this);
+        UserController userController = new UserController( this);
         if (userController.isUserLoggedIn()) {
             setNavbarVisibility(true);
             navController.navigate(R.id.eventsPage);
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         // Initialize QR Code Scanner and set up scan button.
         qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
             if (result.getContents() != null) {
-                UserController userController = new UserController(FirebaseFirestore.getInstance(), this);
+                UserController userController = new UserController( this);
                 String username = userController.fetchStoredUsername();
                 qrScannerController.handleResult(result.getContents(), username);
             } else {

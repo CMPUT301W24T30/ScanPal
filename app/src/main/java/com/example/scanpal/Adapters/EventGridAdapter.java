@@ -2,6 +2,7 @@ package com.example.scanpal.Adapters;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.scanpal.Models.Event;
+import com.example.scanpal.Models.User;
 import com.example.scanpal.R;
 import com.google.android.material.card.MaterialCardView;
 
@@ -25,16 +27,16 @@ import java.util.List;
 public class EventGridAdapter extends BaseAdapter {
     protected Context context;
     protected List<Event> events;
+    protected List<User> users;
+    protected List<Image> images;
 
     /**
      * Constructs an EventGridAdapter with the specified context and event list.
      *
      * @param context The current context. Used to inflate layout files and access resources.
-     * @param events  A list of event models to be displayed in the grid.
      */
-    public EventGridAdapter(Context context, List<Event> events) {
+    public EventGridAdapter(Context context) {
         this.context = context;
-        this.events = events;
     }
 
     /**
@@ -105,6 +107,18 @@ public class EventGridAdapter extends BaseAdapter {
     public void setEvents(List<Event> newEvents) {
         this.events.clear();
         this.events.addAll(newEvents);
+        notifyDataSetChanged();
+    }
+
+    public void setUsers(List<User> newUsers) {
+        this.users.clear();
+        this.users.addAll(newUsers);
+        notifyDataSetChanged();
+    }
+
+    public void setImages(List<Image> newImages) {
+        this.images.clear();
+        this.images.addAll(newImages);
         notifyDataSetChanged();
     }
 }
