@@ -182,7 +182,7 @@ public class EventDetailsFragment extends Fragment {
                             public void onSuccess(ArrayList<Attendee> attendees) {
                                 int currentCount = attendees.size();//how many people are signed up
 
-                                if (currentCount >= eventCapacity) {
+                                if (currentCount >= eventCapacity && eventCapacity != 0) {
                                     Toast.makeText(getContext(), "This event is full 😔", Toast.LENGTH_SHORT).show();
                                     return;
                                 }

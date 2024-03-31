@@ -94,7 +94,7 @@ public class SignedUpUsersFragment extends Fragment {
                     @Override
                     public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
                         View child = rv.findChildViewUnder(e.getX(), e.getY());
-                        Log.wtf("GETTING USER","TOUCH");
+                        //Log.wtf("GETTING USER","TOUCH");
 
                         if (child != null ) {
                             int position = rv.getChildAdapterPosition(child);
@@ -108,7 +108,7 @@ public class SignedUpUsersFragment extends Fragment {
 
 
                             OrganizerOptions.show();
-                            Log.wtf("GETTING USER",usersAdapter.getAt(position).getUsername());
+                            //Log.wtf("GETTING USER",usersAdapter.getAt(position).getUsername());
                             return true;
                         }
                         return false;
@@ -116,12 +116,12 @@ public class SignedUpUsersFragment extends Fragment {
 
                     @Override
                     public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-
+                        //DO NOTHING
                     }
 
                     @Override
                     public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
+                        //DO NOTHING
                     }
                 });
             }

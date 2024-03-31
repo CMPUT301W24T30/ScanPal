@@ -94,8 +94,6 @@ public class AttendeeController {
                         attendee.setRsvp(Boolean.TRUE.equals(documentSnapshot.getBoolean("rsvp")));
                         attendee.setCheckinCount((long)documentSnapshot.get("checkInCount"));
 
-                        //Log.wtf("FETCHONG ATTENDEE", "crash here:"  + documentSnapshot.getBoolean("rsvp").toString());
-
 
                         DocumentReference userRef = documentSnapshot.getDocumentReference("user");
                         DocumentReference eventRef = documentSnapshot.getDocumentReference("eventID");
@@ -105,15 +103,10 @@ public class AttendeeController {
                                 User user = userDoc.toObject(User.class);
                                 user.setUsername( userRef.getId() );
 
-                                Log.wtf("FETCHONG ATTENDEE", "crash here get user: "  + user.getUsername());
-
                                 attendee.setUser(user);
                                 attendee.setEventID(eventRef.getId());
                                 callback.onSuccess(attendee);
                             }).addOnFailureListener(callback::onError);
-
-
-                            Log.wtf("FETCHONG ATTENDEE", "crash here: ansyc" );
 
 
                         } else {
@@ -199,7 +192,6 @@ public class AttendeeController {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots.isEmpty()) {
                         callback.onSuccess(attendees);
-
                         return;
                     }
 

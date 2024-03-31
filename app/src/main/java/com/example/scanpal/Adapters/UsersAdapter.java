@@ -25,15 +25,6 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
 
     ArrayList<User> users;
     Context context;
-    private AdapterView.OnItemClickListener itemListener;
-
-    public interface OnItemClickListener {
-        void onItemClick(int position);
-    }
-
-    public void setItemListener(AdapterView.OnItemClickListener itemListener) {
-        this.itemListener = itemListener;
-    }
 
     public UsersAdapter(Context context, ArrayList<User> users) {
         this.users = users;
