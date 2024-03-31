@@ -39,6 +39,7 @@ import com.example.scanpal.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -244,7 +245,7 @@ public class BrowseEventFragment extends Fragment {
                     String locationStr = location.getLatitude() + "," + location.getLongitude();
 
                     // Fetch current user's username
-                    UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
+                    UserController userController = new UserController(getContext());
                     String currentUsername = userController.fetchStoredUsername();
 
                     // Update user location
@@ -267,50 +268,6 @@ public class BrowseEventFragment extends Fragment {
             });
         }
     }
-
-
-
-    private void askLocationPermissionAndLogLocation() {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
-        } else {
-            logUserLocation();
-        }
-    }
-
-    private void logUserLocation() {
-        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
-
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            fusedLocationClient.getLastLocation().addOnSuccessListener(requireActivity(), location -> {
-                if (location != null) {
-                    String locationStr = location.getLatitude() + "," + location.getLongitude();
-
-                    // Fetch current user's username
-                    UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
-                    String currentUsername = userController.fetchStoredUsername();
-
-                    // Update user location
-                    if (currentUsername != null) {
-                        userController.updateUserLocation(currentUsername, locationStr, new UserUpdateCallback() {
-                            @Override
-                            public void onSuccess() {
-                                Log.d("EventPageFragment", "User location updated successfully");
-                            }
-
-                            @Override
-                            public void onError(Exception e) {
-                                Log.e("EventPageFragment", "Failed to update user location", e);
-                            }
-                        });
-                    }
-                } else {
-                    Log.d("EventPageFragment", "No location detected.");
-                }
-            });
-        }
-    }
-
 
 
     private void fetchAllUsers() {

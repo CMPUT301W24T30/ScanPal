@@ -106,7 +106,7 @@ public class QrScannerController {
 
     
     public void updateUserLocationAndAttendee(String eventId, String username) {
-        UserController userController = new UserController(FirebaseFirestore.getInstance(), context);
+        UserController userController = new UserController( context);
 
         userController.getUser(username, new UserFetchCallback() {
             @Override
