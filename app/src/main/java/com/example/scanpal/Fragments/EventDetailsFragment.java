@@ -189,7 +189,7 @@ public class EventDetailsFragment extends Fragment {
 
                                 if (eventID != null && userDetails != null) {
                                     String attendeeId = userDetails.getUsername() + eventID;
-                                    attendee = new Attendee(userDetails, eventID, true, false);
+                                    attendee = new Attendee(userDetails, eventID, true, false,0);//zero cause new object
                                     attendee.setId(attendeeId);
                                     attendeeController.addAttendee(attendee, new AttendeeAddCallback() {
                                         @Override

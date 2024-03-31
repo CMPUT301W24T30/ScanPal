@@ -1,5 +1,7 @@
 package com.example.scanpal.Controllers;
 
+import android.util.Log;
+
 import com.example.scanpal.Callbacks.AttendeeAddCallback;
 import com.example.scanpal.Callbacks.AttendeeDeleteCallback;
 import com.example.scanpal.Callbacks.AttendeeFetchCallback;
@@ -59,6 +61,7 @@ public class AttendeeController {
         attendeeMap.put("location", attendee.getLocation());
         attendeeMap.put("checkedIn", attendee.isCheckedIn());
         attendeeMap.put("rsvp", attendee.isRsvp());
+        attendeeMap.put("checkInCount", attendee.getCheckinCount());
 
         DocumentReference userRef = database.collection("Users").document(attendee.getUser().getUsername());
         attendeeMap.put("user", userRef);
@@ -89,6 +92,10 @@ public class AttendeeController {
                         attendee.setLocation(documentSnapshot.getString("location"));
                         attendee.setCheckedIn(Boolean.TRUE.equals(documentSnapshot.getBoolean("checkedIn")));
                         attendee.setRsvp(Boolean.TRUE.equals(documentSnapshot.getBoolean("rsvp")));
+                        attendee.setCheckinCount((long)documentSnapshot.get("checkInCount"));
+
+                        //Log.wtf("FETCHONG ATTENDEE", "crash here:"  + documentSnapshot.getBoolean("rsvp").toString());
+
 
                         DocumentReference userRef = documentSnapshot.getDocumentReference("user");
                         DocumentReference eventRef = documentSnapshot.getDocumentReference("eventID");
@@ -96,10 +103,19 @@ public class AttendeeController {
                         if (userRef != null && eventRef != null) {
                             userRef.get().addOnSuccessListener(userDoc -> {
                                 User user = userDoc.toObject(User.class);
+                                user.setUsername( userRef.getId() );
+
+                                Log.wtf("FETCHONG ATTENDEE", "crash here get user: "  + user.getUsername());
+
                                 attendee.setUser(user);
+                                attendee.setEventID(eventRef.getId());
+                                callback.onSuccess(attendee);
                             }).addOnFailureListener(callback::onError);
-                            attendee.setEventID(eventRef.getId());
-                            callback.onSuccess(attendee);
+
+
+                            Log.wtf("FETCHONG ATTENDEE", "crash here: ansyc" );
+
+
                         } else {
                             callback.onError(new Exception("User reference or Event reference not found in attendee document"));
                         }
@@ -125,6 +141,15 @@ public class AttendeeController {
         updated.put("location", attendee.getLocation());
         updated.put("checkedIn", attendee.isCheckedIn());
         updated.put("rsvp", attendee.isRsvp());
+        updated.put("checkInCount", attendee.getCheckinCount());
+        if( attendee.getUser() == null) {
+            Log.wtf("CHECKED IN!", "crash here loc:"  + attendee.getLocation());
+        }
+
+
+
+
+        Log.wtf("CHECKED IN!", "path: User/"  + attendee.getUser().getUsername());
 
         DocumentReference userRef = database.collection("Users").document(attendee.getUser().getUsername());
         updated.put("user", userRef);
@@ -203,7 +228,8 @@ public class AttendeeController {
                                         user,
                                         Objects.requireNonNull(attendeeDoc.getDocumentReference("eventID")).toString(),
                                         Boolean.TRUE.equals(attendeeDoc.getBoolean("rsvp")),
-                                        Boolean.TRUE.equals(attendeeDoc.getBoolean("checkedIn"))
+                                        Boolean.TRUE.equals(attendeeDoc.getBoolean("checkedIn")),
+                                        (long)attendeeDoc.get("checkInCount")
                                 );
                                 attendee.setLocation(attendeeDoc.getString("location"));
                                 attendees.add(attendee);
@@ -257,7 +283,8 @@ public class AttendeeController {
                                         user,
                                         Objects.requireNonNull(attendeeDoc.getDocumentReference("eventID")).toString(),
                                         Boolean.TRUE.equals(attendeeDoc.getBoolean("rsvp")),
-                                        Boolean.TRUE.equals(attendeeDoc.getBoolean("checkedIn"))
+                                        Boolean.TRUE.equals(attendeeDoc.getBoolean("checkedIn")),
+                                        (long) attendeeDoc.get("checkInCount")
                                 );
                                 attendee.setLocation(attendeeDoc.getString("location"));
                                 attendees.add(attendee);
