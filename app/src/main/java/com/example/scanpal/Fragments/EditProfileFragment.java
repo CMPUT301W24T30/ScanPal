@@ -118,8 +118,18 @@ public class EditProfileFragment extends Fragment {
 
         saveButton.setOnClickListener(v -> saveUserDetails());
         goBack.setOnClickListener(v -> {
+            // This is to make it send back to the right profile in admin
+            Bundle bundle = new Bundle();
+            String currentUsername = "";
+            if (getArguments() != null) {
+                currentUsername = getArguments().getString("username", "");
+            }
+            if (Objects.equals(currentUsername, "")) {
+                currentUsername = userController.fetchStoredUsername();
+            }
+            bundle.putString("username", currentUsername);
             NavController navController = NavHostFragment.findNavController(EditProfileFragment.this);
-            navController.navigate(R.id.save_profile_edits);
+            navController.navigate(R.id.save_profile_edits, bundle);
             ((MainActivity) requireActivity()).setNavbarVisibility(true);
         });
         resetButton.setOnClickListener(v -> showDeleteConfirmation());
@@ -139,13 +149,20 @@ public class EditProfileFragment extends Fragment {
      * Fetches the current details of the user from Firestore/Internal storage and displays them in the UI components.
      */
     private void fetchUserDetails() {
-        String storedUsername = userController.fetchStoredUsername();
-        if (storedUsername != null) {
-            userController.getUser(storedUsername, new UserFetchCallback() {
+        String username = "";
+        if (getArguments() != null) {
+            username = getArguments().getString("username", "");
+        }
+        if (Objects.equals(username, "")) {
+            username = userController.fetchStoredUsername();
+        }
+
+        if (username != null) {
+            userController.getUser(username, new UserFetchCallback() {
                 @Override
                 public void onSuccess(User user) {
                     existingUser = user;
-                    username.setText(user.getUsername());
+                    EditProfileFragment.this.username.setText(user.getUsername());
                     firstName.setText(user.getFirstName());
                     lastName.setText(user.getLastName());
                     homepage.setText(user.getHomepage());

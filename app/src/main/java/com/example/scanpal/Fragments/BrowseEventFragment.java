@@ -196,6 +196,15 @@ public class BrowseEventFragment extends Fragment {
                 allEvents.clear();
                 allEvents.addAll(events);
 
+                gridView.setAdapter(eventGridAdapter);
+
+                gridView.setOnItemClickListener((parent, view1, position, id) -> {
+                    Event event = allEvents.get(position);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("event_id", event.getId());
+                    NavHostFragment.findNavController(BrowseEventFragment.this).navigate(R.id.select_event, bundle);
+                });
+
                 CountDownLatch latch = new CountDownLatch(allEvents.size());
 
                 for (Event event : allEvents) {
@@ -277,13 +286,20 @@ public class BrowseEventFragment extends Fragment {
     private void fetchAllUsers() {
         userController.fetchAllUsers(new UsersFetchCallback() {
             @Override
-            public void onSuccess(List<User> user) {
+            public void onSuccess(List<User> users) {
                 // Do something with the user
                 allUsers.clear();
-                allUsers.addAll(user);
+                allUsers.addAll(users);
                 profileGridAdapter.setUsers(allUsers);
 
                 gridView.setAdapter(profileGridAdapter);
+
+                gridView.setOnItemClickListener((parent, view1, position, id) -> {
+                    User user = allUsers.get(position);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("username", user.getUsername());
+                    NavHostFragment.findNavController(BrowseEventFragment.this).navigate(R.id.profile_fragment, bundle);
+                });
             }
 
             @Override

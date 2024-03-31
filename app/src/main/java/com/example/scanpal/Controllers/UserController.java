@@ -139,11 +139,15 @@ public class UserController {
             FileInputStream fis = context.openFileInput("user.ser");
             ObjectInputStream ois = new ObjectInputStream(fis);
             User user = (User) ois.readObject();
-            ois.close();
-            fis.close();
-            Log.d("UserController", "Fetched user from local storage: " + user.getUsername() + " with location: " + user.getLocation());
-            callback.onSuccess(user);
-            return;
+
+            // Only return the user if the username matches
+            if (user.getUsername().equals(username)) {
+                ois.close();
+                fis.close();
+                Log.d("UserController", "Fetched user from local storage: " + user.getUsername() + " with location: " + user.getLocation());
+                callback.onSuccess(user);
+                return;
+            }
         } catch (Exception e) {
             Log.e("UserController", "Error fetching user from local storage", e);
         }

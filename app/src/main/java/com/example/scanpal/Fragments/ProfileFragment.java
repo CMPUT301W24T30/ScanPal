@@ -28,6 +28,8 @@ import com.example.scanpal.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Objects;
+
 /**
  * Fragment for displaying and managing user profile information. This fragment
  * allows users
@@ -43,6 +45,7 @@ public class ProfileFragment extends Fragment {
     private TextView addUsername, firstName, lastName, homepage;
     private UserController userController;
     private String url;
+    private String username = "";
 
     /**
      * Inflates the layout for the user's profile page.
@@ -73,7 +76,13 @@ public class ProfileFragment extends Fragment {
 
         userController = new UserController( getContext());
 
-        String username = userController.fetchStoredUsername();
+        String username = "";
+        if (getArguments() != null) {
+            username = getArguments().getString("username", "");
+        }
+        if (Objects.equals(username, "")) {
+            username = userController.fetchStoredUsername();
+        }
         if (username != null) {
             fetchUserDetails(username);
         } else {
@@ -90,7 +99,12 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        String username = userController.fetchStoredUsername();
+        if (getArguments() != null) {
+            username = getArguments().getString("username", "");
+        }
+        if (Objects.equals(username, "")) {
+            username = userController.fetchStoredUsername();
+        }
         homepage.setTextColor(Color.parseColor("#0D6EFD"));
         if (username != null) {
             fetchUserDetails(username);
@@ -125,8 +139,10 @@ public class ProfileFragment extends Fragment {
         });
 
         buttonEditProfile.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putString("username", username);
             NavController navController = NavHostFragment.findNavController(ProfileFragment.this);
-            navController.navigate(R.id.edit_profile);
+            navController.navigate(R.id.edit_profile, bundle);
         });
 
         homepage.setOnClickListener(v -> openWebPage());
