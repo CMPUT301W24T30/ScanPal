@@ -21,6 +21,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.scanpal.Adapters.EventGridAdapter;
+import com.example.scanpal.Adapters.ImageGridAdapter;
+import com.example.scanpal.Adapters.ProfileGridAdapter;
 import com.example.scanpal.Callbacks.EventsFetchCallback;
 import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Callbacks.UserSignedUpCallback;
@@ -32,7 +34,6 @@ import com.example.scanpal.Models.Event;
 import com.example.scanpal.Models.User;
 import com.example.scanpal.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,9 @@ public class BrowseEventFragment extends Fragment {
     protected List<Event> allEvents = new ArrayList<>();
     protected List<User> allUsers = new ArrayList<>();
     protected List<Image> allImages = new ArrayList<>();
-    private EventGridAdapter adapter;
+    private EventGridAdapter eventGridAdapter;
+    private ProfileGridAdapter profileGridAdapter;
+    private ImageGridAdapter imageGridAdapter;
     private EventController eventController;
     private ImageController imageController;
     private UserController userController;
@@ -69,9 +72,9 @@ public class BrowseEventFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.browse_events, container, false);
 
-        adapter = new EventGridAdapter(getContext());
+        eventGridAdapter = new EventGridAdapter(getContext());
         GridView gridView = view.findViewById(R.id.event_grid);
-        gridView.setAdapter(adapter);
+        gridView.setAdapter(eventGridAdapter);
 
         // init eventController
         eventController = new EventController();
@@ -81,6 +84,8 @@ public class BrowseEventFragment extends Fragment {
         AutoCompleteTextView dropdown = view.findViewById(R.id.browser_select_autocomplete);
 
         dropdown.setText("Events Browser");
+        fetchAllEvents();
+
 
         // Create an ArrayAdapter using the string array and a default dropdown layout.
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(
@@ -117,7 +122,7 @@ public class BrowseEventFragment extends Fragment {
                 switch (selectedItem) {
                     case "Events Browser":
                         NavHostFragment.findNavController(BrowseEventFragment.this).navigate(R.id.eventsPage);
-                        //setEvents();
+                        fetchAllEvents();
                         break;
                     case "Image Browser":
                         //setImages();
@@ -129,7 +134,7 @@ public class BrowseEventFragment extends Fragment {
             }
         });
 
-        fetchAllEvents();
+
 
         // Set up button to add new events.
         FloatingActionButton addEventButton = view.findViewById(R.id.button_add_event);
@@ -183,7 +188,7 @@ public class BrowseEventFragment extends Fragment {
                         latch.await();
                         requireActivity().runOnUiThread(() -> {
                             allEvents.sort((o1, o2) -> Boolean.compare(o2.isUserSignedUp(), o1.isUserSignedUp()));
-                            adapter.setEvents(allEvents);
+                            eventGridAdapter.setEvents(allEvents);
                         });
                     } catch (InterruptedException ignored) {
                     }
@@ -204,7 +209,7 @@ public class BrowseEventFragment extends Fragment {
                 // Do something with the user
                 allUsers.clear();
                 allUsers.addAll(user);
-                adapter.setUsers(allUsers);
+                profileGridAdapter.setUsers(allUsers);
             }
 
             @Override
