@@ -7,19 +7,31 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.GridView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.scanpal.Adapters.EventGridAdapter;
 import com.example.scanpal.Callbacks.UserFetchCallback;
+import com.example.scanpal.Controllers.EventController;
+import com.example.scanpal.Controllers.ImageController;
 import com.example.scanpal.Controllers.UserController;
+import com.example.scanpal.Models.Event;
 import com.example.scanpal.Models.User;
 import com.example.scanpal.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BrowseImageFragment extends Fragment {
+    protected List<Event> eventsList = new ArrayList<>();
+    protected List<Event> allEvents = new ArrayList<>();
+    private EventGridAdapter adapter;
+    private ImageController imageController;
 
     /**
      * Default constructor. Initializes the fragment.
@@ -31,6 +43,10 @@ public class BrowseImageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.browse_events, container, false);
+
+        adapter = new EventGridAdapter(getContext(), new ArrayList<>());
+        GridView gridView = view.findViewById(R.id.event_grid);
+        gridView.setAdapter(adapter);
 
         AutoCompleteTextView dropdown = view.findViewById(R.id.browser_select_autocomplete);
 
@@ -83,6 +99,8 @@ public class BrowseImageFragment extends Fragment {
 
         FloatingActionButton addEventButton = view.findViewById(R.id.button_add_event);
         addEventButton.setVisibility(View.INVISIBLE);
+
+
 
         return view;
     }
