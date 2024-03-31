@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,6 +25,15 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
 
     ArrayList<User> users;
     Context context;
+    private AdapterView.OnItemClickListener itemListener;
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setItemListener(AdapterView.OnItemClickListener itemListener) {
+        this.itemListener = itemListener;
+    }
 
     public UsersAdapter(Context context, ArrayList<User> users) {
         this.users = users;
@@ -54,6 +64,10 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
     public void addUser(User user) {
         users.add(user);
         notifyItemInserted(users.size() - 1);
+    }
+
+    public User getAt(int index) {
+        return users.get(index);
     }
 
     class UsersViewHolder extends RecyclerView.ViewHolder {

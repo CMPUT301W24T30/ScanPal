@@ -199,6 +199,7 @@ public class AttendeeController {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots.isEmpty()) {
                         callback.onSuccess(attendees);
+
                         return;
                     }
 
