@@ -160,8 +160,8 @@ public class UserController {
                                 (String) data.get("lastName"),
                                 (String) data.get("photo"),
                                 (String) data.get("homepage"),
-                                (String) data.get("deviceToken"),
-                                (String) data.get("location"));
+                                (String) data.get("deviceToken"));
+                        user.setLocation(String.valueOf(data.get("location")));
                         callback.onSuccess(user);
                     } else {
                         Log.e("UserController", "Failed to parse user data from Firestore");
