@@ -151,7 +151,7 @@ public class AddEventFragment extends Fragment {
 
         // Initialize QR Code Scanner
         qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
-            if (result.getContents() != null) {
+            if (result.getContents() != null && result.getContents().startsWith("C")) {
                 // Ensure event doesn't already exist
                 FirebaseFirestore database = FirebaseFirestore.getInstance();
                 DocumentSnapshot doc = database.collection("Events").document(result.getContents()).get().getResult();

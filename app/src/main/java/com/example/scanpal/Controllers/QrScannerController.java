@@ -11,7 +11,6 @@ import com.example.scanpal.Models.Attendee;
 import com.example.scanpal.Models.Capture;
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.Models.User;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 /**
@@ -48,8 +47,8 @@ public class QrScannerController {
      * @param username Username of the attendee who scanned the QR code
      */
     public void handleResult(String qrId, String username) {
-        if (qrId.startsWith("check-in-")) {
-            String eventId = qrId.substring(9);
+        if (qrId.startsWith("C")) {
+            String eventId = qrId.substring(1);
 
             eventController.getEventById(eventId, new EventFetchCallback() {
                 @Override
@@ -99,7 +98,7 @@ public class QrScannerController {
                     System.err.println("Error fetching attendee: " + e.getMessage());
                 }
             });
-        } else if (qrId.startsWith("event-")) {
+        } else if (qrId.startsWith("E")) {
             // TODO: handle event check-in?
         }
     }

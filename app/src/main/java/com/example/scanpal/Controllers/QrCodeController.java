@@ -94,7 +94,7 @@ public class QrCodeController {
      */
     public void generateAndStoreQrCode(Event event, Map<String, Object> eventMap, Boolean isCustom) {
         // Creating bitmap for qrcode and add it to event
-        Bitmap qr_to_event = QrCodeController.generate("event-" + event.getId());
+        Bitmap qr_to_event = QrCodeController.generate("E" + event.getId());
         event.setQrToEvent(qr_to_event);
 
         // Storing the bitmap into firebase by converting into byte array
@@ -106,7 +106,7 @@ public class QrCodeController {
         if (isCustom) {
             qr_to_checkin = QrCodeController.generate(event.getId());
         } else {
-            qr_to_checkin = QrCodeController.generate("check-in-" + event.getId());
+            qr_to_checkin = QrCodeController.generate("C" + event.getId());
         }
         event.setQrToCheckIn(qr_to_checkin);
 
