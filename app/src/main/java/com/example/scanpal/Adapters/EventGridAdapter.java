@@ -90,7 +90,7 @@ public class EventGridAdapter extends BaseAdapter {
                 .load(event.getPosterURI())
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
-                .error(R.mipmap.onphone) // TODO Maybe have a better fallback image
+                .error("https://media1.tenor.com/m/s7Tf_aL-Di0AAAAC/chipi-chipi-chapa-chapa.gif")
                 .transform(new RoundedCorners(16))
                 .into(imageView);
 

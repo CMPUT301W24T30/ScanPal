@@ -314,12 +314,12 @@ public class EventDetailsFragment extends Fragment {
                         if (eventLoc != null) {
                             eventLoc.setText(eventLocation);
                         }
-                        if (eventPoster != null) {
-                            Uri imageURI = Uri.parse(ImageURI);
+                        if (ImageURI != null){
+                                    Uri imageURI = Uri.parse(ImageURI);
                             Glide.with(requireView())
                                     .load(imageURI)
                                     .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                    //.error() // TODO Get a default background
+                                    .error("https://media1.tenor.com/m/s7Tf_aL-Di0AAAAC/chipi-chipi-chapa-chapa.gif")
                                     .skipMemoryCache(true)
                                     .apply(new RequestOptions().placeholder(R.drawable.ic_launcher_background))
                                     .into(eventPoster);
