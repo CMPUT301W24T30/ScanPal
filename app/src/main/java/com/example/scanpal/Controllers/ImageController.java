@@ -96,7 +96,6 @@ public class ImageController {
     public void fetchAllImages(final ImagesFetchCallback callback) {
         List<String> imageUrls = new ArrayList<>();
         StorageReference imageRef = storage.getReference();
-        AtomicInteger pendingOperations = new AtomicInteger(1); // Start with 1 for the initial listAll call
 
         imageRef.listAll().addOnSuccessListener(result -> {
             if(result.getItems().isEmpty() && result.getPrefixes().isEmpty()) {
@@ -105,40 +104,23 @@ public class ImageController {
                 return;
             }
 
-            // Update for each item in the list
-            pendingOperations.addAndGet(result.getItems().size());
             for (StorageReference item : result.getItems()) {
                 String path = item.getPath();
                 imageUrls.add(path);
-                if (pendingOperations.decrementAndGet() == 0) {
-                    callback.onSuccess(imageUrls);
-                }
             }
 
             // Update for each prefix
             for (StorageReference prefix : result.getPrefixes()) {
-                // This is a bit tricky because we don't know how many items each prefix contains ahead of time
-                pendingOperations.incrementAndGet(); // Assume there's at least one operation pending for listing the prefix
+
                 prefix.listAll().addOnSuccessListener(folder -> {
-                    // Adjust the pending count based on actual items found
-                    pendingOperations.addAndGet(folder.getItems().size());
                     for (StorageReference item : folder.getItems()) {
                         String path = item.getPath();
                         imageUrls.add(path);
-                        if (pendingOperations.decrementAndGet() == 0) {
-                            callback.onSuccess(imageUrls);
-                        }
                     }
-                    // After adding folder items to the count, remove one for the completed prefix listing itself
-                    if (pendingOperations.decrementAndGet() == 0) {
-                        callback.onSuccess(imageUrls);
-                    }
-                }).addOnFailureListener(callback::onError);
-            }
 
-            // After initiating all prefix listings, decrement for the initial listing
-            if (pendingOperations.decrementAndGet() == 0) {
-                callback.onSuccess(imageUrls);
+                    callback.onSuccess(imageUrls);
+
+                }).addOnFailureListener(callback::onError);
             }
         }).addOnFailureListener(callback::onError);
     }
