@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.Models.User;
@@ -87,6 +88,8 @@ public class EventGridAdapter extends BaseAdapter {
 
         Glide.with(context)
                 .load(event.getPosterURI())
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
                 .error(R.mipmap.onphone) // TODO Maybe have a better fallback image
                 .transform(new RoundedCorners(16))
                 .into(imageView);

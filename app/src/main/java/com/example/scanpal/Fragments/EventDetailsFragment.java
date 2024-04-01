@@ -20,6 +20,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.scanpal.Callbacks.AttendeeAddCallback;
 import com.example.scanpal.Callbacks.AttendeeDeleteCallback;
@@ -318,6 +319,9 @@ public class EventDetailsFragment extends Fragment {
                             Uri imageURI = Uri.parse(ImageURI);
                             Glide.with(requireView())
                                     .load(imageURI)
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                    //.error() // TODO Get a default background
+                                    .skipMemoryCache(true)
                                     .apply(new RequestOptions().placeholder(R.drawable.ic_launcher_background))
                                     .into(eventPoster);
                         }
