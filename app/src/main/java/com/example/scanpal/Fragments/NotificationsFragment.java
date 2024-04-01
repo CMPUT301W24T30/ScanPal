@@ -65,7 +65,7 @@ public class NotificationsFragment extends Fragment {
         notificationsList.clear();
         AnnouncementController announcementController = new AnnouncementController();
         AttendeeController attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
-        UserController userController = new UserController(FirebaseFirestore.getInstance(), this.getContext());
+        UserController userController = new UserController( this.getContext());
         String userName = userController.fetchStoredUsername();
 
 

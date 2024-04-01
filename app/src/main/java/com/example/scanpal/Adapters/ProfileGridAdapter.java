@@ -2,7 +2,6 @@ package com.example.scanpal.Adapters;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.Models.User;
@@ -22,20 +20,16 @@ import com.google.android.material.card.MaterialCardView;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Adapter for displaying event data in a grid format. This adapter binds event data to views
- * represented by grid items in a GridView.
- */
-public class EventGridAdapter extends BaseAdapter {
+public class ProfileGridAdapter extends BaseAdapter {
     protected Context context;
-    protected List<Event> events = new ArrayList<>();
+    protected List<User> users = new ArrayList<>();
 
     /**
      * Constructs an EventGridAdapter with the specified context and event list.
      *
      * @param context The current context. Used to inflate layout files and access resources.
      */
-    public EventGridAdapter(Context context) {
+    public ProfileGridAdapter(Context context) {
         this.context = context;
     }
 
@@ -46,7 +40,7 @@ public class EventGridAdapter extends BaseAdapter {
      */
     @Override
     public int getCount() {
-        return events.size();
+        return users.size();
     }
 
     /**
@@ -57,7 +51,7 @@ public class EventGridAdapter extends BaseAdapter {
      */
     @Override
     public Object getItem(int position) {
-        return events.get(position);
+        return users.get(position);
     }
 
     /**
@@ -77,27 +71,23 @@ public class EventGridAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.grid_item_event, parent, false);
         }
 
-        Event event = events.get(position);
+        User user = users.get(position);
 
         ImageView imageView = convertView.findViewById(R.id.event_image);
         TextView textView = convertView.findViewById(R.id.event_title);
         MaterialCardView cardView = convertView.findViewById(R.id.cardview);
 
         // Log the poster URI
-        Log.d("EventGridAdapter", "Loading image for event: " + event.getName() + " | URI: " + event.getPosterURI());
+        Log.d("EventGridAdapter", "Loading image for user: " + user.getUsername() + " | Photo: " + user.getPhoto());
 
         Glide.with(context)
-                .load(event.getPosterURI())
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
-                .error("https://media1.tenor.com/m/s7Tf_aL-Di0AAAAC/chipi-chipi-chapa-chapa.gif")
+                .load(user.getPhoto())
                 .transform(new RoundedCorners(16))
                 .into(imageView);
 
-        textView.setText(event.getName());
+        textView.setText(user.getUsername());
 
-        int strokeColor = event.isUserSignedUp() ? Color.parseColor("#4CAF50") : Color.parseColor("#0D6EFD");
-        cardView.setStrokeColor(strokeColor);
+        cardView.setStrokeColor(Color.parseColor("#0D6EFD"));
 
         return convertView;
     }
@@ -105,11 +95,11 @@ public class EventGridAdapter extends BaseAdapter {
     /**
      * Updates the events list of the adapter and notifies the GridView to refresh the data set.
      *
-     * @param newEvents The new list of events to replace the old one.
+     * @param newUsers The new list of users to replace the old one.
      */
-    public void setEvents(List<Event> newEvents) {
-        this.events.clear();
-        this.events.addAll(newEvents);
+    public void setUsers(List<User> newUsers) {
+        this.users.clear();
+        this.users.addAll(newUsers);
         notifyDataSetChanged();
     }
 }
