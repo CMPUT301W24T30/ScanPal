@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.GridView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -119,7 +120,7 @@ public class BrowseEventFragment extends Fragment {
         imageController = new ImageController();
 
         AutoCompleteTextView dropdown = view.findViewById(R.id.browser_select_autocomplete);
-
+        ((TextView) view.findViewById(R.id.event_page_title)).setText("Events Browser");
         dropdown.setText("Events Browser");
         fetchAllEvents();
 
@@ -157,12 +158,15 @@ public class BrowseEventFragment extends Fragment {
             switch (selectedItem) {
                 case "Events Browser":
                     fetchAllEvents();
+                    ((TextView) view.findViewById(R.id.event_page_title)).setText("Events Browser");
                     break;
                 case "Image Browser":
                     fetchAllImages();
+                    ((TextView) view.findViewById(R.id.event_page_title)).setText("Image Browser");
                     break;
                 case "Profile Browser":
                     fetchAllUsers();
+                    ((TextView) view.findViewById(R.id.event_page_title)).setText("Profile Browser");
                     break;
             }
         });
