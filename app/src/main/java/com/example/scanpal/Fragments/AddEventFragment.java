@@ -42,6 +42,8 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -155,14 +157,17 @@ public class AddEventFragment extends Fragment {
                 DocumentSnapshot doc = database.collection("Events").document(result.getContents()).get().getResult();
                 if (doc != null && doc.exists()) {
                     Toast.makeText(view.getContext(), "Event QR Code is in use", Toast.LENGTH_SHORT).show();
-            if (result.getContents() != null) {
-                if (result.getContents().startsWith("https://") || result.getContents().startsWith("www")) {  // ensure not a url
+                }
+                else if (result.getContents().startsWith("https://") || result.getContents().startsWith("www")) {  // ensure not a url
                     Toast.makeText(view.getContext(), "Invalid QR Code", Toast.LENGTH_SHORT).show();
-                } else {
+                }
+                else {  // if scanned a valid code
                     Toast.makeText(view.getContext(), "QR Code Scanned", Toast.LENGTH_SHORT).show();
                     QrID = result.getContents();
                     QrChoice = Boolean.TRUE;
                 }
+            } else {
+                Toast.makeText(view.getContext(), "Invalid QR Code", Toast.LENGTH_SHORT).show();
             }
         });
 
