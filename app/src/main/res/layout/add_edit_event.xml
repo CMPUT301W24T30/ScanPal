@@ -31,6 +31,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_location_title" />
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/track_location_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/trackLocation"
+        android:checked="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/autocomplete_fragment"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/white"/>
+
+
     <ImageView
         android:id="@+id/add_edit_event_ImageView"
         android:layout_width="131dp"

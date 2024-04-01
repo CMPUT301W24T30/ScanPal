@@ -34,13 +34,14 @@ import com.example.scanpal.Models.Event;
 import com.example.scanpal.Models.User;
 import com.example.scanpal.R;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
@@ -83,7 +84,8 @@ public class AddEventFragment extends Fragment {
     private ImageController imageController;
     private PlacesClient placesClient;
     private String selectedLocationName;
-    private ActivityResultLauncher<ScanOptions> qrCodeScanner;
+    private String locationCoords;
+    private SwitchMaterial trackLocationSwitch;
 
 
     public AddEventFragment() {
@@ -104,6 +106,15 @@ public class AddEventFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.add_edit_event, container, false);
         ((MainActivity) requireActivity()).setNavbarVisibility(false);
+
+        trackLocationSwitch = view.findViewById(R.id.track_location_switch);
+
+        trackLocationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            // Here, you can directly update your event's trackLocation property
+            if (newEvent != null) {
+                newEvent.setTrackLocation(isChecked);
+            }
+        });
 
         TextView pageHeader = view.findViewById(R.id.add_edit_event_Header);
         pageHeader.setText("Create Event");
@@ -170,18 +181,23 @@ public class AddEventFragment extends Fragment {
                     null == imageUri||
                     QrChoice != Boolean.TRUE) {
 
-                Toast.makeText(view.getContext(), "Please input all Information", Toast.LENGTH_LONG).show();
+                Toast.makeText(view.getContext(), "Please input all Required Information", Toast.LENGTH_LONG).show();
 
-            } else if (Integer.parseInt(attendeesForm.getText().toString()) < 1) {
-                Toast.makeText(view.getContext(), "Please allow at least 1 Attendee", Toast.LENGTH_LONG).show();
             } else {
                 progressBar.setVisibility(View.VISIBLE);
                 newEvent.setName(eventNameForm.getText().toString());
                 newEvent.setLocation(selectedLocationName);
                 newEvent.setDescription(eventDescriptionForm.getText().toString());
-                newEvent.setMaximumAttendees(Integer.parseInt(attendeesForm.getText().toString()));
+
+                if(attendeesForm.getText().toString().isEmpty()) {
+                    newEvent.setMaximumAttendees(0L);//treat zero as 'no limit'
+                } else {
+                    newEvent.setMaximumAttendees(Integer.parseInt(attendeesForm.getText().toString()));
+                }
+
                 newEvent.setPosterURI(imageUri);
                 newEvent.setAnnouncementCount(0L);
+                newEvent.setLocationCoords(locationCoords);
 
                 eventController.addEvent(newEvent, QrID);
                 uploadImageToFirebase(imageUri);
@@ -228,12 +244,17 @@ public class AddEventFragment extends Fragment {
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
         if (autocompleteFragment != null) {
-            autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+            autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
             autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
                 @Override
                 public void onPlaceSelected(@NonNull Place place) {
-                    // Handle the selected place
                     selectedLocationName = place.getName();
+                    LatLng latLng = place.getLatLng();
+                    if (latLng != null) {
+                        selectedLocationName = place.getName();
+                        locationCoords = place.getLatLng().latitude + "," + place.getLatLng().longitude;
+                        newEvent.setLocationCoords(locationCoords);
+                    }
                 }
 
                 @Override
