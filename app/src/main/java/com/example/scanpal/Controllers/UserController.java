@@ -10,6 +10,7 @@ import com.example.scanpal.Callbacks.UserRemoveCallback;
 import com.example.scanpal.Callbacks.UserSignedUpCallback;
 import com.example.scanpal.Callbacks.UserUpdateCallback;
 import com.example.scanpal.Callbacks.UsernameCheckCallback;
+import com.example.scanpal.Callbacks.UsersFetchCallback;
 import com.example.scanpal.Models.Attendee;
 import com.example.scanpal.Models.User;
 import com.google.firebase.firestore.DocumentReference;
@@ -20,7 +21,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -36,11 +39,10 @@ public class UserController {
     /**
      * Initializes a new UserController instance.
      *
-     * @param database The Firestore database instance used for user operations.
      * @param context  The application's context, used for file operations.
      */
-    public UserController(FirebaseFirestore database, Context context) {
-        this.database = database;
+    public UserController(Context context) {
+        this.database = FirebaseFirestore.getInstance();
         this.context = context;
     }
 
@@ -100,14 +102,17 @@ public class UserController {
      */
     public void updateUser(User user, UserUpdateCallback callback) {
         // Attempt to serialize and update user locally
-        try {
-            FileOutputStream fos = context.openFileOutput("user.ser", Context.MODE_PRIVATE);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(user);
-            oos.close();
-            fos.close();
-        } catch (Exception e) {
-            callback.onError(e);
+        fetchStoredUsername();
+        if(Objects.equals(user.getUsername(), fetchStoredUsername())) {
+            try {
+                FileOutputStream fos = context.openFileOutput("user.ser", Context.MODE_PRIVATE);
+                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                oos.writeObject(user);
+                oos.close();
+                fos.close();
+            } catch (Exception e) {
+                callback.onError(e);
+            }
         }
 
         // Prepare updated user data for Firestore
@@ -137,17 +142,65 @@ public class UserController {
             FileInputStream fis = context.openFileInput("user.ser");
             ObjectInputStream ois = new ObjectInputStream(fis);
             User user = (User) ois.readObject();
-            ois.close();
-            fis.close();
-            Log.d("UserController", "Fetched user from local storage: " + user.getUsername() + " with location: " + user.getLocation());
-            callback.onSuccess(user);
-            return;
+
+            // Only return the user if the username matches
+            if (user.getUsername().equals(username)) {
+                ois.close();
+                fis.close();
+                Log.d("UserController", "Fetched user from local storage: " + user.getUsername() + " with location: " + user.getLocation());
+                callback.onSuccess(user);
+                return;
+            }
         } catch (Exception e) {
             Log.e("UserController", "Error fetching user from local storage", e);
         }
 
         // If local storage fetch fails or doesn't exist, fetch from Firestore
         DocumentReference docRef = database.collection("Users").document(username);
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document != null && document.exists()) {
+                    Log.d("UserController", "Fetched user from Firestore: " + document.getData());
+                    Map<String, Object> data = document.getData();
+                    if (data != null) {
+                        User user = new User(username,
+                                (String) data.get("firstName"),
+                                (String) data.get("lastName"),
+                                (String) data.get("photo"),
+                                (String) data.get("homepage"),
+                                (String) data.get("deviceToken"));
+                        user.setLocation(String.valueOf(data.get("location")));
+                        callback.onSuccess(user);
+                    } else {
+                        Log.e("UserController", "Failed to parse user data from Firestore");
+                        callback.onError(new Exception("Failed to parse user data"));
+                    }
+                } else {
+                    Log.e("UserController", "User does not exist in Firestore");
+                    callback.onError(new Exception("User does not exist"));
+                }
+            } else {
+                Log.e("UserController", "Error fetching user from Firestore", task.getException());
+                callback.onError(new Exception("Error fetching user", task.getException()));
+            }
+        });
+    }
+
+    /**
+     * Fetches a user's details from the Firestore database. If the user is not
+     * found in Firestore, attempts to retrieve a local copy.
+     *
+     * @param username The username of the user to fetch.
+     * @param callback The callback to report the fetched user or failure.
+     */
+    public void getUserFirebaseOnly(String username, UserFetchCallback callback) {
+        if (Objects.equals(username, "") || username == null) {
+            callback.onError(new Exception("User does not exist"));
+            return;
+        }
+        DocumentReference docRef = database.collection("Users").document(username);
+
         docRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
@@ -186,9 +239,11 @@ public class UserController {
      */
     public void removeUser(String username, UserRemoveCallback callback) {
         // delete user locally
-        try {
-            context.deleteFile("user.ser");
-        } catch (Exception ignored) {
+        if (Objects.equals(username, fetchStoredUsername())) {
+            try {
+                context.deleteFile("user.ser");
+            } catch (Exception ignored) {
+            }
         }
 
         // delete user from Firestore
@@ -309,6 +364,29 @@ public class UserController {
                     Log.e("UserController", "Failed to update user location on Firebase", e);
                     callback.onError(e);
                 });
+    }
+
+
+    public void fetchAllUsers(UsersFetchCallback callback) {
+        database.collection("Users").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                List<User> users = new ArrayList<>();
+                for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                    // Assuming User has a constructor that accepts a Map<String, Object>. Adjust as needed.
+                    User user = new User(
+                            document.getId(), // Username as document ID
+                            (String) document.get("firstName"),
+                            (String) document.get("lastName"),
+                            (String) document.get("deviceToken")
+                    );
+                    user.setPhoto(String.valueOf(document.get("photo"))); // Adjust if your user model handles photos differently
+                    users.add(user);
+                }
+                callback.onSuccess(users);
+            } else {
+                callback.onError(new Exception("Error fetching users", task.getException()));
+            }
+        }).addOnFailureListener(callback::onError);
     }
 
 }
