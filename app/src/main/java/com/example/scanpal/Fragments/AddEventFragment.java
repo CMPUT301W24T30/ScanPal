@@ -42,6 +42,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
@@ -71,6 +72,7 @@ public class AddEventFragment extends Fragment {
     UserController userController;
     ProgressBar progressBar;
     User Organizer;
+    private ActivityResultLauncher<ScanOptions> qrCodeScanner;
     private Uri imageUri;
     private ImageView profileImageView;
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
@@ -178,7 +180,7 @@ public class AddEventFragment extends Fragment {
                     selectedLocationName == null || selectedLocationName.isEmpty() ||
                     eventDescriptionForm.getText().toString().isEmpty() ||
                     attendeesForm.getText().toString().isEmpty() ||
-                    null == imageUri||
+                    null == imageUri ||
                     QrChoice != Boolean.TRUE) {
 
                 Toast.makeText(view.getContext(), "Please input all Required Information", Toast.LENGTH_LONG).show();
@@ -189,7 +191,7 @@ public class AddEventFragment extends Fragment {
                 newEvent.setLocation(selectedLocationName);
                 newEvent.setDescription(eventDescriptionForm.getText().toString());
 
-                if(attendeesForm.getText().toString().isEmpty()) {
+                if (attendeesForm.getText().toString().isEmpty()) {
                     newEvent.setMaximumAttendees(0L);//treat zero as 'no limit'
                 } else {
                     newEvent.setMaximumAttendees(Integer.parseInt(attendeesForm.getText().toString()));
