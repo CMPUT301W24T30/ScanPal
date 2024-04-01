@@ -102,14 +102,17 @@ public class UserController {
      */
     public void updateUser(User user, UserUpdateCallback callback) {
         // Attempt to serialize and update user locally
-        try {
-            FileOutputStream fos = context.openFileOutput("user.ser", Context.MODE_PRIVATE);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(user);
-            oos.close();
-            fos.close();
-        } catch (Exception e) {
-            callback.onError(e);
+        fetchStoredUsername();
+        if(Objects.equals(user.getUsername(), fetchStoredUsername())) {
+            try {
+                FileOutputStream fos = context.openFileOutput("user.ser", Context.MODE_PRIVATE);
+                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                oos.writeObject(user);
+                oos.close();
+                fos.close();
+            } catch (Exception e) {
+                callback.onError(e);
+            }
         }
 
         // Prepare updated user data for Firestore
