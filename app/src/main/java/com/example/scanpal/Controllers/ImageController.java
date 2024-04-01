@@ -2,6 +2,9 @@ package com.example.scanpal.Controllers;
 
 import android.net.Uri;
 
+import com.example.scanpal.Callbacks.EventsFetchCallback;
+import com.example.scanpal.Callbacks.ImagesDeleteCallback;
+import com.example.scanpal.Callbacks.ImagesFetchCallback;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -10,6 +13,8 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 /**
  * Controller class for managing image uploads and retrievals with Firebase Storage.
@@ -47,6 +52,18 @@ public class ImageController {
     }
 
     /**
+     * Fetches the download URL of an image stored in a specific folder in Firebase Storage.
+     *
+     * @param folderPath        The folder path within Firebase Storage where the file is stored.
+     * @param onSuccessListener Listener for successful upload operations.
+     * @param onFailureListener Listener for failed upload operations.
+     */
+    public void fetchImage(String folderPath, OnSuccessListener<Uri> onSuccessListener, OnFailureListener onFailureListener) {
+        StorageReference imageRef = storage.getReference().child(folderPath);
+        imageRef.getDownloadUrl().addOnSuccessListener(onSuccessListener).addOnFailureListener(onFailureListener);
+    }
+
+    /**
      * Deletes a given image stored in a specific folder in Firebase Storage.
      *
      * @param folderPath The folder path within Firebase Storage where the file is stored.
@@ -58,44 +75,73 @@ public class ImageController {
     }
 
     /**
+     * Deletes a given image stored in a specific folder in Firebase Storage.
+     *
+     * @param filePath The folder path within Firebase Storage where the file is stored.
+     */
+    public void deleteImage(String filePath, final ImagesDeleteCallback callback) {
+
+        StorageReference imageRef = storage.getReference().child(filePath);
+        imageRef.delete().addOnSuccessListener(result -> {
+            callback.onSuccess();
+        }).addOnFailureListener(callback::onError);;
+    }
+
+
+    /**
      * Fetches all image URLs from a specific folder in Firebase Storage.
      *
-     * @param folderPath        The folder path within Firebase Storage.
-     * @param onSuccessListener Listener for successful operations, receiving a list of image URLs.
-     * @param onFailureListener Listener for failed operations.
+     * @param callback         Callback for handling the fetched image URLs.
      */
-    public void fetchAllImages(String folderPath, OnSuccessListener<List<Uri>> onSuccessListener, OnFailureListener onFailureListener) {
-        StorageReference folderRef = storage.getReference().child(folderPath);
+    public void fetchAllImages(final ImagesFetchCallback callback) {
+        List<String> imageUrls = new ArrayList<>();
+        StorageReference imageRef = storage.getReference();
+        AtomicInteger pendingOperations = new AtomicInteger(1); // Start with 1 for the initial listAll call
 
-        folderRef.listAll()
-                .addOnSuccessListener(listResult -> {
-                    List<Uri> imageUrls = new ArrayList<>();
-                    List<StorageReference> items = listResult.getItems();
+        imageRef.listAll().addOnSuccessListener(result -> {
+            if(result.getItems().isEmpty() && result.getPrefixes().isEmpty()) {
+                // Directly call onSuccess if there are no items and no prefixes
+                callback.onSuccess(imageUrls);
+                return;
+            }
 
-                    // Track the number of successful fetches to know when all URLs have been loaded
-                    final int[] successfulFetches = {0};
+            // Update for each item in the list
+            pendingOperations.addAndGet(result.getItems().size());
+            for (StorageReference item : result.getItems()) {
+                String path = item.getPath();
+                imageUrls.add(path);
+                if (pendingOperations.decrementAndGet() == 0) {
+                    callback.onSuccess(imageUrls);
+                }
+            }
 
-                    if (items.isEmpty()) {
-                        // Immediately return an empty list if the folder has no items
-                        onSuccessListener.onSuccess(imageUrls);
-                    } else {
-                        for (StorageReference itemRef : items) {
-                            itemRef.getDownloadUrl()
-                                    .addOnSuccessListener(uri -> {
-                                        imageUrls.add(uri);
-                                        successfulFetches[0]++;
-                                        // Call the success listener once all URLs are fetched
-                                        if (successfulFetches[0] == items.size()) {
-                                            onSuccessListener.onSuccess(imageUrls);
-                                        }
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        onFailureListener.onFailure(e);
-                                        // Optionally, you could also collect and report back individual failures
-                                    });
+            // Update for each prefix
+            for (StorageReference prefix : result.getPrefixes()) {
+                // This is a bit tricky because we don't know how many items each prefix contains ahead of time
+                pendingOperations.incrementAndGet(); // Assume there's at least one operation pending for listing the prefix
+                prefix.listAll().addOnSuccessListener(folder -> {
+                    // Adjust the pending count based on actual items found
+                    pendingOperations.addAndGet(folder.getItems().size());
+                    for (StorageReference item : folder.getItems()) {
+                        String path = item.getPath();
+                        imageUrls.add(path);
+                        if (pendingOperations.decrementAndGet() == 0) {
+                            callback.onSuccess(imageUrls);
                         }
                     }
-                })
-                .addOnFailureListener(onFailureListener);
+                    // After adding folder items to the count, remove one for the completed prefix listing itself
+                    if (pendingOperations.decrementAndGet() == 0) {
+                        callback.onSuccess(imageUrls);
+                    }
+                }).addOnFailureListener(callback::onError);
+            }
+
+            // After initiating all prefix listings, decrement for the initial listing
+            if (pendingOperations.decrementAndGet() == 0) {
+                callback.onSuccess(imageUrls);
+            }
+        }).addOnFailureListener(callback::onError);
     }
+
+
 }

@@ -87,6 +87,7 @@ public class EventGridAdapter extends BaseAdapter {
 
         Glide.with(context)
                 .load(event.getPosterURI())
+                .error(R.mipmap.onphone) // TODO Maybe have a better fallback image
                 .transform(new RoundedCorners(16))
                 .into(imageView);
 

@@ -12,16 +12,17 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.example.scanpal.Models.Event;
-import com.example.scanpal.Models.ImageData;
+
+import com.example.scanpal.Controllers.ImageController;
 import com.example.scanpal.R;
 import com.google.android.material.card.MaterialCardView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ImageGridAdapter extends BaseAdapter {
     protected Context context;
-    protected List<ImageData> images;
+    protected List<String> images = new ArrayList<>();
 
     /**
      * Constructs an EventGridAdapter with the specified context and event list.
@@ -70,21 +71,26 @@ public class ImageGridAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.grid_item_event, parent, false);
         }
 
-        ImageData image = images.get(position);
+        String image = images.get(position);
+        View finalConvertView = convertView;
+        new ImageController().fetchImage(image, uri -> {
+            ImageView imageView = finalConvertView.findViewById(R.id.event_image);
+            Glide.with(context)
+                    .load(uri)
+                    .transform(new RoundedCorners(16))
+                    .into(imageView);
+        }, e -> {
+            Log.e("EventGridAdapter", "Failed to load image: " + e.getMessage());
+        });
 
         ImageView imageView = convertView.findViewById(R.id.event_image);
         TextView textView = convertView.findViewById(R.id.event_title);
         MaterialCardView cardView = convertView.findViewById(R.id.cardview);
 
         // Log the poster URI
-        Log.d("EventGridAdapter", "Loading image for event: " + image.getFileName() + " | URI: " + image.getImageURL());
+        Log.d("EventGridAdapter", "Loading image: " + image);
 
-        Glide.with(context)
-                .load(image.getImageURL())
-                .transform(new RoundedCorners(16))
-                .into(imageView);
-
-        textView.setText(image.getFileName());
+        //textView.setText(image);
 
         cardView.setStrokeColor(Color.parseColor("#0D6EFD"));
 
@@ -96,9 +102,10 @@ public class ImageGridAdapter extends BaseAdapter {
      *
      * @param newImages The new list of events to replace the old one.
      */
-    public void setImages(List<ImageData> newImages) {
+    public void setImages(List<String> newImages) {
         this.images.clear();
         this.images.addAll(newImages);
         notifyDataSetChanged();
     }
+
 }

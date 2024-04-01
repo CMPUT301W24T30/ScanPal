@@ -2,6 +2,7 @@ package com.example.scanpal.Fragments;
 
 import android.content.pm.PackageManager;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +27,8 @@ import com.example.scanpal.Adapters.EventGridAdapter;
 import com.example.scanpal.Adapters.ImageGridAdapter;
 import com.example.scanpal.Adapters.ProfileGridAdapter;
 import com.example.scanpal.Callbacks.EventsFetchCallback;
+import com.example.scanpal.Callbacks.ImagesDeleteCallback;
+import com.example.scanpal.Callbacks.ImagesFetchCallback;
 import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Callbacks.UserSignedUpCallback;
 import com.example.scanpal.Callbacks.UsersFetchCallback;
@@ -34,10 +37,12 @@ import com.example.scanpal.Controllers.EventController;
 import com.example.scanpal.Controllers.ImageController;
 import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.Models.Event;
+import com.example.scanpal.Models.ImageData;
 import com.example.scanpal.Models.User;
 import com.example.scanpal.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -69,10 +74,10 @@ public class BrowseEventFragment extends Fragment {
                     Toast.makeText(getContext(), "Location access is required to use this feature.", Toast.LENGTH_LONG).show();
                 }
             });
-    protected List<Event> eventsList = new ArrayList<>();
+
     protected List<Event> allEvents = new ArrayList<>();
     protected List<User> allUsers = new ArrayList<>();
-    protected List<Image> allImages = new ArrayList<>();
+    protected List<String> allImages = new ArrayList<>();
     private EventGridAdapter eventGridAdapter;
     private ProfileGridAdapter profileGridAdapter;
     private ImageGridAdapter imageGridAdapter;
@@ -82,6 +87,7 @@ public class BrowseEventFragment extends Fragment {
     private UserController userController;
 
     private GridView gridView;
+    private int selectedImage;
 
     /**
      * Default constructor. Initializes the fragment.
@@ -145,26 +151,21 @@ public class BrowseEventFragment extends Fragment {
             });
         }
 
-        dropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Similar handling as above
-                String selectedItem = (String) parent.getItemAtPosition(position);
-                switch (selectedItem) {
-                    case "Events Browser":
-                        fetchAllEvents();
-                        break;
-                    case "Image Browser":
-                        fetchAllImages();
-                        break;
-                    case "Profile Browser":
-                        fetchAllUsers();
-                        break;
-                }
+        dropdown.setOnItemClickListener((parent, view12, position, id) -> {
+            // Similar handling as above
+            String selectedItem = (String) parent.getItemAtPosition(position);
+            switch (selectedItem) {
+                case "Events Browser":
+                    fetchAllEvents();
+                    break;
+                case "Image Browser":
+                    fetchAllImages();
+                    break;
+                case "Profile Browser":
+                    fetchAllUsers();
+                    break;
             }
         });
-
-
 
         // Set up button to add new events.
         FloatingActionButton addEventButton = view.findViewById(R.id.button_add_event);
@@ -242,7 +243,7 @@ public class BrowseEventFragment extends Fragment {
     }
 
     private void askLocationPermissionAndLogLocation() {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
         } else {
             logUserLocation();
@@ -310,7 +311,27 @@ public class BrowseEventFragment extends Fragment {
     }
 
     private void fetchAllImages() {
+        imageController.fetchAllImages(new ImagesFetchCallback() {
+            @Override
+            public void onSuccess(List<String> images) {
+                // Do something with the user
+                allImages.clear();
+                allImages.addAll(images);
+                imageGridAdapter.setImages(allImages);
 
+                gridView.setAdapter(imageGridAdapter);
+
+                gridView.setOnItemClickListener((parent, view1, position, id) -> {
+                    selectedImage = position;
+                    showDeleteConfirmation();
+                });
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(getContext(), "Error fetching all events.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**
@@ -323,5 +344,35 @@ public class BrowseEventFragment extends Fragment {
                 requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS);
             }
         }
+    }
+
+    /**
+     * Shows a confirmation dialog to confirm user deletion.
+     */
+    private void showDeleteConfirmation() {
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Delete Image?")
+                .setMessage("Are you sure you want to delete this image? This action cannot be undone.")
+                .setPositiveButton("Delete", (dialog, which) -> deleteImage())
+                .setNegativeButton("Cancel", null)
+                .setIcon(R.drawable.danger_icon)
+                .show();
+    }
+
+    private void deleteImage() {
+        String image = allImages.get(selectedImage);
+        imageController.deleteImage(image, new ImagesDeleteCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(getContext(), "Image deleted successfully.", Toast.LENGTH_SHORT).show();
+                fetchAllImages();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                System.out.println(e.toString());
+                Toast.makeText(getContext(), "Failed to delete image." + e.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
