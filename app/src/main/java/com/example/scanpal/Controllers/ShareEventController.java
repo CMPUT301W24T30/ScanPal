@@ -38,7 +38,7 @@ public class ShareEventController {
      *
      * @param eventID The ID of the event to be shared
      */
-    public void shareQrCode(String eventID){
+    public void shareQrCode(String eventID) {
         // Take event id, get image, and put it into bitmap
         try {
             String imageName = eventID + "-event.png";
@@ -54,42 +54,44 @@ public class ShareEventController {
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
-                    // Handle error
                     Toast.makeText(context, "Error Retrieving Image", Toast.LENGTH_SHORT).show();
                 }
-
             });
         } catch (Exception e) {
             Toast.makeText(context, "Error Retrieving Image", Toast.LENGTH_SHORT).show();
         }
     }
+
     /**
      * Initiates the intent that will pop up the share menu
      *
      * @param imageBitmap The bitmap for the qr code to be shared
-     * @eventID id of the event being shared
+     * @param eventID     id of the event being shared
      */
     public void shareIntent(Bitmap imageBitmap, String eventID) {
         Uri uri = getUri(imageBitmap);
         Intent intent = new Intent(Intent.ACTION_SEND);
         EventController eventController = new EventController();
-        String eventName;
 
         eventController.getEventById(eventID, new EventFetchCallback() {
             @Override
             public void onSuccess(Event event) {
-                eventItem = event;
+                String shareMessage =
+                        "・・・・・・・・ Check out this event! 👀 ・・・・・・・・\n\n" +
+                                " 🎪 Event: " + event.getName() + " \n\n" +
+                                " 📍 Location: " + event.getLocation() + " \n\n" +
+                                " 📋 Details: " + event.getDescription() + " \n\n";
+                intent.putExtra(Intent.EXTRA_STREAM, uri);
+                intent.putExtra(Intent.EXTRA_TEXT, shareMessage);
+                intent.setType("image/png");
+                context.startActivity(Intent.createChooser(intent, "Share via"));
             }
+
             @Override
             public void onError(Exception e) {
                 Toast.makeText(context, "Error Retrieving Event", Toast.LENGTH_SHORT).show();
             }
         });
-        eventName = eventItem.getName();
-        intent.putExtra(Intent.EXTRA_STREAM, uri);
-        intent.putExtra(Intent.EXTRA_TEXT, "QR Code for event: " + eventName);
-        intent.setType("image/png");
-        context.startActivity(Intent.createChooser(intent, "Share via"));
     }
 
     /**
