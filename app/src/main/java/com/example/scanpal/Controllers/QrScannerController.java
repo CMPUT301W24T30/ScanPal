@@ -48,8 +48,8 @@ public class QrScannerController {
      * @param username Username of the attendee who scanned the QR code
      */
     public void handleResult(String qrId, String username) {
-        if (qrId.startsWith("C")) {
-            String eventId = qrId.substring(1);
+        if (qrId.startsWith("check-in-")) {
+            String eventId = qrId.substring(9);
 
             eventController.getEventById(eventId, new EventFetchCallback() {
                 @Override
@@ -99,7 +99,7 @@ public class QrScannerController {
                     System.err.println("Error fetching attendee: " + e.getMessage());
                 }
             });
-        } else if (qrId.startsWith("E")) {
+        } else if (qrId.startsWith("event-")) {
             // TODO: handle event check-in?
         }
     }
