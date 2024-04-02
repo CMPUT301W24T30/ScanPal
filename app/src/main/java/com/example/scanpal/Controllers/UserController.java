@@ -72,6 +72,7 @@ public class UserController {
         userMap.put("photo", user.getPhoto());
         userMap.put("homepage", user.getHomepage());
         userMap.put("deviceToken", user.getDeviceToken());
+        userMap.put("trackingPerm", user.getTrackingPerm());
 
         // Attempt to add user to Firestore
         DocumentReference docRef = database.collection("Users").document(user.getUsername());
