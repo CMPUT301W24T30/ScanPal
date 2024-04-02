@@ -65,7 +65,7 @@ public class SignupFragment extends Fragment {
                     bundle.putString("firstName", firstNameStr);
                     bundle.putString("lastName", lastNameStr);
 
-                    new UserController(FirebaseFirestore.getInstance(), getContext()).isUsernameTaken(usernameStr,
+                    new UserController( getContext()).isUsernameTaken(usernameStr,
                             new UsernameCheckCallback() {
                                 @Override
                                 public void onUsernameTaken(boolean isTaken) {

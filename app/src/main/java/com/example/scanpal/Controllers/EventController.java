@@ -207,7 +207,7 @@ public class EventController {
         // TODO: a clause for admins to return all existing events
 
         ArrayList<Event> userEvents = new ArrayList<>();
-        UserController userController = new UserController(FirebaseFirestore.getInstance(), view.getContext());
+        UserController userController = new UserController( view.getContext());
 
         userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
             @Override

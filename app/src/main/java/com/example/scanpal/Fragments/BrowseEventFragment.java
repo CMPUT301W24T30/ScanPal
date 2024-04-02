@@ -1,6 +1,8 @@
 package com.example.scanpal.Fragments;
 
 import android.content.pm.PackageManager;
+import android.media.Image;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.GridView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -22,17 +25,25 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.scanpal.Adapters.EventGridAdapter;
+import com.example.scanpal.Adapters.ImageGridAdapter;
+import com.example.scanpal.Adapters.ProfileGridAdapter;
 import com.example.scanpal.Callbacks.EventsFetchCallback;
+import com.example.scanpal.Callbacks.ImagesDeleteCallback;
+import com.example.scanpal.Callbacks.ImagesFetchCallback;
 import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Callbacks.UserSignedUpCallback;
+import com.example.scanpal.Callbacks.UsersFetchCallback;
 import com.example.scanpal.Callbacks.UserUpdateCallback;
 import com.example.scanpal.Controllers.EventController;
+import com.example.scanpal.Controllers.ImageController;
 import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.Models.Event;
+import com.example.scanpal.Models.ImageData;
 import com.example.scanpal.Models.User;
 import com.example.scanpal.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -64,11 +75,20 @@ public class BrowseEventFragment extends Fragment {
                     Toast.makeText(getContext(), "Location access is required to use this feature.", Toast.LENGTH_LONG).show();
                 }
             });
-    protected List<Event> eventsList = new ArrayList<>();
+
     protected List<Event> allEvents = new ArrayList<>();
-    private EventGridAdapter adapter;
+    protected List<User> allUsers = new ArrayList<>();
+    protected List<String> allImages = new ArrayList<>();
+    private EventGridAdapter eventGridAdapter;
+    private ProfileGridAdapter profileGridAdapter;
+    private ImageGridAdapter imageGridAdapter;
     private EventController eventController;
     private FusedLocationProviderClient fusedLocationClient;
+    private ImageController imageController;
+    private UserController userController;
+
+    private GridView gridView;
+    private int selectedImage;
 
     /**
      * Default constructor. Initializes the fragment.
@@ -87,16 +107,23 @@ public class BrowseEventFragment extends Fragment {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         View view = inflater.inflate(R.layout.browse_events, container, false);
 
-        adapter = new EventGridAdapter(getContext(), new ArrayList<>());
-        GridView gridView = view.findViewById(R.id.event_grid);
-        gridView.setAdapter(adapter);
+        eventGridAdapter = new EventGridAdapter(getContext());
+        profileGridAdapter = new ProfileGridAdapter(getContext());
+        imageGridAdapter = new ImageGridAdapter(getContext());
+
+        gridView = view.findViewById(R.id.event_grid);
+        gridView.setAdapter(eventGridAdapter);
 
         // init eventController
         eventController = new EventController();
+        userController = new UserController(this.getContext());
+        imageController = new ImageController();
 
         AutoCompleteTextView dropdown = view.findViewById(R.id.browser_select_autocomplete);
-
+        ((TextView) view.findViewById(R.id.event_page_title)).setText("Events Browser");
         dropdown.setText("Events Browser");
+        fetchAllEvents();
+
 
         // Create an ArrayAdapter using the string array and a default dropdown layout.
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(
@@ -107,7 +134,7 @@ public class BrowseEventFragment extends Fragment {
         // Apply the adapter to the dropdown.
         dropdown.setAdapter(adapter);
 
-        UserController userController = new UserController(FirebaseFirestore.getInstance(), this.getContext());
+        UserController userController = new UserController(this.getContext());
         if (userController.fetchStoredUsername() != null) {
             userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
                 @Override
@@ -125,26 +152,24 @@ public class BrowseEventFragment extends Fragment {
             });
         }
 
-        dropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Similar handling as above
-                String selectedItem = (String) parent.getItemAtPosition(position);
-                switch (selectedItem) {
-                    case "Events Browser":
-                        NavHostFragment.findNavController(BrowseEventFragment.this).navigate(R.id.eventsPage);
-                        break;
-                    case "Image Browser":
-                        NavHostFragment.findNavController(BrowseEventFragment.this).navigate(R.id.browseImageFragment);
-                        break;
-                    case "Profile Browser":
-                        NavHostFragment.findNavController(BrowseEventFragment.this).navigate(R.id.browseProfileFragment);
-                        break;
-                }
+        dropdown.setOnItemClickListener((parent, view12, position, id) -> {
+            // Similar handling as above
+            String selectedItem = (String) parent.getItemAtPosition(position);
+            switch (selectedItem) {
+                case "Events Browser":
+                    fetchAllEvents();
+                    ((TextView) view.findViewById(R.id.event_page_title)).setText("Events Browser");
+                    break;
+                case "Image Browser":
+                    fetchAllImages();
+                    ((TextView) view.findViewById(R.id.event_page_title)).setText("Image Browser");
+                    break;
+                case "Profile Browser":
+                    fetchAllUsers();
+                    ((TextView) view.findViewById(R.id.event_page_title)).setText("Profile Browser");
+                    break;
             }
         });
-
-        fetchAllEvents();
 
         // Set up button to add new events.
         FloatingActionButton addEventButton = view.findViewById(R.id.button_add_event);
@@ -161,7 +186,6 @@ public class BrowseEventFragment extends Fragment {
         });
 
         askLocationPermissionAndLogLocation();
-        fetchEventsAndUpdateGrid();
 
         return view;
     }
@@ -171,12 +195,20 @@ public class BrowseEventFragment extends Fragment {
      * Applies filters based on user sign-up status and sorts events.
      */
     private void fetchAllEvents() {
-        UserController userController = new UserController(FirebaseFirestore.getInstance(), this.getContext());
         eventController.fetchAllEvents(new EventsFetchCallback() {
             @Override
             public void onSuccess(List<Event> events) {
                 allEvents.clear();
                 allEvents.addAll(events);
+
+                gridView.setAdapter(eventGridAdapter);
+
+                gridView.setOnItemClickListener((parent, view1, position, id) -> {
+                    Event event = allEvents.get(position);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("event_id", event.getId());
+                    NavHostFragment.findNavController(BrowseEventFragment.this).navigate(R.id.select_event, bundle);
+                });
 
                 CountDownLatch latch = new CountDownLatch(allEvents.size());
 
@@ -200,7 +232,7 @@ public class BrowseEventFragment extends Fragment {
                         latch.await();
                         requireActivity().runOnUiThread(() -> {
                             allEvents.sort((o1, o2) -> Boolean.compare(o2.isUserSignedUp(), o1.isUserSignedUp()));
-                            adapter.setEvents(allEvents);
+                            eventGridAdapter.setEvents(allEvents);
                         });
                     } catch (InterruptedException ignored) {
                     }
@@ -215,7 +247,7 @@ public class BrowseEventFragment extends Fragment {
     }
 
     private void askLocationPermissionAndLogLocation() {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
         } else {
             logUserLocation();
@@ -231,7 +263,7 @@ public class BrowseEventFragment extends Fragment {
                     String locationStr = location.getLatitude() + "," + location.getLongitude();
 
                     // Fetch current user's username
-                    UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
+                    UserController userController = new UserController(getContext());
                     String currentUsername = userController.fetchStoredUsername();
 
                     // Update user location
@@ -256,24 +288,52 @@ public class BrowseEventFragment extends Fragment {
     }
 
 
-
-    /**
-     * Fetches events from the data source and updates the grid view.
-     * This method differs from fetchAllEvents by focusing on updating the existing list.
-     */
-    private void fetchEventsAndUpdateGrid() {
-        EventController eventController = new EventController();
-        eventController.fetchAllEvents(new EventsFetchCallback() {
+    private void fetchAllUsers() {
+        userController.fetchAllUsers(new UsersFetchCallback() {
             @Override
-            public void onSuccess(List<Event> events) {
-                eventsList.clear();
-                eventsList.addAll(events);
-                adapter.notifyDataSetChanged();
+            public void onSuccess(List<User> users) {
+                // Do something with the user
+                allUsers.clear();
+                allUsers.addAll(users);
+                profileGridAdapter.setUsers(allUsers);
+
+                gridView.setAdapter(profileGridAdapter);
+
+                gridView.setOnItemClickListener((parent, view1, position, id) -> {
+                    User user = allUsers.get(position);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("username", user.getUsername());
+                    NavHostFragment.findNavController(BrowseEventFragment.this).navigate(R.id.profile_fragment, bundle);
+                });
             }
 
             @Override
             public void onError(Exception e) {
-                Toast.makeText(getContext(), "Error fetching events: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Error fetching all events.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void fetchAllImages() {
+        imageController.fetchAllImages(new ImagesFetchCallback() {
+            @Override
+            public void onSuccess(List<String> images) {
+                // Do something with the user
+                allImages.clear();
+                allImages.addAll(images);
+                imageGridAdapter.setImages(allImages);
+
+                gridView.setAdapter(imageGridAdapter);
+
+                gridView.setOnItemClickListener((parent, view1, position, id) -> {
+                    selectedImage = position;
+                    showDeleteConfirmation();
+                });
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(getContext(), "Error fetching all events.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -288,5 +348,35 @@ public class BrowseEventFragment extends Fragment {
                 requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS);
             }
         }
+    }
+
+    /**
+     * Shows a confirmation dialog to confirm user deletion.
+     */
+    private void showDeleteConfirmation() {
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Delete Image?")
+                .setMessage("Are you sure you want to delete this image? This action cannot be undone.")
+                .setPositiveButton("Delete", (dialog, which) -> deleteImage())
+                .setNegativeButton("Cancel", null)
+                .setIcon(R.drawable.danger_icon)
+                .show();
+    }
+
+    private void deleteImage() {
+        String image = allImages.get(selectedImage);
+        imageController.deleteImage(image, new ImagesDeleteCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(getContext(), "Image deleted successfully.", Toast.LENGTH_SHORT).show();
+                fetchAllImages();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                System.out.println(e.toString());
+                Toast.makeText(getContext(), "Failed to delete image." + e.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

@@ -20,6 +20,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.scanpal.Callbacks.AttendeeAddCallback;
 import com.example.scanpal.Callbacks.AttendeeDeleteCallback;
@@ -99,7 +100,7 @@ public class EventDetailsFragment extends Fragment {
         FloatingActionButton shareButton = view.findViewById(R.id.event_shareButton);
 
         // Setup user and attendee controllers
-        UserController userController = new UserController(FirebaseFirestore.getInstance(), getContext());
+        UserController userController = new UserController( getContext());
         attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
 
         if (userController.fetchStoredUsername() != null) {
@@ -118,7 +119,7 @@ public class EventDetailsFragment extends Fragment {
 
         backButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
-            navController.popBackStack();
+            navController.navigate(R.id.eventsPage);
         });
 
         eventEditButton.setOnClickListener(v -> {
@@ -182,14 +183,14 @@ public class EventDetailsFragment extends Fragment {
                             public void onSuccess(ArrayList<Attendee> attendees) {
                                 int currentCount = attendees.size();//how many people are signed up
 
-                                if (currentCount >= eventCapacity) {
+                                if (currentCount >= eventCapacity && eventCapacity != 0) {
                                     Toast.makeText(getContext(), "This event is full 😔", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
 
                                 if (eventID != null && userDetails != null) {
                                     String attendeeId = userDetails.getUsername() + eventID;
-                                    attendee = new Attendee(userDetails, eventID, true, false);
+                                    attendee = new Attendee(userDetails, eventID, true, false,0);//zero cause new object
                                     attendee.setId(attendeeId);
                                     attendeeController.addAttendee(attendee, new AttendeeAddCallback() {
                                         @Override
@@ -247,8 +248,7 @@ public class EventDetailsFragment extends Fragment {
                     String organizerName = firstName + " " + lastName;
                     getEventOrganizerUserName = organizerDoc.getId();
 
-                    if ((userDetails.getUsername().equals(getEventOrganizerUserName)) ||
-                            (userDetails.getUsername().equals(getEventOrganizerUserName)) && (userDetails.isAdministrator())) {
+                    if ((userDetails.getUsername().equals(getEventOrganizerUserName)) || (userDetails.isAdministrator())) {
                         eventEditButton.setVisibility(View.VISIBLE);
                     }
 
@@ -314,10 +314,13 @@ public class EventDetailsFragment extends Fragment {
                         if (eventLoc != null) {
                             eventLoc.setText(eventLocation);
                         }
-                        if (eventPoster != null) {
-                            Uri imageURI = Uri.parse(ImageURI);
+                        if (ImageURI != null){
+                                    Uri imageURI = Uri.parse(ImageURI);
                             Glide.with(requireView())
                                     .load(imageURI)
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                    .error("https://media1.tenor.com/m/s7Tf_aL-Di0AAAAC/chipi-chipi-chapa-chapa.gif")
+                                    .skipMemoryCache(true)
                                     .apply(new RequestOptions().placeholder(R.drawable.ic_launcher_background))
                                     .into(eventPoster);
                         }

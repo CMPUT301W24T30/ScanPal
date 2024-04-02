@@ -75,6 +75,10 @@ public class QrScannerController {
                 @Override
                 public void onSuccess(Attendee attendee) {
                     attendee.setCheckedIn(true);
+                    attendee.setCheckinCount(attendee.getCheckinCount() + 1L);
+
+                    Log.wtf("CHECKED IN!", " crash not here: in callback "  + attendee.getUser().getUsername());
+
                     attendeeController.updateAttendee(attendee, new AttendeeUpdateCallback() {
                         @Override
                         public void onSuccess() {
@@ -100,7 +104,7 @@ public class QrScannerController {
 
     
     public void updateUserLocationAndAttendee(String eventId, String username) {
-        UserController userController = new UserController(FirebaseFirestore.getInstance(), context);
+        UserController userController = new UserController( context);
 
         userController.getUser(username, new UserFetchCallback() {
             @Override
