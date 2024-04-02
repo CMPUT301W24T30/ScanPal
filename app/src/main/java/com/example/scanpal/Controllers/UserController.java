@@ -116,6 +116,7 @@ public class UserController {
         userMap.put("lastName", user.getLastName());
         userMap.put("photo", user.getPhoto());
         userMap.put("homepage", user.getHomepage());
+        userMap.put("trackingPerm", user.getTrackingPerm());
 
         // Attempt to update user in Firestore
         DocumentReference docRef = database.collection("Users").document(user.getUsername());
@@ -162,6 +163,7 @@ public class UserController {
                                 (String) data.get("homepage"),
                                 (String) data.get("deviceToken"));
                         user.setLocation(String.valueOf(data.get("location")));
+                        user.setTrackingPerm((Boolean) data.get("trackingPerm"));
                         callback.onSuccess(user);
                     } else {
                         Log.e("UserController", "Failed to parse user data from Firestore");

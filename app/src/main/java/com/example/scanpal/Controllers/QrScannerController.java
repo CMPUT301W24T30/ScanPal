@@ -112,7 +112,9 @@ public class QrScannerController {
                     @Override
                     public void onSuccess(Attendee attendee) {
 
-                        attendee.setLocation(userLocation);
+                        if (user.getTrackingPerm()) {
+                            attendee.setLocation(userLocation);
+                        }
                         attendee.setCheckedIn(true);
                         attendeeController.updateAttendee(attendee, new AttendeeUpdateCallback() {
                             @Override
