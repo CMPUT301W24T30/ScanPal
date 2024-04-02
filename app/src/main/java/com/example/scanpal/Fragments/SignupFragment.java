@@ -87,6 +87,36 @@ public class SignupFragment extends Fragment {
                 }
             }
         });
+
+        view.findViewById(R.id.addUserGuest).setOnClickListener(v -> {
+
+                String usernameStr = Objects.requireNonNull(username.getText()).toString();
+                String firstNameStr = Objects.requireNonNull(firstName.getText()).toString();
+                String lastNameStr = Objects.requireNonNull(lastName.getText()).toString();
+
+                Bundle bundle = new Bundle();
+                bundle.putString("username", usernameStr);
+                bundle.putString("firstName", firstNameStr);
+                bundle.putString("lastName", lastNameStr);
+
+                new UserController( getContext()).isUsernameTaken(usernameStr,
+                    new UsernameCheckCallback() {
+                        @Override
+                        public void onUsernameTaken(boolean isTaken) {
+                            if (isTaken) {
+                                Toast.makeText(view.getContext(), "Username is already taken", Toast.LENGTH_LONG).show();
+                            } else {
+                                NavController navController = NavHostFragment.findNavController(SignupFragment.this);
+                                navController.navigate(R.id.addUserContinueAction, bundle);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Toast.makeText(view.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+        });
         return view;
     }
 }
