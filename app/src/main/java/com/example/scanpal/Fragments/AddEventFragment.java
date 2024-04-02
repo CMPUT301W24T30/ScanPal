@@ -163,7 +163,7 @@ public class AddEventFragment extends Fragment {
                 }
                 else {  // if scanned a valid code
                     Toast.makeText(view.getContext(), "QR Code Scanned", Toast.LENGTH_SHORT).show();
-                    QrID = result.getContents();
+                    QrID = result.getContents().substring(1);
                     QrChoice = Boolean.TRUE;
                 }
             } else {

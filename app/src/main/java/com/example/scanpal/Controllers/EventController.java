@@ -68,13 +68,11 @@ public class EventController {
      */
     public void addEvent(Event event, String ID) {
         Map<String, Object> eventMap = new HashMap<>();
-        Boolean isCustom = Boolean.TRUE;  // to keep track of whether custom qr code or not
 
         // have to generate ID for qr code if no ID given
         if (ID == null) {
             UUID uuid = UUID.randomUUID();
             ID = uuid.toString();
-            isCustom = Boolean.FALSE;
         }
         event.setId(ID);
         eventMap.put("name", event.getName());
@@ -99,7 +97,7 @@ public class EventController {
 
         // Generate Qr Code or get custom code
         QrCodeController qrCodeController = new QrCodeController();
-        qrCodeController.generateAndStoreQrCode(event, eventMap, isCustom);  // auto generate a qr code
+        qrCodeController.generateAndStoreQrCode(event, eventMap);  // auto generate a qr code
 
         StorageReference storageRef = storage.getReference();
         DocumentReference eventRef = database.collection("Events").document(event.getId());

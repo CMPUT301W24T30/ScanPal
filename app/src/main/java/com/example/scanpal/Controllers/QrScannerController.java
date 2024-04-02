@@ -102,7 +102,6 @@ public class QrScannerController {
             // TODO: handle event check-in?
         }
     }
-
     
     public void updateUserLocationAndAttendee(String eventId, String username) {
         UserController userController = new UserController( context);
