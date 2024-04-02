@@ -56,10 +56,8 @@ public class QrScannerController {
                 public void onSuccess(Event event) {
 
                     if (event.isTrackLocation()) {
-                        // Proceed to get user location and update attendee
                         updateUserLocationAndAttendee(eventId, username);
                     } else {
-                        // Handle case where tracking is not required
                         Log.d("HANDLE_RESULT", "Location tracking not required for this event.");
                     }
                 }
