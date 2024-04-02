@@ -28,7 +28,8 @@
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_location_title" />
+        app:layout_constraintTop_toBottomOf="@+id/event_location_title"
+        android:textColor="#797474" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/track_location_switch"

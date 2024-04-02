@@ -218,6 +218,7 @@ public class UserController {
                                 (String) data.get("homepage"),
                                 (String) data.get("deviceToken"));
                         user.setLocation(String.valueOf(data.get("location")));
+                        user.setTrackingPerm((Boolean) data.get("trackingPerm"));
                         callback.onSuccess(user);
                     } else {
                         Log.e("UserController", "Failed to parse user data from Firestore");
