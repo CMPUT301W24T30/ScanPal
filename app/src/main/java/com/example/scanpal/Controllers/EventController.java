@@ -54,6 +54,18 @@ public class EventController {
     }
 
     /**
+     * Constructs an EventController with a reference to a Firestore database and Firebase storage.
+     * @param database The Firestore database instance.
+     * @param storage The Firebase storage instance.
+     * @param imageController The image controller instance.
+     */
+    public EventController(FirebaseFirestore database, FirebaseStorage storage, ImageController imageController) {
+        this.database = database;
+        this.storage = storage;
+        this.imageController = imageController;
+    }
+
+    /**
      * Retrieves the Firestore database instance used for event operations.
      *
      * @return The Firestore database instance used for event operations.

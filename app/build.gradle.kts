@@ -111,4 +111,5 @@ dependencies {
     implementation("androidx.core:core:1.3.2")
 
     implementation("de.hdodenhof:circleimageview:3.1.0")
+    testImplementation("org.mockito:mockito-core:3.12.4")
 }
