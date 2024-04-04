@@ -237,6 +237,10 @@ public class EventDetailsFragment extends Fragment {
      */
     private void fetchOrganizer(DocumentReference userRef) {
 
+        if  (userDetails.isAdministrator()) {
+            eventEditButton.setVisibility(View.VISIBLE);
+        }
+
         userRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot organizerDoc = task.getResult();
@@ -248,7 +252,7 @@ public class EventDetailsFragment extends Fragment {
                     String organizerName = firstName + " " + lastName;
                     getEventOrganizerUserName = organizerDoc.getId();
 
-                    if ((userDetails.getUsername().equals(getEventOrganizerUserName)) || (userDetails.isAdministrator())) {
+                    if ((userDetails.getUsername().equals(getEventOrganizerUserName))) {
                         eventEditButton.setVisibility(View.VISIBLE);
                     }
 
