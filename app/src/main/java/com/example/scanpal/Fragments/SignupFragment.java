@@ -16,10 +16,10 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.scanpal.Callbacks.UsernameCheckCallback;
-import com.example.scanpal.R;
 import com.example.scanpal.Controllers.UserController;
+import com.example.scanpal.R;
+import com.github.javafaker.Faker;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Objects;
 
@@ -65,7 +65,7 @@ public class SignupFragment extends Fragment {
                     bundle.putString("firstName", firstNameStr);
                     bundle.putString("lastName", lastNameStr);
 
-                    new UserController( getContext()).isUsernameTaken(usernameStr,
+                    new UserController(getContext()).isUsernameTaken(usernameStr,
                             new UsernameCheckCallback() {
                                 @Override
                                 public void onUsernameTaken(boolean isTaken) {
@@ -88,23 +88,32 @@ public class SignupFragment extends Fragment {
             }
         });
 
+        generateGuestUser(view);
+
+        return view;
+    }
+
+    private void generateGuestUser(View view) {
         view.findViewById(R.id.addUserGuest).setOnClickListener(v -> {
 
-                String usernameStr = Objects.requireNonNull(username.getText()).toString();
-                String firstNameStr = Objects.requireNonNull(firstName.getText()).toString();
-                String lastNameStr = Objects.requireNonNull(lastName.getText()).toString();
+            Faker faker = new Faker();
 
-                Bundle bundle = new Bundle();
-                bundle.putString("username", usernameStr);
-                bundle.putString("firstName", firstNameStr);
-                bundle.putString("lastName", lastNameStr);
 
-                new UserController( getContext()).isUsernameTaken(usernameStr,
+            String usernameStr = "G_" + faker.name().username();
+            String firstNameStr = faker.name().firstName();
+            String lastNameStr = faker.name().lastName();
+
+            Bundle bundle = new Bundle();
+            bundle.putString("username", usernameStr);
+            bundle.putString("firstName", firstNameStr);
+            bundle.putString("lastName", lastNameStr);
+
+            new UserController(getContext()).isUsernameTaken(usernameStr,
                     new UsernameCheckCallback() {
                         @Override
                         public void onUsernameTaken(boolean isTaken) {
                             if (isTaken) {
-                                Toast.makeText(view.getContext(), "Username is already taken", Toast.LENGTH_LONG).show();
+                                generateGuestUser(view);
                             } else {
                                 NavController navController = NavHostFragment.findNavController(SignupFragment.this);
                                 navController.navigate(R.id.addUserContinueAction, bundle);
@@ -117,6 +126,5 @@ public class SignupFragment extends Fragment {
                         }
                     });
         });
-        return view;
     }
 }
