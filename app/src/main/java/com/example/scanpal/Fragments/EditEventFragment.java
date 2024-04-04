@@ -23,15 +23,15 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
-import com.example.scanpal.Controllers.AttendeeController;
 import com.example.scanpal.BuildConfig;
 import com.example.scanpal.Callbacks.DeleteAllAttendeesCallback;
-import com.example.scanpal.Models.Event;
-import com.example.scanpal.Controllers.EventController;
 import com.example.scanpal.Callbacks.EventDeleteCallback;
 import com.example.scanpal.Callbacks.EventFetchCallback;
 import com.example.scanpal.Callbacks.EventUpdateCallback;
+import com.example.scanpal.Controllers.AttendeeController;
+import com.example.scanpal.Controllers.EventController;
 import com.example.scanpal.MainActivity;
+import com.example.scanpal.Models.Event;
 import com.example.scanpal.R;
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.Places;
@@ -54,8 +54,6 @@ import java.util.Arrays;
 public class EditEventFragment extends Fragment {
     private Button saveButton, editImageButton, deleteButton;
     private FloatingActionButton backButton;
-    Button GenerateQrCodeButton;
-    Button CustomQrCodeButton;
     private EditText eventNameForm, eventDescriptionForm, attendeesForm;
     private TextView pageHeader;
     private ImageView eventImageView;
@@ -112,10 +110,6 @@ public class EditEventFragment extends Fragment {
         attendeesForm = view.findViewById(R.id.add_edit_event_Attendees);
         eventImageView = view.findViewById(R.id.add_edit_event_ImageView);
         progressBar = view.findViewById(R.id.progressBar);
-        this.GenerateQrCodeButton = view.findViewById(R.id.generate_qr_code);
-        this.CustomQrCodeButton = view.findViewById(R.id.custom_qr_code);
-        this.GenerateQrCodeButton.setVisibility(View.GONE);
-        this.CustomQrCodeButton.setVisibility(View.GONE);
         autocompleteFragment = (AutocompleteSupportFragment)
                 getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
         Places.initialize(requireContext(), BuildConfig.MAPS_API_KEY);
@@ -164,7 +158,7 @@ public class EditEventFragment extends Fragment {
                 // otherwise eventLocation field stays null and you cant save the event without re-selecting location
                 eventLocation = event.getLocation();
 
-                if(event.getMaximumAttendees() != 0) {
+                if (event.getMaximumAttendees() != 0) {
                     attendeesForm.setText(String.valueOf(event.getMaximumAttendees()));
                 }
 
@@ -203,7 +197,7 @@ public class EditEventFragment extends Fragment {
         Event event = new Event(null, eventName, eventDescription);
         event.setLocation(eventLocation);
 
-        if(attendeesForm.getText().toString().isEmpty()) {
+        if (attendeesForm.getText().toString().isEmpty()) {
             event.setMaximumAttendees(0L);//treat zero as 'no limit'
         } else {
             int maxAttendees = Integer.parseInt(attendeesForm.getText().toString());

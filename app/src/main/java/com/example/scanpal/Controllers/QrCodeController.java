@@ -29,9 +29,6 @@ import java.util.Map;
 public class QrCodeController {
     /**
      * Generates a qr code and returns in in the form of a bitmap
-     *
-     * @param data A string of the event id which the qr code will encode
-     * @return A bitmap representing the qr code
      */
 
     private final FirebaseFirestore database;
@@ -88,7 +85,7 @@ public class QrCodeController {
     /**
      * Generates and Qr Code in Database
      *
-     * @param event The event to link to
+     * @param event    The event to link to
      * @param eventMap the map of the event as stored in the database
      */
     public void generateAndStoreQrCode(Event event, Map<String, Object> eventMap) {
@@ -121,15 +118,12 @@ public class QrCodeController {
                     Log.d("EventController", "Event added successfully!");
                     StorageReference checkInQRCodeRef = storageRef.child("qr-codes/" + event.getId() + "-check-in.png");
                     StorageReference eventQRCodeRef = storageRef.child("qr-codes/" + event.getId() + "-event.png");
-                    // StorageReference eventPosterRef = storageRef.child("/" + event.getId() +
-                    // "-poster.jpg");//TODO: checking img types?
                     UploadTask uploadTask = checkInQRCodeRef.putBytes(imageDataCheckin, metadata);
                     uploadTask
                             .addOnFailureListener(exception -> Log.e("FirebaseStorage",
                                     "Failed to upload check in qr code: " + exception.getMessage()))
                             .addOnSuccessListener(taskSnapshot -> taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(uri -> {
                                 eventMap.put("checkInQRCodeUrl", uri.toString());
-                                // Save to database
                                 eventRef.update("checkInQRCodeURL", uri);
                             }).addOnFailureListener(exception -> Log.e("FirebaseStorage",
                                     "Failed to get download url for check in qr code" + exception.getMessage())));
@@ -140,7 +134,6 @@ public class QrCodeController {
 
                             .addOnSuccessListener(taskSnapshot -> taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(uri -> {
                                 eventMap.put("eventQRCodeUrl", uri.toString());
-                                // Save to database
                                 eventRef.update("eventQRCodeURL", uri);
                             }).addOnFailureListener(exception -> Log.e("FirebaseStorage",
                                     "Failed to get download url for event qr code" + exception.getMessage())));
