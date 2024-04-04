@@ -2,6 +2,7 @@ package com.example.scanpal.Controllers;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.scanpal.Callbacks.AttendeeFetchCallback;
 import com.example.scanpal.Callbacks.AttendeeUpdateCallback;
@@ -11,16 +12,15 @@ import com.example.scanpal.Models.Attendee;
 import com.example.scanpal.Models.Capture;
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.Models.User;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 /**
  * Handles QR Code scanning and adding events using QR codes or checking in
  */
 public class QrScannerController {
-    private Context context;
     private final AttendeeController attendeeController;
     private final EventController eventController = new EventController();
+    private final Context context;
 
     public QrScannerController(Context context, AttendeeController attendeeController) {
         this.context = context;
@@ -77,16 +77,18 @@ public class QrScannerController {
                     attendee.setCheckedIn(true);
                     attendee.setCheckinCount(attendee.getCheckinCount() + 1L);
 
-                    Log.wtf("CHECKED IN!", " crash not here: in callback "  + attendee.getUser().getUsername());
+                    Log.wtf("CHECKED IN!", " crash not here: in callback " + attendee.getUser().getUsername());
 
                     attendeeController.updateAttendee(attendee, new AttendeeUpdateCallback() {
                         @Override
                         public void onSuccess() {
+                            Toast.makeText(context.getApplicationContext(), "Checked-in! 🎉", Toast.LENGTH_SHORT).show();
                             Log.wtf("CHECKED IN!", "Attendee checked-in successfully!");
                         }
 
                         @Override
                         public void onError(Exception e) {
+                            Toast.makeText(context.getApplicationContext(), "Checked-in Failed 😔", Toast.LENGTH_SHORT).show();
                             Log.wtf("NOT CHECKED IN!", "check-in failed");
                         }
                     });
@@ -102,9 +104,8 @@ public class QrScannerController {
         }
     }
 
-    
     public void updateUserLocationAndAttendee(String eventId, String username) {
-        UserController userController = new UserController( context);
+        UserController userController = new UserController(context);
 
         userController.getUser(username, new UserFetchCallback() {
             @Override

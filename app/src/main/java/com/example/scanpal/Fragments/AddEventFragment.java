@@ -25,14 +25,16 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.scanpal.BuildConfig;
-import com.example.scanpal.Models.Event;
+import com.example.scanpal.Callbacks.EventIDsFetchCallback;
+import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Controllers.EventController;
 import com.example.scanpal.Controllers.ImageController;
-import com.example.scanpal.MainActivity;
-import com.example.scanpal.R;
-import com.example.scanpal.Models.User;
+import com.example.scanpal.Controllers.QrScannerController;
 import com.example.scanpal.Controllers.UserController;
-import com.example.scanpal.Callbacks.UserFetchCallback;
+import com.example.scanpal.MainActivity;
+import com.example.scanpal.Models.Event;
+import com.example.scanpal.Models.User;
+import com.example.scanpal.R;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
@@ -40,11 +42,14 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * A Fragment for adding new events to the Firestore database. It allows users to input
@@ -53,18 +58,18 @@ import java.util.Arrays;
  */
 public class AddEventFragment extends Fragment {
     private static final String TAG = "AddEditEvent";
-    Button saveButton;
+    Button saveButton, deleteButton, editImageButton;
     FloatingActionButton backButton;
-    Button deleteButton;
-    Button editImageButton;
-    EditText attendeesForm;
-    EditText eventNameForm;
-    EditText eventDescriptionForm;
+    Boolean QrChoice = Boolean.FALSE;
+    String QrID = null;
+    EditText attendeesForm, eventNameForm, eventDescriptionForm;
     Event newEvent;
-    EventController eventController;
-    UserController userController;
     ProgressBar progressBar;
     User Organizer;
+    EventController eventController;
+    UserController userController;
+    private ImageController imageController;
+    private ActivityResultLauncher<ScanOptions> qrCodeScanner;
     private Uri imageUri;
     private ImageView profileImageView;
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
@@ -75,12 +80,8 @@ public class AddEventFragment extends Fragment {
                     profileImageView.setImageURI(imageUri);
                 }
             });
-    private ImageController imageController;
     private PlacesClient placesClient;
-    private String selectedLocationName;
-    private String locationCoords;
-    private SwitchMaterial trackLocationSwitch;
-
+    private String selectedLocationName, locationCords;
 
     public AddEventFragment() {
         // Required empty public constructor
@@ -101,7 +102,7 @@ public class AddEventFragment extends Fragment {
         View view = inflater.inflate(R.layout.add_edit_event, container, false);
         ((MainActivity) requireActivity()).setNavbarVisibility(false);
 
-        trackLocationSwitch = view.findViewById(R.id.track_location_switch);
+        SwitchMaterial trackLocationSwitch = view.findViewById(R.id.track_location_switch);
 
         trackLocationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             // Here, you can directly update your event's trackLocation property
@@ -116,7 +117,6 @@ public class AddEventFragment extends Fragment {
         this.deleteButton = view.findViewById(R.id.add_edit_deleteButton);
         this.deleteButton.setVisibility(View.GONE);
 
-
         this.saveButton = view.findViewById(R.id.add_edit_save_button);
         this.backButton = view.findViewById(R.id.add_edit_backButton);
         this.editImageButton = view.findViewById(R.id.add_edit_event_imageButton);
@@ -127,7 +127,7 @@ public class AddEventFragment extends Fragment {
         this.progressBar = view.findViewById(R.id.progressBar);
 
         imageController = new ImageController();
-        userController = new UserController( view.getContext());
+        userController = new UserController(view.getContext());
         eventController = new EventController();
 
         userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
@@ -141,53 +141,54 @@ public class AddEventFragment extends Fragment {
             }
         });
 
+        // Initialize QR Code Scanner
+        qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
+            if (result.getContents() != null) {
+                eventController.getAllEventIds(new EventIDsFetchCallback() {
+                    @Override
+                    public void onSuccess(List<String> EventIDs) {
+                        if (EventIDs.contains(result.getContents().substring(1))) {
+                            Toast.makeText(view.getContext(), "QR Code is in use ⚠️", Toast.LENGTH_SHORT).show();
+                        } else if (result.getContents().startsWith("https://") || result.getContents().startsWith("www")) {
+                            Toast.makeText(view.getContext(), "Invalid QR Code ❌", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(view.getContext(), "QR Code Scanned ✅", Toast.LENGTH_SHORT).show();
+                            QrID = result.getContents().substring(1);
+                            QrChoice = Boolean.TRUE;
+                            progressBar.setVisibility(View.VISIBLE);
+                            saveEvent();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(getContext(), "Error checking QR Code", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
         this.newEvent = new Event(this.Organizer, "", "");
 
         saveButton.setOnClickListener(v -> {
-
-            //checking for valid input
             if (eventNameForm.getText().toString().isEmpty() ||
                     selectedLocationName == null || selectedLocationName.isEmpty() ||
                     eventDescriptionForm.getText().toString().isEmpty() ||
                     null == imageUri) {
-
                 Toast.makeText(view.getContext(), "Please input all Required Information", Toast.LENGTH_LONG).show();
-
             } else {
-                progressBar.setVisibility(View.VISIBLE);
-                newEvent.setName(eventNameForm.getText().toString());
-                newEvent.setLocation(selectedLocationName);
-                newEvent.setDescription(eventDescriptionForm.getText().toString());
-
-                if(attendeesForm.getText().toString().isEmpty()) {
-                    newEvent.setMaximumAttendees(0L);//treat zero as 'no limit'
-                } else {
-                    newEvent.setMaximumAttendees(Integer.parseInt(attendeesForm.getText().toString()));
-                }
-
-                newEvent.setPosterURI(imageUri);
-                newEvent.setAnnouncementCount(0L);
-                newEvent.setLocationCoords(locationCoords);
-
-                eventController.addEvent(newEvent);
-                uploadImageToFirebase(imageUri);
-
-                progressBar.setVisibility(View.GONE);
-                NavController navController = NavHostFragment.findNavController(AddEventFragment.this);
-                navController.navigate(R.id.addEditEventComplete);
-                ((MainActivity) requireActivity()).setNavbarVisibility(true);
+                QROptionsDialog();
             }
         });
 
         backButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(AddEventFragment.this);
-            navController.navigate(R.id.addEditEventComplete);
+            navController.popBackStack();
             ((MainActivity) requireActivity()).setNavbarVisibility(true);
         });
 
         editImageButton.setOnClickListener(v -> openGallery());
 
-        // Initialize Places and AutocompleteSupportFragment
         if (!Places.isInitialized()) {
             Places.initialize(requireContext(), BuildConfig.MAPS_API_KEY);
         }
@@ -224,7 +225,6 @@ public class AddEventFragment extends Fragment {
                 }
             });
         }
-
         return view;
     }
 
@@ -249,5 +249,55 @@ public class AddEventFragment extends Fragment {
         imageController.uploadImage(imageUri, folderPath, fileName,
                 uri -> System.out.println("Success"),
                 e -> Log.e("AddEventFragment", "Upload failed: " + e.getMessage()));
+    }
+
+    /**
+     * Shows a dialog for selecting QR code generation method.
+     */
+    private void QROptionsDialog() {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
+        builder.setTitle("Check-in Code Options");
+        builder.setIcon(R.drawable.onphone);
+        String[] options = {"🤖 Autogenerate Code", "♻️ Reuse Old Code"};
+        builder.setItems(options, (dialog, which) -> {
+            switch (which) {
+                case 0:
+                    QrChoice = Boolean.TRUE;
+                    QrID = null;
+                    Toast.makeText(getContext(), "Generated QR Code", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.VISIBLE);
+                    saveEvent();
+                    break;
+                case 1:
+                    qrCodeScanner.launch(QrScannerController.getOptions());
+                    break;
+            }
+        });
+        builder.show();
+    }
+
+    /**
+     * Saves event details and image to Firebase, then navigates back.
+     */
+    private void saveEvent() {
+        newEvent.setName(eventNameForm.getText().toString());
+        newEvent.setLocation(selectedLocationName);
+        newEvent.setDescription(eventDescriptionForm.getText().toString());
+
+        if (attendeesForm.getText().toString().isEmpty()) {
+            newEvent.setMaximumAttendees(0L);
+        } else {
+            newEvent.setMaximumAttendees(Integer.parseInt(attendeesForm.getText().toString()));
+        }
+        newEvent.setPosterURI(imageUri);
+        newEvent.setAnnouncementCount(0L);
+        newEvent.setLocationCoords(locationCords);
+        eventController.addEvent(newEvent, QrID);
+        uploadImageToFirebase(imageUri);
+
+        NavController navController = NavHostFragment.findNavController(this);
+        navController.popBackStack();
+        progressBar.setVisibility(View.GONE);
+        ((MainActivity) requireActivity()).setNavbarVisibility(true);
     }
 }

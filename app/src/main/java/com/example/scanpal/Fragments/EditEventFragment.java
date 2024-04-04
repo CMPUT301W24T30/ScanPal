@@ -24,15 +24,15 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
-import com.example.scanpal.Controllers.AttendeeController;
 import com.example.scanpal.BuildConfig;
 import com.example.scanpal.Callbacks.DeleteAllAttendeesCallback;
-import com.example.scanpal.Models.Event;
-import com.example.scanpal.Controllers.EventController;
 import com.example.scanpal.Callbacks.EventDeleteCallback;
 import com.example.scanpal.Callbacks.EventFetchCallback;
 import com.example.scanpal.Callbacks.EventUpdateCallback;
+import com.example.scanpal.Controllers.AttendeeController;
+import com.example.scanpal.Controllers.EventController;
 import com.example.scanpal.MainActivity;
+import com.example.scanpal.Models.Event;
 import com.example.scanpal.R;
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.Places;
@@ -187,7 +187,7 @@ public class EditEventFragment extends Fragment {
                 // otherwise eventLocation field stays null and you cant save the event without re-selecting location
                 eventLocation = event.getLocation();
 
-                if(event.getMaximumAttendees() != 0) {
+                if (event.getMaximumAttendees() != 0) {
                     attendeesForm.setText(String.valueOf(event.getMaximumAttendees()));
                 }
 
@@ -226,7 +226,7 @@ public class EditEventFragment extends Fragment {
         Event event = new Event(null, eventName, eventDescription);
         event.setLocation(eventLocation);
 
-        if(attendeesForm.getText().toString().isEmpty()) {
+        if (attendeesForm.getText().toString().isEmpty()) {
             event.setMaximumAttendees(0L);//treat zero as 'no limit'
         } else {
             int maxAttendees = Integer.parseInt(attendeesForm.getText().toString());
