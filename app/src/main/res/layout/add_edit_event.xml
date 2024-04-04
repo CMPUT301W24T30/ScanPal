@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,7 +13,7 @@
 
     <TextView
         android:id="@+id/attendees_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
@@ -16,31 +21,67 @@
         android:textColor="#797474"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/add_edit_event_ImageView" />
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/autocomplete_fragment"
-        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout_attendees"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:textColorHint="@color/grey"
+        android:theme="@style/TextInput"
+        app:boxBackgroundColor="#0A0C16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/attendees_title">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/add_edit_event_Attendees"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Max Attendees"
+            android:inputType="number"
+            android:textColor="@color/white" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <FrameLayout
+        android:id="@+id/autocomplete_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:background="@drawable/border"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_location_title"
-        android:textColor="#797474" />
+        app:layout_constraintTop_toBottomOf="@+id/event_location_title">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/autocomplete_fragment"
+            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:textColor="#797474" />
+
+    </FrameLayout>
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/track_location_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/event_name_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/event_name_title"
+        app:layout_constraintBottom_toBottomOf="@id/event_name_title"
         android:text="@string/trackLocation"
         android:checked="false"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/autocomplete_fragment"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:textColor="@color/white"/>
+        android:textColor="@color/white" />
 
 
     <ImageView
@@ -90,15 +131,17 @@
 
     <TextView
         android:id="@+id/event_name_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
         android:text="Event Name"
         android:textColor="#797474"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_edit_event_Attendees" />
+        app:layout_constraintEnd_toStartOf="@+id/track_location_switch"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout_attendees" />
 
     <TextView
         android:id="@+id/event_location_title"
@@ -123,25 +166,7 @@
         android:textColor="#797474"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/autocomplete_fragment" />
-
-    <EditText
-        android:id="@+id/add_edit_event_Attendees"
-        android:layout_width="45dp"
-        android:layout_height="31dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="#0A0C16"
-        android:backgroundTint="#0A0C16"
-        android:drawableTint="#9C27B0"
-        android:ems="10"
-        android:hint=" 1 >= "
-        android:inputType="number"
-        android:textColor="@color/white"
-        app:boxBackgroundMode="outline"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/attendees_title"
-        app:strokeColor="#3580FF" />
+        app:layout_constraintTop_toBottomOf="@+id/autocomplete_fragment_container" />
 
     <TextView
         android:id="@+id/add_edit_event_Header"
@@ -202,7 +227,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/add_edit_event_Name"
             android:layout_width="match_parent"
-            android:layout_height="46dp"
+            android:layout_height="50dp"
             android:hint="Enter Event Name"
             android:textColor="@color/white" />
 
@@ -247,3 +272,4 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

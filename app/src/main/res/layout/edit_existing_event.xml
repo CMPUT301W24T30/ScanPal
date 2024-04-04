@@ -101,15 +101,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="34dp"
-        android:layout_marginEnd="300dp"
         android:text="Event Name"
         android:textColor="#797474"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@+id/add_edit_event_ImageView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_edit_event_ImageView" />
+        app:layout_constraintEnd_toStartOf="@+id/track_location_switch"
+        app:layout_constraintBottom_toTopOf="@+id/textInputLayout" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/track_location_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/event_name_title"
+        app:layout_constraintBottom_toBottomOf="@+id/event_name_title"
+        app:layout_constraintStart_toEndOf="@+id/event_name_title"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/event_location_title"
