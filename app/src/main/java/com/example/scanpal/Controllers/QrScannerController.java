@@ -1,8 +1,11 @@
 package com.example.scanpal.Controllers;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.navigation.NavController;
 
 import com.example.scanpal.Callbacks.AttendeeFetchCallback;
 import com.example.scanpal.Callbacks.AttendeeUpdateCallback;
@@ -12,6 +15,7 @@ import com.example.scanpal.Models.Attendee;
 import com.example.scanpal.Models.Capture;
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.Models.User;
+import com.example.scanpal.R;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 /**
@@ -102,7 +106,22 @@ public class QrScannerController {
                 }
             });
         } else if (qrId.startsWith("E")) {
-            // TODO: handle event check-in?
+            // Navigate user to event with id and display it
+            String eventId = qrId.substring(1);
+            eventController.getEventById(eventId, new EventFetchCallback() {
+                @Override
+                public void onSuccess(Event event) {
+                    NavController navController = new NavController(context);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("event_id", event.getId());
+                    navController.navigate(R.id.eventDetailsPage, bundle);
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Toast.makeText(context, "Error Retrieving Event", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
