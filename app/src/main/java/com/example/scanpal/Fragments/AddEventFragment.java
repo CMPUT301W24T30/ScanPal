@@ -203,8 +203,8 @@ public class AddEventFragment extends Fragment {
                     LatLng latLng = place.getLatLng();
                     if (latLng != null) {
                         selectedLocationName = place.getName();
-                        locationCoords = place.getLatLng().latitude + "," + place.getLatLng().longitude;
-                        newEvent.setLocationCoords(locationCoords);
+                        locationCords = place.getLatLng().latitude + "," + place.getLatLng().longitude;
+                        newEvent.setLocationCoords(locationCords);
 
                         View autocompleteView = autocompleteFragment.getView();
                         if (autocompleteView != null) {
