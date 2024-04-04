@@ -24,6 +24,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.scanpal.BuildConfig;
+import com.example.scanpal.Callbacks.EventFetchByUserCallback;
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.Controllers.EventController;
 import com.example.scanpal.Controllers.ImageController;
@@ -42,8 +43,10 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * A Fragment for adding new events to the Firestore database. It allows users to input
@@ -170,6 +173,35 @@ public class AddEventFragment extends Fragment {
 
                 eventController.addEvent(newEvent);
                 uploadImageToFirebase(imageUri);
+
+
+                //for subscribing the organizer to their unique topic channel for milestone
+                eventController.getEventsByUser(view, new EventFetchByUserCallback() {
+                    @Override
+                    public void onSuccess(List<Event> events) {
+                        for(Event event: events) {
+                            //get the event just created
+                            if(event.getName().equals(newEvent.getName()) ) {
+                                FirebaseMessaging.getInstance().subscribeToTopic( event.getId() + "org")
+                                        .addOnCompleteListener(task -> {
+                                            if (task.isSuccessful()) {
+                                                //setJoinButton(true);
+                                                //onResume();
+                                                Log.i(TAG, "Subscribed to Organizer Topic: " + event.getId() + "org" );
+
+
+                                            }
+                                        });
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });
+
 
                 progressBar.setVisibility(View.GONE);
                 NavController navController = NavHostFragment.findNavController(AddEventFragment.this);
