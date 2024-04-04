@@ -14,7 +14,6 @@ import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Controllers.AttendeeController;
 import com.example.scanpal.Controllers.QrScannerController;
 import com.example.scanpal.Controllers.UserController;
-import com.example.scanpal.Fragments.BrowseEventFragment;
 import com.example.scanpal.Models.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -67,11 +66,10 @@ public class MainActivity extends AppCompatActivity {
         assert navHostFragment != null;
         navController = navHostFragment.getNavController();
 
-        UserController userController = new UserController( this);
+        UserController userController = new UserController(this);
         if (userController.isUserLoggedIn()) {
             setNavbarVisibility(true);
             navController.navigate(R.id.eventsPage);
-            // Make navbar visible after user is confirmed to be logged in// Now that user is logged in, set up listeners.
         } else {
             navController.navigate(R.id.signupFragment);
             setNavbarVisibility(false);
@@ -101,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         // Initialize QR Code Scanner and set up scan button.
         qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
             if (result.getContents() != null) {
-                UserController userController = new UserController( this);
+                UserController userController = new UserController(this);
                 String username = userController.fetchStoredUsername();
                 qrScannerController.handleResult(result.getContents(), username);
             } else {
