@@ -39,8 +39,8 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro"
             )
         }
     }
@@ -51,7 +51,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
-        
+
     }
 }
 
@@ -70,8 +70,6 @@ dependencies {
     // google maps
     implementation("com.google.android.libraries.places:places:3.3.0")
     implementation("com.google.android.gms:play-services-maps:17.0.1")
-
-
 
 
     // navigation
@@ -94,6 +92,8 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment:2.7.7")
     implementation("androidx.navigation:navigation-ui:2.7.7")
     implementation("androidx.navigation:navigation-runtime:2.7.7")
+    implementation("com.github.javafaker:javafaker:1.0.2")
+
 
     implementation("com.journeyapps:zxing-android-embedded:4.1.0")
     testImplementation("junit:junit:4.13.2")

@@ -16,10 +16,10 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.scanpal.Callbacks.UsernameCheckCallback;
-import com.example.scanpal.R;
 import com.example.scanpal.Controllers.UserController;
+import com.example.scanpal.R;
+import com.github.javafaker.Faker;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Objects;
 
@@ -65,7 +65,7 @@ public class SignupFragment extends Fragment {
                     bundle.putString("firstName", firstNameStr);
                     bundle.putString("lastName", lastNameStr);
 
-                    new UserController( getContext()).isUsernameTaken(usernameStr,
+                    new UserController(getContext()).isUsernameTaken(usernameStr,
                             new UsernameCheckCallback() {
                                 @Override
                                 public void onUsernameTaken(boolean isTaken) {
@@ -87,6 +87,44 @@ public class SignupFragment extends Fragment {
                 }
             }
         });
+
+        generateGuestUser(view);
+
         return view;
+    }
+
+    private void generateGuestUser(View view) {
+        view.findViewById(R.id.addUserGuest).setOnClickListener(v -> {
+
+            Faker faker = new Faker();
+
+
+            String usernameStr = "G_" + faker.name().username();
+            String firstNameStr = faker.name().firstName();
+            String lastNameStr = faker.name().lastName();
+
+            Bundle bundle = new Bundle();
+            bundle.putString("username", usernameStr);
+            bundle.putString("firstName", firstNameStr);
+            bundle.putString("lastName", lastNameStr);
+
+            new UserController(getContext()).isUsernameTaken(usernameStr,
+                    new UsernameCheckCallback() {
+                        @Override
+                        public void onUsernameTaken(boolean isTaken) {
+                            if (isTaken) {
+                                generateGuestUser(view);
+                            } else {
+                                NavController navController = NavHostFragment.findNavController(SignupFragment.this);
+                                navController.navigate(R.id.addUserContinueAction, bundle);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Toast.makeText(view.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+        });
     }
 }
