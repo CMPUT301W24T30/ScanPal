@@ -24,7 +24,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.scanpal"
-        minSdk = 24
+        minSdk = 28
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -51,7 +51,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
-        
+
     }
 }
 
@@ -70,8 +70,6 @@ dependencies {
     // google maps
     implementation("com.google.android.libraries.places:places:3.3.0")
     implementation("com.google.android.gms:play-services-maps:17.0.1")
-
-
 
 
     // navigation
