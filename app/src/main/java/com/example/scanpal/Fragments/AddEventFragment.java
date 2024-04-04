@@ -24,6 +24,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.scanpal.BuildConfig;
+import com.example.scanpal.Callbacks.EventFetchByUserCallback;
+import com.example.scanpal.Models.Event;
 import com.example.scanpal.Callbacks.EventIDsFetchCallback;
 import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Controllers.EventController;
@@ -31,7 +33,6 @@ import com.example.scanpal.Controllers.ImageController;
 import com.example.scanpal.Controllers.QrScannerController;
 import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.MainActivity;
-import com.example.scanpal.Models.Event;
 import com.example.scanpal.Models.User;
 import com.example.scanpal.R;
 import com.google.android.gms.common.api.Status;
@@ -44,6 +45,8 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -176,6 +179,7 @@ public class AddEventFragment extends Fragment {
                     null == imageUri) {
                 Toast.makeText(view.getContext(), "Please input all Required Information", Toast.LENGTH_LONG).show();
             } else {
+
                 QROptionsDialog();
             }
         });
@@ -282,6 +286,29 @@ public class AddEventFragment extends Fragment {
         newEvent.setLocationCoords(locationCords);
         eventController.addEvent(newEvent, QrID);
         uploadImageToFirebase(imageUri);
+
+        eventController.getEventsByUser(getView(), new EventFetchByUserCallback() {
+            @Override
+            public void onSuccess(List<Event> events) {
+                for(Event event: events) {
+                    //get the event just created
+                    if(event.getName().equals(newEvent.getName()) ) {
+                        FirebaseMessaging.getInstance().subscribeToTopic( event.getId() + "org")
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+
+                                        Log.i(TAG, "Subscribed to Organizer Topic: " + event.getId() + "org" );
+
+                                    }
+                                });
+                    }
+                }
+            }
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
 
         NavController navController = NavHostFragment.findNavController(this);
         navController.popBackStack();

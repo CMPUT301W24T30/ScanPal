@@ -26,6 +26,7 @@ public class Event {
     private boolean isUserSignedUp;
     private boolean trackLocation = false;
     private String locationCoords; // "lat,lon" format
+    private long totalCheckInCount;
 
     /**
      * Constructs an event with an organizer, name, and description.
@@ -39,6 +40,7 @@ public class Event {
         this.name = name;
         this.description = description;
         participants = new ArrayList<>();
+        this.totalCheckInCount = 0L;
     }
 
     public boolean isTrackLocation() {
@@ -159,6 +161,14 @@ public class Event {
 
     public void setAnnouncementCount(Long announcementCount) {
         this.announcementCount = announcementCount;
+    }
+
+    public long getTotalCheckInCount() {
+        return totalCheckInCount;
+    }
+
+    public void setTotalCheckInCount(long totalCheckInCount) {
+        this.totalCheckInCount = totalCheckInCount;
     }
 
     public boolean isUserSignedUp() {
