@@ -63,7 +63,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/geolocation" />
+        app:layout_constraintTop_toBottomOf="@+id/homepage" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/username"
@@ -147,7 +147,7 @@
         app:boxBackgroundColor="#0A0C16"
         app:boxStrokeColor="@color/input_layout_stroke_color"
         app:hintTextColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/geolocation"
+        app:layout_constraintBottom_toTopOf="@+id/save_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/last_name"
@@ -160,24 +160,6 @@
             android:hint="Homepage"
             android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
-
-    <Switch
-        android:id="@+id/geolocation"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="64dp"
-        android:singleLine="true"
-        android:text="Geo-location Tracking"
-        android:textColor="#848A94"
-        android:textSize="18sp"
-        android:thumbTint="#0A0C16"
-        android:trackTint="#2196F3"
-        android:trackTintMode="add"
-        app:layout_constraintBottom_toTopOf="@+id/save_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homepage" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/upload_button"
