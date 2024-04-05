@@ -83,6 +83,7 @@ public class EventController {
         eventMap.put("announcementCount", 0L);
         eventMap.put("trackLocation", event.isTrackLocation());
         eventMap.put("locationCoords", event.getLocationCoords());
+        eventMap.put("totalCheckInCount", event.getTotalCheckInCount() );
 
         DocumentReference organizerRef = database.collection("Users").document(event.getOrganizer().getUsername());
         eventMap.put("organizer", organizerRef);
