@@ -42,6 +42,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
@@ -193,6 +194,9 @@ public class EditEventFragment extends Fragment {
 
                 existingImageUri = event.getPosterURI();
                 announcementCount = event.getAnnouncementCount();
+
+                SwitchMaterial trackLocationSwitch = getView().findViewById(R.id.track_location_switch);
+                trackLocationSwitch.setChecked(event.isTrackLocation());
 
                 Glide.with(EditEventFragment.this)
                         .load(event.getPosterURI())
