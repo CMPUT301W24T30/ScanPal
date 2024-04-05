@@ -54,99 +54,43 @@ public class QrScannerController {
             eventController.getEventById(eventId, new EventFetchCallback() {
                 @Override
                 public void onSuccess(Event event) {
-
-                    if (event.isTrackLocation()) {
-                        // Proceed to get user location and update attendee
-                        updateUserLocationAndAttendee(eventId, username);
-                    } else {
-                        // Handle case where tracking is not required
-                        Log.d("HANDLE_RESULT", "Location tracking not required for this event.");
-                    }
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    Log.e("HANDLE_RESULT", "Error fetching event details: " + e.getMessage());
-                }
-            });
-
-            String attendeeId = username + eventId;
-            Log.d("ATTENDEE", attendeeId);
-
-            attendeeController.fetchAttendee(attendeeId, new AttendeeFetchCallback() {
-                @Override
-                public void onSuccess(Attendee attendee) {
-                    attendee.setCheckedIn(true);
-                    attendee.setCheckinCount(attendee.getCheckinCount() + 1L);
-
-                    Log.wtf("CHECKED IN!", " crash not here: in callback " + attendee.getUser().getUsername());
-
-                    attendeeController.updateAttendee(attendee, new AttendeeUpdateCallback() {
+                    Log.d("HANDLE_RESULT", "Handling event check-in or addition based on QR.");
+                    String attendeeId = username + eventId;
+                    attendeeController.fetchAttendee(attendeeId, new AttendeeFetchCallback() {
                         @Override
-                        public void onSuccess() {
-                            Toast.makeText(context.getApplicationContext(), "Checked-in! 🎉", Toast.LENGTH_SHORT).show();
-                            Log.wtf("CHECKED IN!", "Attendee checked-in successfully!");
+                        public void onSuccess(Attendee attendee) {
+                            attendee.setCheckedIn(true);
+                            attendee.setCheckinCount(attendee.getCheckinCount() + 1L);
+
+                            attendeeController.updateAttendee(attendee, new AttendeeUpdateCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Toast.makeText(context, "Checked-in! 🎉", Toast.LENGTH_SHORT).show();
+                                    Log.d("CHECKED IN!", "Attendee checked-in successfully!");
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+                                    Toast.makeText(context, "Checked-in Failed 😔", Toast.LENGTH_SHORT).show();
+                                    Log.d("NOT CHECKED IN!", "Check-in failed", e);
+                                }
+                            });
                         }
 
                         @Override
                         public void onError(Exception e) {
-                            Toast.makeText(context.getApplicationContext(), "Checked-in Failed 😔", Toast.LENGTH_SHORT).show();
-                            Log.wtf("NOT CHECKED IN!", "check-in failed");
+                            Log.e("ERROR", "Error fetching attendee: " + e.getMessage(), e);
                         }
                     });
                 }
 
                 @Override
                 public void onError(Exception e) {
-                    System.err.println("Error fetching attendee: " + e.getMessage());
+                    Log.e("ERROR", "Error fetching event details: " + e.getMessage(), e);
                 }
             });
         } else if (qrId.startsWith("E")) {
-            // TODO: handle event check-in?
+            Log.d("HANDLE_RESULT", "Handling other QR code operations.");
         }
     }
-
-    public void updateUserLocationAndAttendee(String eventId, String username) {
-        UserController userController = new UserController(context);
-
-        userController.getUser(username, new UserFetchCallback() {
-            @Override
-            public void onSuccess(User user) {
-                String userLocation = user.getLocation();
-                String attendeeId = username + eventId;
-
-                attendeeController.fetchAttendee(attendeeId, new AttendeeFetchCallback() {
-                    @Override
-                    public void onSuccess(Attendee attendee) {
-
-                        attendee.setLocation(userLocation);
-                        attendee.setCheckedIn(true);
-                        attendeeController.updateAttendee(attendee, new AttendeeUpdateCallback() {
-                            @Override
-                            public void onSuccess() {
-                                Log.d("QrScannerController", "Attendee location updated successfully.");
-                            }
-
-                            @Override
-                            public void onError(Exception e) {
-                                Log.e("QrScannerController", "Error updating attendee location: " + e.getMessage());
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        Log.e("QrScannerController", "Error fetching attendee: " + e.getMessage());
-                    }
-                });
-            }
-
-            @Override
-            public void onError(Exception e) {
-                Log.e("QrScannerController", "Error fetching user for location update: " + e.getMessage());
-            }
-        });
-    }
-
-
 }

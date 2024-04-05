@@ -147,7 +147,7 @@ public class UserController {
             if (user.getUsername().equals(username)) {
                 ois.close();
                 fis.close();
-                Log.d("UserController", "Fetched user from local storage: " + user.getUsername() + " with location: " + user.getLocation());
+                Log.d("UserController", "Fetched user from local storage");
                 callback.onSuccess(user);
                 return;
             }
@@ -170,7 +170,6 @@ public class UserController {
                                 (String) data.get("photo"),
                                 (String) data.get("homepage"),
                                 (String) data.get("deviceToken"));
-                        user.setLocation(String.valueOf(data.get("location")));
                         callback.onSuccess(user);
                     } else {
                         Log.e("UserController", "Failed to parse user data from Firestore");
@@ -214,7 +213,6 @@ public class UserController {
                                 (String) data.get("photo"),
                                 (String) data.get("homepage"),
                                 (String) data.get("deviceToken"));
-                        user.setLocation(String.valueOf(data.get("location")));
                         callback.onSuccess(user);
                     } else {
                         Log.e("UserController", "Failed to parse user data from Firestore");
@@ -328,44 +326,6 @@ public class UserController {
             }
         });
     }
-
-    public void updateUserLocation(String username, String location, UserUpdateCallback callback) {
-        DocumentReference userRef = database.collection("Users").document(username);
-        userRef.update("location", location)
-                .addOnSuccessListener(aVoid -> {
-                    // Fetch the latest user data from Firebase to update local storage
-                    getUser(username, new UserFetchCallback() {
-                        @Override
-                        public void onSuccess(User user) {
-                            // User fetched from Firebase, now update local storage
-                            try {
-                                FileOutputStream fos = context.openFileOutput("user.ser", Context.MODE_PRIVATE);
-                                ObjectOutputStream oos = new ObjectOutputStream(fos);
-                                user.setLocation(location); // Update location
-                                oos.writeObject(user); // Serialize updated user object
-                                oos.close();
-                                fos.close();
-                                Log.d("UserController", "User location updated locally for " + username);
-                                callback.onSuccess(); // Indicate success
-                            } catch (Exception e) {
-                                Log.e("UserController", "Failed to update user location locally", e);
-                                callback.onError(e); // Indicate failure
-                            }
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            Log.e("UserController", "Error fetching updated user from Firebase", e);
-                            callback.onError(e);
-                        }
-                    });
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("UserController", "Failed to update user location on Firebase", e);
-                    callback.onError(e);
-                });
-    }
-
 
     public void fetchAllUsers(UsersFetchCallback callback) {
         database.collection("Users").get().addOnCompleteListener(task -> {

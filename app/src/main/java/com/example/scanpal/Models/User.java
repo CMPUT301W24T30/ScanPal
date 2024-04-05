@@ -15,7 +15,6 @@ public class User implements Serializable {
     private String lastName;
     private String photo; // Profile Photo of the User
     private String deviceToken;
-    private String location;
     private String homepage;
 
     /**
@@ -107,14 +106,6 @@ public class User implements Serializable {
 
     public void setPhoto(String photo) {
         this.photo = photo;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
     }
 
     public String getDeviceToken() {
