@@ -1,11 +1,8 @@
 package com.example.scanpal.Controllers;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-
-import androidx.navigation.NavController;
 
 import com.example.scanpal.Callbacks.AttendeeFetchCallback;
 import com.example.scanpal.Callbacks.AttendeeUpdateCallback;
@@ -15,7 +12,6 @@ import com.example.scanpal.Models.Attendee;
 import com.example.scanpal.Models.Capture;
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.Models.User;
-import com.example.scanpal.R;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 /**
@@ -25,6 +21,7 @@ public class QrScannerController {
     private final AttendeeController attendeeController;
     private final EventController eventController = new EventController();
     private final Context context;
+    private String eventId = null;
 
     public QrScannerController(Context context, AttendeeController attendeeController) {
         this.context = context;
@@ -51,7 +48,7 @@ public class QrScannerController {
      * @param qrId     A string of the eventID contained inside the QR code after scanning
      * @param username Username of the attendee who scanned the QR code
      */
-    public void handleResult(String qrId, String username) {
+    public String handleResult(String qrId, String username) {
         if (qrId.startsWith("C")) {
             String eventId = qrId.substring(1);
 
@@ -105,24 +102,12 @@ public class QrScannerController {
                     System.err.println("Error fetching attendee: " + e.getMessage());
                 }
             });
-        } else if (qrId.startsWith("E")) {
-            // Navigate user to event with id and display it
-            String eventId = qrId.substring(1);
-            eventController.getEventById(eventId, new EventFetchCallback() {
-                @Override
-                public void onSuccess(Event event) {
-                    NavController navController = new NavController(context);
-                    Bundle bundle = new Bundle();
-                    bundle.putString("event_id", event.getId());
-                    navController.navigate(R.id.eventDetailsPage, bundle);
-                }
 
-                @Override
-                public void onError(Exception e) {
-                    Toast.makeText(context, "Error Retrieving Event", Toast.LENGTH_SHORT).show();
-                }
-            });
+        } else if (qrId.startsWith("E")) {
+            // Change event id for main activity to deal with
+            eventId = qrId.substring(1);
         }
+        return eventId;  // only gets changed if event starts with E and is successfully retrieved
     }
 
     public void updateUserLocationAndAttendee(String eventId, String username) {

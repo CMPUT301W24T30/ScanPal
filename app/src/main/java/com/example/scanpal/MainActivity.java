@@ -101,7 +101,12 @@ public class MainActivity extends AppCompatActivity {
             if (result.getContents() != null) {
                 UserController userController = new UserController(this);
                 String username = userController.fetchStoredUsername();
-                qrScannerController.handleResult(result.getContents(), username);
+                String id = qrScannerController.handleResult(result.getContents(), username);  // outcome will be event id if event code scanned
+                if (id != null) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("event_id", id);
+                    navController.navigate(R.id.eventDetailsPage, bundle);
+                }
             } else {
                 Toast.makeText(MainActivity.this, "Invalid QR Code", Toast.LENGTH_SHORT).show();
             }
