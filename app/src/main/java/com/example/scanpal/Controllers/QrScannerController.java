@@ -47,6 +47,7 @@ public class QrScannerController {
      *
      * @param qrId     A string of the eventID contained inside the QR code after scanning
      * @param username Username of the attendee who scanned the QR code
+     * @return returns event id if event code scanned, otherwise stays null
      */
     public String handleResult(String qrId, String username) {
         if (qrId.startsWith("C")) {

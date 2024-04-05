@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 if (id != null) {
                     Bundle bundle = new Bundle();
                     bundle.putString("event_id", id);
-                    navController.navigate(R.id.eventDetailsPage, bundle);
+                    navController.navigate(R.id.eventDetailsPage, bundle);  // pass id to event details fragment to display event scanned
                 }
             } else {
                 Toast.makeText(MainActivity.this, "Invalid QR Code", Toast.LENGTH_SHORT).show();
