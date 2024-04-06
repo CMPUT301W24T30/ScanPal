@@ -11,13 +11,12 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.scanpal.Models.Administrator;
-import com.example.scanpal.MainActivity;
-import com.example.scanpal.R;
-import com.example.scanpal.Models.User;
 import com.example.scanpal.Callbacks.UserAddCallback;
 import com.example.scanpal.Controllers.UserController;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.example.scanpal.MainActivity;
+import com.example.scanpal.Models.Administrator;
+import com.example.scanpal.Models.User;
+import com.example.scanpal.R;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 /**
@@ -40,7 +39,7 @@ public class RoleSelectFragment extends Fragment {
         String firstName = getArguments().getString("firstName", "");
         String lastName = getArguments().getString("lastName", "");
 
-        UserController userController = new UserController( getContext());
+        UserController userController = new UserController(getContext());
 
         //String deviceToken = "a";
 

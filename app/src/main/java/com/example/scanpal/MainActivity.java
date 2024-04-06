@@ -118,25 +118,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        buttonScan.setOnClickListener(v -> {
-            qrCodeScanner.launch(QrScannerController.getOptions());
-        });
+        buttonScan.setOnClickListener(v -> qrCodeScanner.launch(QrScannerController.getOptions()));
 
-        buttonChat.setOnClickListener(v -> {
-            navController.navigate(R.id.notificationsFragment);
-        });
+        buttonChat.setOnClickListener(v -> navController.navigate(R.id.notificationsFragment));
 
-        buttonProfile.setOnClickListener(v -> {
-            navController.navigate(R.id.profile_fragment);
-        });
+        buttonProfile.setOnClickListener(v -> navController.navigate(R.id.profile_fragment));
 
-        buttonYourEvents.setOnClickListener(v -> {
-            navController.navigate(R.id.yourEvents);
-        });
+        buttonYourEvents.setOnClickListener(v -> navController.navigate(R.id.yourEvents));
 
-        buttonHomepage.setOnClickListener(v -> {
-            navController.navigate(R.id.eventsPage);
-        });
+        buttonHomepage.setOnClickListener(v -> navController.navigate(R.id.eventsPage));
     }
 
     public void setNavbarVisibility(boolean isVisible) {

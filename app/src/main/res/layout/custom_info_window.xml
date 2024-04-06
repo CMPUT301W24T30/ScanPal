@@ -8,8 +8,8 @@
         android:id="@+id/info_window_image"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:scaleType="centerCrop"
         android:layout_gravity="center"
-        android:background="@drawable/circle_background" />
+        android:background="@drawable/circle_background"
+        android:scaleType="centerCrop" />
 
 </FrameLayout>

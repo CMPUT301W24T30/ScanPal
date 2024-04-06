@@ -2,21 +2,15 @@ package com.example.scanpal.Controllers;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.example.scanpal.Callbacks.AnnouncementsFetchCallback;
 import com.example.scanpal.Callbacks.EventFetchCallback;
 import com.example.scanpal.Models.Announcement;
 import com.example.scanpal.Models.Event;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
@@ -32,7 +26,7 @@ public class AnnouncementController {
         database = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
     }
-    
+
     /**
      * Creates an announcement object and stores in the DB
      *
@@ -47,12 +41,9 @@ public class AnnouncementController {
         announcementMap.put("EventID", announcement.getEventID());
         announcementMap.put("Message", announcement.getMessage());
         announcementMap.put("TimeStamp", announcement.getTimeStamp());
-        announcementRef.set(announcement).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Log.d("CREATE ANNOUNCEMENT", "announcement Created");
-                Log.d("CREATE ANNOUNCEMENT", "Created at: " + announcement.getTimeStamp());
-            }
+        announcementRef.set(announcement).addOnSuccessListener(unused -> {
+            Log.d("CREATE ANNOUNCEMENT", "announcement Created");
+            Log.d("CREATE ANNOUNCEMENT", "Created at: " + announcement.getTimeStamp());
         });
         EventController eventController = new EventController();
         eventController.getEventById(announcement.getEventID(), new EventFetchCallback() {
@@ -76,26 +67,23 @@ public class AnnouncementController {
     public void getAnnouncementsByEventId(String EventID, AnnouncementsFetchCallback callback) {
         CollectionReference announcementsRef = database.collection("Announcements");
         Query query = announcementsRef.whereEqualTo("eventID", EventID);
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    List<Announcement> announcementsList = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Announcement announcement = new Announcement();
-                        announcement.setAnnouncementNum((Long) document.get("announcementNum"));
-                        announcement.setEventID((String) document.get("eventID"));
-                        announcement.setMessage((String) document.get("message"));
-                        announcement.setTimeStamp((String) document.get("timeStamp"));
-                        announcementsList.add(announcement);
-                    }
-                    callback.onSuccess(announcementsList);
-                    for (Announcement announcement : announcementsList) {
-                        Log.d("Announcement", announcement.toString());
-                    }
-                } else {
-                    Log.d("Firestore", "Error getting documents: ", task.getException());
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                List<Announcement> announcementsList = new ArrayList<>();
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    Announcement announcement = new Announcement();
+                    announcement.setAnnouncementNum((Long) document.get("announcementNum"));
+                    announcement.setEventID((String) document.get("eventID"));
+                    announcement.setMessage((String) document.get("message"));
+                    announcement.setTimeStamp((String) document.get("timeStamp"));
+                    announcementsList.add(announcement);
                 }
+                callback.onSuccess(announcementsList);
+                for (Announcement announcement : announcementsList) {
+                    Log.d("Announcement", announcement.toString());
+                }
+            } else {
+                Log.d("Firestore", "Error getting documents: ", task.getException());
             }
         });
     }
