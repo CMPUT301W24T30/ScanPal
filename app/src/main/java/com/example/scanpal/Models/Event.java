@@ -15,7 +15,7 @@ public class Event {
     private String description;
     private User organizer;
     private String location;
-    private long maximumAttendees;
+    private Long maximumAttendees;
     private ArrayList<Attendee> participants;
     private String signUpAddress;
     private Uri posterURI;
@@ -26,7 +26,7 @@ public class Event {
     private boolean isUserSignedUp;
     private boolean trackLocation = false;
     private String locationCoords; // "lat,lon" format
-    private long totalCheckInCount;
+    private Long totalCheckInCount;
 
     /**
      * Constructs an event with an organizer, name, and description.
@@ -131,11 +131,11 @@ public class Event {
         this.location = location;
     }
 
-    public long getMaximumAttendees() {
+    public Long getMaximumAttendees() {
         return maximumAttendees;
     }
 
-    public void setMaximumAttendees(long maximumAttendees) {
+    public void setMaximumAttendees(Long maximumAttendees) {
         this.maximumAttendees = maximumAttendees;
     }
 
@@ -163,11 +163,11 @@ public class Event {
         this.announcementCount = announcementCount;
     }
 
-    public long getTotalCheckInCount() {
+    public Long getTotalCheckInCount() {
         return totalCheckInCount;
     }
 
-    public void setTotalCheckInCount(long totalCheckInCount) {
+    public void setTotalCheckInCount(Long totalCheckInCount) {
         this.totalCheckInCount = totalCheckInCount;
     }
 

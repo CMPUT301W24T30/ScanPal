@@ -12,13 +12,12 @@ public class Attendee {
     private boolean checkedIn = false;
     private boolean rsvp = false;
     private String location;
-
-    private long checkinCount;
+    private Long checkinCount;
 
     public Attendee() {
     }
 
-    public Attendee(User user, String eventID, boolean rsvp, boolean checkedIn, long checkinCount) {
+    public Attendee(User user, String eventID, boolean rsvp, boolean checkedIn, Long checkinCount) {
         this.user = user;
         this.eventID = eventID;
         this.rsvp = rsvp;
@@ -74,11 +73,11 @@ public class Attendee {
         this.rsvp = rsvp;
     }
 
-    public long getCheckinCount() {
+    public Long getCheckinCount() {
         return this.checkinCount;
     }
 
-    public void setCheckinCount(long checkinCount) {
+    public void setCheckinCount(Long checkinCount) {
         this.checkinCount = checkinCount;
     }
 }
