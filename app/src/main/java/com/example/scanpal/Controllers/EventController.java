@@ -134,7 +134,7 @@ public class EventController {
                         }
                         callback.onSuccess(eventsList);
                     } else {
-                            callback.onError(task.getException());
+                        callback.onError(task.getException());
                     }
                 });
     }
@@ -307,6 +307,8 @@ public class EventController {
                     documentIds.add(documentId);
                 }
                 callback.onSuccess(documentIds);
+            } else {
+                callback.onError(task.getException());
             }
         });
     }
@@ -315,9 +317,52 @@ public class EventController {
         imageController.deleteImage("events", "event_" + eventID + ".jpg");
         imageController.deleteImage("qr-codes", eventID + "-check-in.png");
         imageController.deleteImage("qr-codes", eventID + "-event.png");
-        DocumentReference eventRef = database.collection("Events").document(eventID);
-        eventRef.delete()
-                .addOnSuccessListener(aVoid -> callback.onSuccess())
-                .addOnFailureListener(callback::onError);
+        attendeeController.deleteAllAttendeesForEvent(eventID, new DeleteAllAttendeesCallback() {
+            @Override
+            public void onSuccess() {
+                DocumentReference eventRef = database.collection("Events").document(eventID);
+                eventRef.delete()
+                        .addOnSuccessListener(aVoid -> callback.onSuccess())
+                        .addOnFailureListener(callback::onError);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                callback.onError(e);
+            }
+        });
+    }
+
+    /**
+     * Deletes all events organized by the specified user from the Firestore database.
+     *
+     * @param username The username of the user whose events are to be deleted.
+     * @param callback The callback to handle the result of the deletion process.
+     */
+    public void deleteEventsByOrganizer(String username, EventDeleteCallback callback) {
+        DocumentReference userRef = database.collection("Users").document(username);
+        database.collection("Events").whereEqualTo("organizer", userRef)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String eventID = document.getId();
+                            deleteEvent(eventID, new EventDeleteCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Log.wtf(TAG, "Event deleted successfully: " + eventID);
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+                                    Log.wtf(TAG, "Failed to delete event: " + eventID, e);
+                                }
+                            });
+                        }
+                        callback.onSuccess();
+                    } else {
+                        callback.onError(task.getException());
+                    }
+                });
     }
 }
