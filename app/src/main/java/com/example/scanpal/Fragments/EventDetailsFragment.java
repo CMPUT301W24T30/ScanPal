@@ -10,8 +10,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -184,15 +186,17 @@ public class EventDetailsFragment extends Fragment {
                             public void onSuccess() {
                                 Toast.makeText(getContext(), "RSVP cancelled successfully.", Toast.LENGTH_SHORT).show();
                                 setJoinButton(false);
-                                onResume();
+                                updateRSVPStatus(eventID);
                             }
 
                             @Override
                             public void onError(Exception e) {
                                 Toast.makeText(getContext(), "Failed to cancel RSVP", Toast.LENGTH_LONG).show();
                             }
-                        }));
+                        }), null);
             } else {
+                CheckBox checkBox = new CheckBox(getContext());
+                checkBox.setText("Include location in RSVP?");
                 // Permission already granted, directly fetch location and RSVP
                 showConfirmationDialog("Join Event", "Do you want to signup for this event?",
                         () -> attendeeController.fetchSignedUpUsers(eventID, new AttendeeSignedUpFetchCallback() {
@@ -205,8 +209,14 @@ public class EventDetailsFragment extends Fragment {
                                     return;
                                 }
 
-                                // proceed if event is not full and if user has confirmed they want to rsvp
-                                checkLocationAndRSVP();
+                                // Proceed if event is not full
+                                if (checkBox.isChecked()) {
+                                    // User wants to include location
+                                    checkLocationAndRSVP(true);
+                                } else {
+                                    // User does not want to include location
+                                    proceedWithRSVP(null);
+                                }
 
                             }
 
@@ -214,8 +224,8 @@ public class EventDetailsFragment extends Fragment {
                             public void onFailure(Exception e) {
                                 Toast.makeText(getContext(), "Failed to Get attendees count", Toast.LENGTH_LONG).show();
                             }
-                        })
-                );
+
+                        }), checkBox);
             }
         });
 
@@ -371,14 +381,39 @@ public class EventDetailsFragment extends Fragment {
      * @param message   The message displayed in the dialog.
      * @param onConfirm A Runnable to execute if the user confirms the action.
      */
-    private void showConfirmationDialog(String title, String message, Runnable onConfirm) {
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(title)
-                .setMessage(message)
-                .setPositiveButton("✅ Yes", (dialog, which) -> onConfirm.run())
-                .setNegativeButton("❌ No", null)
-                .setIcon(R.drawable.onphone)
-                .show();
+    private void showConfirmationDialog(String title, String message, Runnable onConfirm,  @Nullable CheckBox checkBox) {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
+        builder.setTitle(title);
+        builder.setMessage(message);
+
+        if (checkBox != null) {
+            // Set up a LinearLayout for the checkbox to add margins
+            LinearLayout container = new LinearLayout(getContext());
+            container.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            int leftMarginInPixels = (int) (16 * getResources().getDisplayMetrics().density);
+            params.setMargins(leftMarginInPixels, 0, 0, 0);
+            checkBox.setLayoutParams(params);
+            checkBox.setChecked(true);
+
+            container.addView(checkBox);
+            builder.setView(container);
+        }
+
+        builder.setPositiveButton("✅ Yes", (dialog, which) -> {
+            if (checkBox != null && checkBox.isChecked()) {
+                checkLocationAndRSVP(true);
+            } else {
+                onConfirm.run();
+            }
+        });
+        builder.setNegativeButton("❌ No", null);
+        builder.setIcon(R.drawable.onphone);
+        builder.show();
+
     }
 
     /**
@@ -504,13 +539,18 @@ public class EventDetailsFragment extends Fragment {
         }
     }
 
-    private void checkLocationAndRSVP() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Permission not granted, request it
-            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+    private void checkLocationAndRSVP(boolean includeLocation) {
+        if (includeLocation) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // Permission not granted, request it
+                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+            } else {
+                // Permission already granted, directly fetch location and RSVP
+                fetchLocationAndRSVP();
+            }
         } else {
-            // Permission already granted, directly fetch location and RSVP
-            fetchLocationAndRSVP();
+            // Proceed with RSVP without including location
+            proceedWithRSVP(null);
         }
     }
 
