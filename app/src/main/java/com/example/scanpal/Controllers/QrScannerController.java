@@ -21,6 +21,7 @@ public class QrScannerController {
     private final AttendeeController attendeeController;
     private final EventController eventController = new EventController();
     private final Context context;
+    private String eventId = null;
 
     public QrScannerController(Context context, AttendeeController attendeeController) {
         this.context = context;
@@ -46,8 +47,9 @@ public class QrScannerController {
      *
      * @param qrId     A string of the eventID contained inside the QR code after scanning
      * @param username Username of the attendee who scanned the QR code
+     * @return returns event id if event code scanned, otherwise stays null
      */
-    public void handleResult(String qrId, String username) {
+    public String handleResult(String qrId, String username) {
         if (qrId.startsWith("C")) {
             String eventId = qrId.substring(1);
 
@@ -89,8 +91,11 @@ public class QrScannerController {
                     Log.e("ERROR", "Error fetching event details: " + e.getMessage(), e);
                 }
             });
+
         } else if (qrId.startsWith("E")) {
-            Log.d("HANDLE_RESULT", "Handling other QR code operations.");
+            // Change event id for main activity to deal with
+            eventId = qrId.substring(1);
         }
+        return eventId;  // only gets changed if event starts with E and is successfully retrieved
     }
 }

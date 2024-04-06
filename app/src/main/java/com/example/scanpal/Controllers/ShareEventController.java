@@ -77,7 +77,7 @@ public class ShareEventController {
             @Override
             public void onSuccess(Event event) {
                 String shareMessage =
-                        "・・・・・・・・ Check out this event! 👀 ・・・・・・・・\n\n" +
+                        "・・・ Check out this event! 👀 ・・・\n\n" +
                                 " 🎪 Event: " + event.getName() + " \n\n" +
                                 " 📍 Location: " + event.getLocation() + " \n\n" +
                                 " 📋 Details: " + event.getDescription() + " \n\n";
