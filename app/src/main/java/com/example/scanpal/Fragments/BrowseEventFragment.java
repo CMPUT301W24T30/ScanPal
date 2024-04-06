@@ -11,12 +11,14 @@ import android.widget.AutoCompleteTextView;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+
 import com.example.scanpal.Adapters.EventGridAdapter;
 import com.example.scanpal.Adapters.ImageGridAdapter;
 import com.example.scanpal.Adapters.ProfileGridAdapter;

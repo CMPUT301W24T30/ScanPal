@@ -2,7 +2,6 @@ package com.example.scanpal.Controllers;
 
 import android.net.Uri;
 
-import com.example.scanpal.Callbacks.EventsFetchCallback;
 import com.example.scanpal.Callbacks.ImagesDeleteCallback;
 import com.example.scanpal.Callbacks.ImagesFetchCallback;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -13,8 +12,6 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
 /**
  * Controller class for managing image uploads and retrievals with Firebase Storage.
@@ -82,23 +79,22 @@ public class ImageController {
     public void deleteImage(String filePath, final ImagesDeleteCallback callback) {
 
         StorageReference imageRef = storage.getReference().child(filePath);
-        imageRef.delete().addOnSuccessListener(result -> {
-            callback.onSuccess();
-        }).addOnFailureListener(callback::onError);;
+        imageRef.delete().addOnSuccessListener(result -> callback.onSuccess()).addOnFailureListener(callback::onError);
+        ;
     }
 
 
     /**
      * Fetches all image URLs from a specific folder in Firebase Storage.
      *
-     * @param callback         Callback for handling the fetched image URLs.
+     * @param callback Callback for handling the fetched image URLs.
      */
     public void fetchAllImages(final ImagesFetchCallback callback) {
         List<String> imageUrls = new ArrayList<>();
         StorageReference imageRef = storage.getReference();
 
         imageRef.listAll().addOnSuccessListener(result -> {
-            if(result.getItems().isEmpty() && result.getPrefixes().isEmpty()) {
+            if (result.getItems().isEmpty() && result.getPrefixes().isEmpty()) {
                 // Directly call onSuccess if there are no items and no prefixes
                 callback.onSuccess(imageUrls);
                 return;
