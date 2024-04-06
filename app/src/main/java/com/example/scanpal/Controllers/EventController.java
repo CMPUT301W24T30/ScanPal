@@ -116,7 +116,7 @@ public class EventController {
                             String description = document.getString("description");
                             String location = document.getString("location");
                             String photoUrlString = document.getString("photo");
-                            long maximumAttendees = document.getLong("capacity");
+                            Long maximumAttendees = document.getLong("capacity");
                             String signUpAddress = document.getString("2ndQrCode");
                             Uri photoUri = photoUrlString != null ? Uri.parse(photoUrlString) : null;
                             String infoAddress = document.getString("qrcodeurl");
@@ -128,43 +128,32 @@ public class EventController {
                             event.setSignUpAddress(signUpAddress);
                             event.setPosterURI(photoUri);
                             event.setInfoAddress(infoAddress);
-
                             event.setOrganizer(null);
                             event.setParticipants(new ArrayList<>());
-
                             eventsList.add(event);
                         }
                         callback.onSuccess(eventsList);
                     } else {
-                        if (task.getException() != null) {
                             callback.onError(task.getException());
-                        }
                     }
                 });
     }
-
 
     /**
      * This will give back an arrayList of event Type, consisting of events created
      * by the current user (user is obtained from UserController.getUser())
      */
     public void getEventsByUser(View view, EventFetchByUserCallback callback) {
-        // TODO: a clause for admins to return all existing events
-
         ArrayList<Event> userEvents = new ArrayList<>();
         UserController userController = new UserController(view.getContext());
-
         userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
             @Override
             public void onSuccess(User user) {
-
                 DocumentReference userRef = FirebaseFirestore.getInstance().collection("Users")
                         .document(user.getUsername());
-
                 database.collection("Events").whereEqualTo("organizer", userRef)
                         .get()
                         .addOnCompleteListener(task -> {
-
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     getEventById(document.getId(), new EventFetchCallback() {
@@ -207,13 +196,13 @@ public class EventController {
                                     Objects.requireNonNull(eventDoc.get("description")).toString());
 
                             event.setLocation(Objects.requireNonNull(eventDoc.get("location")).toString());
-                            event.setMaximumAttendees((long) eventDoc.get("capacity"));
-                            event.setTrackLocation(eventDoc.getBoolean("trackLocation"));
+                            event.setMaximumAttendees((Long) Objects.requireNonNull(eventDoc.get("capacity")));
+                            event.setTrackLocation(Objects.requireNonNull(eventDoc.getBoolean("trackLocation")));
 
                             Uri imageURI = Uri.parse(Objects.requireNonNull(eventDoc.get("photo")).toString());
                             event.setPosterURI(imageURI);
                             event.setId(EventID);
-                            event.setAnnouncementCount((long) eventDoc.get("announcementCount"));
+                            event.setAnnouncementCount((Long) Objects.requireNonNull(eventDoc.get("announcementCount")));
 
                             fetchEventOrganizerByRef((DocumentReference) Objects.requireNonNull(eventDoc.get("organizer")),
                                     new UserFetchCallback() {
@@ -242,7 +231,6 @@ public class EventController {
         String folderPath = "events";
         String fileName = "event_" + event.getId() + ".jpg";
         Map<String, Object> eventMap = new HashMap<>();
-
         Runnable updateEventDetails = () -> {
             eventMap.put("name", event.getName());
             eventMap.put("description", event.getDescription());
@@ -251,12 +239,9 @@ public class EventController {
             eventMap.put("capacity", event.getMaximumAttendees());
             eventMap.put("announcementCount", event.getAnnouncementCount());
             eventMap.put("trackLocation", event.isTrackLocation());
-
-
             DocumentReference eventRef = database.collection("Events").document(event.getId());
             eventRef.update(eventMap).addOnSuccessListener(aVoid -> callback.onSuccess(true)).addOnFailureListener(callback::onError);
         };
-
         if (newImageUri != null) {
             imageController.uploadImage(newImageUri, folderPath, fileName, uri -> {
                 eventMap.put("photo", uri.toString());
@@ -276,7 +261,6 @@ public class EventController {
             callback.onError(new NullPointerException("Event Reference is null."));
             return;
         }
-
         eventRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
                 DocumentSnapshot organizerDoc = task.getResult();
