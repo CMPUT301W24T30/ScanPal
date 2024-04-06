@@ -6,6 +6,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.example.scanpal.Callbacks.DeleteAllAttendeesCallback;
 import com.example.scanpal.Callbacks.EventDeleteCallback;
 import com.example.scanpal.Callbacks.EventFetchByUserCallback;
 import com.example.scanpal.Callbacks.EventFetchCallback;
@@ -21,9 +22,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,19 +34,18 @@ import java.util.UUID;
  * Handles operations related to event management in a Firestore database.
  */
 public class EventController {
-
     private static final String TAG = "EventController";
     private final FirebaseFirestore database;
-    private final FirebaseStorage storage;
     protected ImageController imageController;
+    protected AttendeeController attendeeController;
 
     /**
      * Constructs an EventController with a reference to a Firestore database.
      */
     public EventController() {
         database = FirebaseFirestore.getInstance();
-        storage = FirebaseStorage.getInstance();
         imageController = new ImageController();
+        attendeeController = new AttendeeController(database);
     }
 
     /**
@@ -71,8 +68,7 @@ public class EventController {
 
         // have to generate ID for qr code if no ID given
         if (ID == null) {
-            UUID uuid = UUID.randomUUID();
-            ID = uuid.toString();
+            ID = UUID.randomUUID().toString();
         }
         event.setId(ID);
         eventMap.put("name", event.getName());
@@ -100,19 +96,11 @@ public class EventController {
         QrCodeController qrCodeController = new QrCodeController();
         qrCodeController.generateAndStoreQrCode(event, eventMap);  // auto generate a qr code
 
-        StorageReference storageRef = storage.getReference();
         DocumentReference eventRef = database.collection("Events").document(event.getId());
-        StorageReference eventPosterRef = storageRef.child("events/" + "event_" + event.getId() + ".jpg");
-        eventPosterRef.putFile(event.getPosterURI());
-        UploadTask uploadPhotoTask;
-        uploadPhotoTask = eventPosterRef.putFile(event.getPosterURI());
-
-        uploadPhotoTask.addOnSuccessListener(taskSnapshot -> taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(uri -> {
+        imageController.uploadImage(event.getPosterURI(), "events", event.getId() + ".jpg", uri -> {
             eventMap.put("photo", uri.toString());
-            eventRef.update("photo", uri.toString())
-                    .addOnSuccessListener(aVoid -> Log.d("EventController", "Photo URL added successfully!"))
-                    .addOnFailureListener(exception -> Log.e("EventController", "Failed to update photo URL: " + exception.getMessage()));
-        }).addOnFailureListener(exception -> Log.e("FirebaseStorage", "Failed to get download URL for event photo: " + exception.getMessage()))).addOnFailureListener(exception -> Log.e("FirebaseStorage", "Failed to upload event photo: " + exception.getMessage()));
+            eventRef.update("photo", uri.toString());
+        }, e -> Log.wtf(TAG, "Event Image Upload failed: " + e.getMessage()));
     }
 
     public void fetchAllEvents(final EventsFetchCallback callback) {
