@@ -2,7 +2,6 @@ package com.example.scanpal.Controllers;
 
 import android.net.Uri;
 
-import com.example.scanpal.Callbacks.EventsFetchCallback;
 import com.example.scanpal.Callbacks.ImagesDeleteCallback;
 import com.example.scanpal.Callbacks.ImagesFetchCallback;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -13,8 +12,6 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
 /**
  * Controller class for managing image uploads and retrievals with Firebase Storage.
@@ -82,9 +79,7 @@ public class ImageController {
     public void deleteImage(String filePath, final ImagesDeleteCallback callback) {
 
         StorageReference imageRef = storage.getReference().child(filePath);
-        imageRef.delete().addOnSuccessListener(result -> {
-            callback.onSuccess();
-        }).addOnFailureListener(callback::onError);;
+        imageRef.delete().addOnSuccessListener(result -> callback.onSuccess()).addOnFailureListener(callback::onError);;
     }
 
 

@@ -44,19 +44,11 @@ public class ShareEventController {
             String imageName = eventID + "-event.png";
             StorageReference imageRef = storage.getReference().child("qr-codes/" + imageName);
             // download image into bitmap
-            imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {
-                    // convert to bitmap
-                    Bitmap imageBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    shareIntent(imageBitmap, eventID);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    Toast.makeText(context, "Error Retrieving Image", Toast.LENGTH_SHORT).show();
-                }
-            });
+            imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
+                // convert to bitmap
+                Bitmap imageBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                shareIntent(imageBitmap, eventID);
+            }).addOnFailureListener(exception -> Toast.makeText(context, "Error Retrieving Image", Toast.LENGTH_SHORT).show());
         } catch (Exception e) {
             Toast.makeText(context, "Error Retrieving Image", Toast.LENGTH_SHORT).show();
         }

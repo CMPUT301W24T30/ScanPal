@@ -79,9 +79,7 @@ public class ImageGridAdapter extends BaseAdapter {
                     .load(uri)
                     .transform(new RoundedCorners(16))
                     .into(imageView);
-        }, e -> {
-            Log.e("EventGridAdapter", "Failed to load image: " + e.getMessage());
-        });
+        }, e -> Log.e("EventGridAdapter", "Failed to load image: " + e.getMessage()));
 
         ImageView imageView = convertView.findViewById(R.id.event_image);
         TextView textView = convertView.findViewById(R.id.event_title);

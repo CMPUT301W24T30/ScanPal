@@ -53,9 +53,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Find the FloatingActionButton and set a click listener to finish the activity
         FloatingActionButton backButton = findViewById(R.id.back_button);
-        backButton.setOnClickListener(v -> {
-            finish();
-        });
+        backButton.setOnClickListener(v -> finish());
     }
 
     /**

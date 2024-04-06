@@ -26,7 +26,6 @@ import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -17,7 +17,6 @@ import com.example.scanpal.R;
 import com.example.scanpal.Models.User;
 import com.example.scanpal.Callbacks.UserAddCallback;
 import com.example.scanpal.Controllers.UserController;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 /**

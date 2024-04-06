@@ -22,8 +22,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.Objects;
-
 
 public class ShowQrFragment extends Fragment {
 
@@ -73,23 +71,17 @@ public class ShowQrFragment extends Fragment {
 
         // Get image from Firebase Storage
         imageRef.getBytes(1024 * 1024) // allow 1MB
-                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        // Load bytes into the ImageView using Glide
-                        Glide.with(ShowQrFragment.this)
-                                .load(bytes)
-                                .into(imageView);
-                        TextView title = view.findViewById(R.id.event_name_qrcode);
-                        title.setText(eventName);
-                    }
+                .addOnSuccessListener(bytes -> {
+                    // Load bytes into the ImageView using Glide
+                    Glide.with(ShowQrFragment.this)
+                            .load(bytes)
+                            .into(imageView);
+                    TextView title = view.findViewById(R.id.event_name_qrcode);
+                    title.setText(eventName);
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Handle failure
-                        Toast.makeText(getContext(), "Failed to retrieve image", Toast.LENGTH_SHORT).show();
-                    }
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                    Toast.makeText(getContext(), "Failed to retrieve image", Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -102,23 +94,17 @@ public class ShowQrFragment extends Fragment {
 
         // Get image from Firebase Storage
         imageRef.getBytes(1024 * 1024) // allow 1MB
-                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        // Load bytes into the ImageView using Glide
-                        Glide.with(ShowQrFragment.this)
-                                .load(bytes)
-                                .into(imageView);
-                        TextView title = view.findViewById(R.id.event_name_qrcode);
-                        title.setText(eventName);
-                    }
+                .addOnSuccessListener(bytes -> {
+                    // Load bytes into the ImageView using Glide
+                    Glide.with(ShowQrFragment.this)
+                            .load(bytes)
+                            .into(imageView);
+                    TextView title = view.findViewById(R.id.event_name_qrcode);
+                    title.setText(eventName);
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Handle failure
-                        Toast.makeText(getContext(), "Failed to retrieve image", Toast.LENGTH_SHORT).show();
-                    }
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                    Toast.makeText(getContext(), "Failed to retrieve image", Toast.LENGTH_SHORT).show();
                 });
     }
 
