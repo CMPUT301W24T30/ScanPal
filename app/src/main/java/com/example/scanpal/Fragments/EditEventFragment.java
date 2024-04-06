@@ -35,6 +35,7 @@ import com.example.scanpal.MainActivity;
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.R;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
@@ -73,7 +74,7 @@ public class EditEventFragment extends Fragment {
     private PlacesClient placesClient;
     private EventController eventController;
     private AttendeeController attendeeController;
-    private String eventID, eventLocation;
+    private String eventID, eventLocation, locationCords;
     private AutocompleteSupportFragment autocompleteFragment;
 
     @Nullable
@@ -102,12 +103,16 @@ public class EditEventFragment extends Fragment {
         autocompleteFragment = (AutocompleteSupportFragment)
                 getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
         if (autocompleteFragment != null) {
-            autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+            autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
             autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
                 @Override
                 public void onPlaceSelected(@NonNull Place place) {
                     eventLocation = place.getName();
-
+                    LatLng latLng = place.getLatLng();
+                    if (latLng != null) {
+                        eventLocation = place.getName();
+                        locationCords = place.getLatLng().latitude + "," + place.getLatLng().longitude;
+                    }
                     setAutocompleteTextColor();
                 }
 
@@ -229,6 +234,7 @@ public class EditEventFragment extends Fragment {
 
         Event event = new Event(null, eventName, eventDescription);
         event.setLocation(eventLocation);
+        event.setLocationCoords(locationCords);
 
         if (attendeesForm.getText().toString().isEmpty()) {
             event.setMaximumAttendees(0L);//treat zero as 'no limit'
