@@ -2,21 +2,15 @@ package com.example.scanpal.Controllers;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.example.scanpal.Callbacks.AnnouncementsFetchCallback;
 import com.example.scanpal.Callbacks.EventFetchCallback;
 import com.example.scanpal.Models.Announcement;
 import com.example.scanpal.Models.Event;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
@@ -32,7 +26,7 @@ public class AnnouncementController {
         database = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
     }
-    
+
     /**
      * Creates an announcement object and stores in the DB
      *

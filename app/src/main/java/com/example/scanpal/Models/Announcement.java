@@ -23,7 +23,7 @@ public class Announcement {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd h:mm a");
         String formattedDateTime = dateFormat.format(calendar.getTime());
 
-        timeStamp =  formattedDateTime;//Calendar.getInstance().getTime().toString();
+        timeStamp = formattedDateTime;//Calendar.getInstance().getTime().toString();
     }
 
     public Long getAnnouncementNum() {

@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-
 import com.example.scanpal.Controllers.ImageController;
 import com.example.scanpal.R;
 import com.google.android.material.card.MaterialCardView;

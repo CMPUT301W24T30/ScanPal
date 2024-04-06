@@ -16,8 +16,6 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.example.scanpal.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -52,17 +50,17 @@ public class ShowQrFragment extends Fragment {
         // Show either check in code or event code based on request
 
         if (request == "check-in") {
-            showCheckIn(eventID,view,eventName);
+            showCheckIn(eventID, view, eventName);
         } else if (request == "event") {
             TextView textView = view.findViewById(R.id.show_qr_title);
             textView.setText("Event Details");
-            showEvent(eventID,view,eventName);
+            showEvent(eventID, view, eventName);
         }
-      
+
         return view;
     }
 
-    public void showCheckIn(String eventID,View view,String eventName) {
+    public void showCheckIn(String eventID, View view, String eventName) {
         String imageName = eventID + "-check-in.png";
         StorageReference imageRef = storage.getReference().child("qr-codes/" + imageName);
         //View view = getView();
@@ -85,7 +83,7 @@ public class ShowQrFragment extends Fragment {
                 });
     }
 
-    public void showEvent(String eventID,View view,String eventName) {
+    public void showEvent(String eventID, View view, String eventName) {
         String imageName = eventID + "-event.png";
         StorageReference imageRef = storage.getReference().child("qr-codes/" + imageName);
         //View view = getView();

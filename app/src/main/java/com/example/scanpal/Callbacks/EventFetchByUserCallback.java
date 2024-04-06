@@ -9,5 +9,6 @@ import java.util.List;
  */
 public interface EventFetchByUserCallback {
     void onSuccess(List<Event> events); // Correctly expect a List<Event>
+
     void onError(Exception e);
 }

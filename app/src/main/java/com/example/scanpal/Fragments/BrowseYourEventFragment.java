@@ -99,7 +99,7 @@ public class BrowseYourEventFragment extends Fragment {
      * Applies filters based on user sign-up status and sorts events.
      */
     private void fetchYourEvents() {
-        UserController userController = new UserController( getContext());
+        UserController userController = new UserController(getContext());
         String username = userController.fetchStoredUsername();
         if (username != null) {
             // Use EventController to fetch user-specific events

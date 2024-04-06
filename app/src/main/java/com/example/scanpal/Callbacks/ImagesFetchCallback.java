@@ -4,7 +4,8 @@ import java.util.List;
 
 public interface ImagesFetchCallback {
 
-        void onSuccess(List<String> images);
-        void onError(Exception e);
+    void onSuccess(List<String> images);
+
+    void onError(Exception e);
 
 }
