@@ -314,7 +314,7 @@ public class EventController {
     }
 
     public void deleteEvent(String eventID, EventDeleteCallback callback) {
-        imageController.deleteImage("events", "event_" + eventID + ".jpg");
+        imageController.deleteImage("events", eventID + ".jpg");
         imageController.deleteImage("qr-codes", eventID + "-check-in.png");
         imageController.deleteImage("qr-codes", eventID + "-event.png");
         attendeeController.deleteAllAttendeesForEvent(eventID, new DeleteAllAttendeesCallback() {
