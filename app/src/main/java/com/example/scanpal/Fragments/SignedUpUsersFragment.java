@@ -63,28 +63,21 @@ public class SignedUpUsersFragment extends Fragment {
         usersList.setAdapter(usersAdapter);
         listSwitch = view.findViewById(R.id.listSwitch1);
         title = view.findViewById(R.id.attendeesList_title);
-
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
         attendeeController.fetchSignedUpUsers(eventID, new AttendeeSignedUpFetchCallback() {
             @Override
             public void onSuccess(ArrayList<Attendee> attendees) {
-                //Log.d("SignedUpUsersFragment", eventID);
-
                 // upcast to User
-                usersAdapter = new UsersAdapter(getContext(), new ArrayList<>());//to empty it(bless the garbage collector)
+                usersAdapter = new UsersAdapter(getContext(), new ArrayList<>()); // to empty it (bless the garbage collector)
                 usersList.setAdapter(usersAdapter);
-
                 title.setText("Signed Up");
 
                 MaterialAlertDialogBuilder OrganizerOptions = new MaterialAlertDialogBuilder(getContext());
-
 
                 for (Attendee attendee : attendees) {
                     usersAdapter.addUser(attendee.getUser());
@@ -94,21 +87,12 @@ public class SignedUpUsersFragment extends Fragment {
                     @Override
                     public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
                         View child = rv.findChildViewUnder(e.getX(), e.getY());
-                        //Log.wtf("GETTING USER","TOUCH");
-
-                        if (child != null ) {
+                        if (child != null) {
                             int position = rv.getChildAdapterPosition(child);
-
-                            //mListener.onItemClick(position);
                             usersAdapter.getAt(position);
                             OrganizerOptions.setTitle(usersAdapter.getAt(position).getUsername() + "'s Info");
-                            OrganizerOptions.setMessage("Check In Count:" + Long.toString( attendees.get(position).getCheckinCount()));
-
-
-
-
+                            OrganizerOptions.setMessage("Check In Count: " + attendees.get(position).getCheckinCount());
                             OrganizerOptions.show();
-                            //Log.wtf("GETTING USER",usersAdapter.getAt(position).getUsername());
                             return true;
                         }
                         return false;
@@ -116,12 +100,12 @@ public class SignedUpUsersFragment extends Fragment {
 
                     @Override
                     public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-                        //DO NOTHING
+                        // DO NOTHING
                     }
 
                     @Override
                     public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-                        //DO NOTHING
+                        // DO NOTHING
                     }
                 });
             }
@@ -138,9 +122,6 @@ public class SignedUpUsersFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    //listSwitch.setChecked(false);
-
-
                     attendeeController.fetchCheckedInUsers(eventID, new AttendeeSignedUpFetchCallback() {
                         @Override
                         public void onSuccess(ArrayList<Attendee> attendees) {
@@ -153,18 +134,13 @@ public class SignedUpUsersFragment extends Fragment {
                                 usersAdapter.addUser(attendee.getUser());
                                 usersAdapter.notifyDataSetChanged();
                             }
-
                         }
 
                         @Override
                         public void onFailure(Exception e) {
-
                         }
                     });
-
                 } else {
-                    //listSwitch.setChecked(true);
-
                     attendeeController.fetchSignedUpUsers(eventID, new AttendeeSignedUpFetchCallback() {
                         @Override
                         public void onSuccess(ArrayList<Attendee> attendees) {
@@ -185,11 +161,8 @@ public class SignedUpUsersFragment extends Fragment {
                             Log.e("EventDetailsFragment", e.getMessage());
                         }
                     });
-
                 }
             }
         });
-
-
     }
 }

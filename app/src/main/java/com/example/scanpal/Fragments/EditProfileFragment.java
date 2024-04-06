@@ -23,10 +23,12 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.scanpal.Callbacks.DeleteAllAttendeesCallback;
+import com.example.scanpal.Callbacks.EventDeleteCallback;
 import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Callbacks.UserRemoveCallback;
 import com.example.scanpal.Callbacks.UserUpdateCallback;
 import com.example.scanpal.Controllers.AttendeeController;
+import com.example.scanpal.Controllers.EventController;
 import com.example.scanpal.Controllers.ImageController;
 import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.MainActivity;
@@ -65,6 +67,7 @@ public class EditProfileFragment extends Fragment {
             });
     private UserController userController;
     private AttendeeController attendeeController;
+    private EventController eventController;
 
     /**
      * Inflates the layout for the edit profile page.
@@ -102,8 +105,9 @@ public class EditProfileFragment extends Fragment {
         homepage = (TextInputEditText) ((TextInputLayout) view.findViewById(R.id.homepage)).getEditText();
 
         imageController = new ImageController();
-        userController = new UserController( getContext());
+        userController = new UserController(getContext());
         attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
+        eventController = new EventController();
 
         uploadButton.setOnClickListener(v -> openGallery());
 
@@ -276,15 +280,24 @@ public class EditProfileFragment extends Fragment {
                     userController.removeUser(username, new UserRemoveCallback() {
                         @Override
                         public void onSuccess() {
-                            Toast.makeText(getContext(), "Profile reset successfully", Toast.LENGTH_SHORT).show();
-                            NavController navController = NavHostFragment.findNavController(EditProfileFragment.this);
-                            if (Objects.equals(oldUsername, username)) {
-                                navController.navigate(R.id.signupFragment);
-                            } else {
-                                navController.navigate(R.id.eventsPage);
-                                ((MainActivity) requireActivity()).setNavbarVisibility(true);
-                            }
+                            eventController.deleteEventsByOrganizer(username, new EventDeleteCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Toast.makeText(getContext(), "Profile reset successfully", Toast.LENGTH_SHORT).show();
+                                    NavController navController = NavHostFragment.findNavController(EditProfileFragment.this);
+                                    if (Objects.equals(oldUsername, username)) {
+                                        navController.navigate(R.id.signupFragment);
+                                    } else {
+                                        navController.navigate(R.id.eventsPage);
+                                        ((MainActivity) requireActivity()).setNavbarVisibility(true);
+                                    }
+                                }
 
+                                @Override
+                                public void onError(Exception e) {
+
+                                }
+                            });
                         }
 
                         @Override

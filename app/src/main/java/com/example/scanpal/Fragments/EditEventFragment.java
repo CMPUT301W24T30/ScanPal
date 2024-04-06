@@ -237,9 +237,9 @@ public class EditEventFragment extends Fragment {
         event.setLocationCoords(locationCords);
 
         if (attendeesForm.getText().toString().isEmpty()) {
-            event.setMaximumAttendees(0L);//treat zero as 'no limit'
+            event.setMaximumAttendees(0L); //treat zero as 'no limit'
         } else {
-            int maxAttendees = Integer.parseInt(attendeesForm.getText().toString());
+            Long maxAttendees = Long.parseLong(attendeesForm.getText().toString());
             event.setMaximumAttendees(maxAttendees);
         }
 
