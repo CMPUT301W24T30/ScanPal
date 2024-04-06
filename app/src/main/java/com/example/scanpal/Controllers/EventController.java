@@ -64,7 +64,7 @@ public class EventController {
      * Adds a new event to the Firestore database.
      *
      * @param event The event to be added to the database.
-     * @param ID if user chooses to reuse an existing qr code, this can contain that ID
+     * @param ID    if user chooses to reuse an existing qr code, this can contain that ID
      */
     public void addEvent(Event event, String ID) {
         Map<String, Object> eventMap = new HashMap<>();
@@ -83,7 +83,7 @@ public class EventController {
         eventMap.put("announcementCount", 0L);
         eventMap.put("trackLocation", event.isTrackLocation());
         eventMap.put("locationCoords", event.getLocationCoords());
-        eventMap.put("totalCheckInCount", event.getTotalCheckInCount() );
+        eventMap.put("totalCheckInCount", event.getTotalCheckInCount());
 
         DocumentReference organizerRef = database.collection("Users").document(event.getOrganizer().getUsername());
         eventMap.put("organizer", organizerRef);
@@ -164,7 +164,7 @@ public class EventController {
         // TODO: a clause for admins to return all existing events
 
         ArrayList<Event> userEvents = new ArrayList<>();
-        UserController userController = new UserController( view.getContext());
+        UserController userController = new UserController(view.getContext());
 
         userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
             @Override
@@ -259,6 +259,7 @@ public class EventController {
             eventMap.put("name", event.getName());
             eventMap.put("description", event.getDescription());
             eventMap.put("location", event.getLocation());
+            eventMap.put("locationCoords", event.getLocationCoords());
             eventMap.put("capacity", event.getMaximumAttendees());
             eventMap.put("announcementCount", event.getAnnouncementCount());
             eventMap.put("trackLocation", event.isTrackLocation());
