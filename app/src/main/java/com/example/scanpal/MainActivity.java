@@ -2,7 +2,6 @@ package com.example.scanpal;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +9,7 @@ import androidx.core.splashscreen.SplashScreen;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.scanpal.Callbacks.QrScanResultCallback;
 import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Controllers.AttendeeController;
 import com.example.scanpal.Controllers.QrScannerController;
@@ -101,14 +101,20 @@ public class MainActivity extends AppCompatActivity {
             if (result.getContents() != null) {
                 UserController userController = new UserController(this);
                 String username = userController.fetchStoredUsername();
-                String id = qrScannerController.handleResult(result.getContents(), username);  // outcome will be event id if event code scanned
-                if (id != null) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("event_id", id);
-                    navController.navigate(R.id.eventDetailsPage, bundle);  // pass id to event details fragment to display event scanned
-                }
-            } else {
-                Toast.makeText(MainActivity.this, "Invalid QR Code", Toast.LENGTH_SHORT).show();
+                qrScannerController.handleResult(result.getContents(), username, new QrScanResultCallback() {
+                    @Override
+                    public void onResult(String eventID) {
+                        if (eventID != null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putString("event_id", eventID);
+                            navController.navigate(R.id.eventDetailsPage, bundle);  // pass id to event details fragment to display event scanned
+                        }
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                    }
+                });
             }
         });
 
@@ -142,5 +148,4 @@ public class MainActivity extends AppCompatActivity {
         if (buttonHomepage != null) buttonHomepage.setVisibility(visibility);
         if (appBar != null) appBar.setVisibility(visibility);
     }
-
 }
