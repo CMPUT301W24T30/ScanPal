@@ -1,14 +1,20 @@
 package com.example.scanpal;
 
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.scanpal.databinding.ActivityMapsBinding;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -202,7 +208,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Glide.with(getApplicationContext())
                     .load(imageUrl)
                     .circleCrop()
-                    .into(infoWindowImage);
+                    .into(new CustomTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            infoWindowImage.setImageDrawable(resource);
+                            if (marker.isInfoWindowShown()) {
+                                // Refresh the marker to update the info window.
+                                marker.hideInfoWindow();
+                                marker.showInfoWindow();
+                            }
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                            // Handle cleanup if needed
+                        }
+                    });
         }
 
         @Override
