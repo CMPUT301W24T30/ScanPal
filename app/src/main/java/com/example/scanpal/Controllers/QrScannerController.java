@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.example.scanpal.Callbacks.AttendeeFetchCallback;
 import com.example.scanpal.Callbacks.AttendeeUpdateCallback;
 import com.example.scanpal.Callbacks.EventFetchCallback;
+import com.example.scanpal.Callbacks.QrScanResultCallback;
 import com.example.scanpal.Models.Attendee;
 import com.example.scanpal.Models.Capture;
 import com.example.scanpal.Models.Event;
@@ -19,7 +20,7 @@ public class QrScannerController {
     private final AttendeeController attendeeController;
     private final EventController eventController = new EventController();
     private final Context context;
-    private String eventID = null;
+    protected String eventID = null;
 
     public QrScannerController(Context context, AttendeeController attendeeController) {
         this.context = context;
@@ -41,13 +42,14 @@ public class QrScannerController {
     }
 
     /**
-     * Handles the logic for checking in/adding event functionality after scanning a valid QR code
+     * Handles the logic for checking in/adding event functionality after scanning a
+     * valid QR code
      *
-     * @param qrId     A string of the eventID contained inside the QR code after scanning
+     * @param qrId     A string of the eventID contained inside the QR code after
+     *                 scanning
      * @param username Username of the attendee who scanned the QR code
-     * @return returns event id if event code scanned, otherwise stays null
      */
-    public String handleResult(String qrId, String username) {
+    public void handleResult(String qrId, String username, QrScanResultCallback callback) {
         if (qrId.startsWith("C")) {
             String eventID = qrId.substring(1);
 
@@ -67,36 +69,40 @@ public class QrScannerController {
                                 public void onSuccess() {
                                     Toast.makeText(context, "Checked-in! 🎉", Toast.LENGTH_SHORT).show();
                                     Log.d("CHECKED IN!", "Attendee checked-in successfully!");
+                                    callback.onResult(eventID);
                                 }
 
                                 @Override
                                 public void onError(Exception e) {
-                                    Toast.makeText(context, "Checked-in Failed 😔", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "Check-in Failed 😔", Toast.LENGTH_SHORT).show();
                                     Log.d("NOT CHECKED IN!", "Check-in failed", e);
+                                    callback.onResult(eventID);
                                 }
                             });
                         }
 
                         @Override
                         public void onError(Exception e) {
-                            Toast.makeText(context, "Checked-in Failed. Make sure to rsvp before joining an event.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Check-in Failed. Make sure to RSVP before joining an event.",
+                                    Toast.LENGTH_SHORT).show();
                             Log.e("ERROR", "Error fetching attendee: " + e.getMessage(), e);
+                            callback.onResult(eventID);
                         }
                     });
                 }
 
                 @Override
                 public void onError(Exception e) {
-                    Toast.makeText(context, "Checked-in Failed. Error Fetching Event.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Check-in Failed. Error Fetching Event.", Toast.LENGTH_SHORT).show();
                     Log.e("ERROR", "Error fetching event details: " + e.getMessage(), e);
+                    callback.onError("Error fetching event details.");
                 }
             });
 
         } else if (qrId.startsWith("E")) {
-            // Change event id for main activity to deal with
-            eventID = qrId.substring(1);
+            callback.onResult(qrId.substring(1));
+        } else {
+            callback.onError("Invalid QR code.");
         }
-
-        return eventID;  // only gets changed if event starts with E and is successfully retrieved
     }
 }
