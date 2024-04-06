@@ -151,7 +151,7 @@ exports.sendNotificationOnAnnouncement = functions.firestore
                 const orgSnapshot = await OrgRef.get();
                 if(orgSnapshot.exists) {
                   const orgData = orgSnapshot.data();
-                  console.log("Organizer Name: ", orgData.id);
+                  console.log("Organizer Name: ", OrgRef.id);
 
                   //send notif to topic of userName
                   // topic actually should be eventID + 'org'
