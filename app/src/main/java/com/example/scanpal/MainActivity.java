@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         buttonScan.setOnClickListener(v -> {
             qrCodeScanner.launch(QrScannerController.getOptions());
         });

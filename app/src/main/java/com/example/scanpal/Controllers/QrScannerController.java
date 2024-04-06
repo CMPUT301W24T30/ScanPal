@@ -7,11 +7,9 @@ import android.widget.Toast;
 import com.example.scanpal.Callbacks.AttendeeFetchCallback;
 import com.example.scanpal.Callbacks.AttendeeUpdateCallback;
 import com.example.scanpal.Callbacks.EventFetchCallback;
-import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Models.Attendee;
 import com.example.scanpal.Models.Capture;
 import com.example.scanpal.Models.Event;
-import com.example.scanpal.Models.User;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 /**
@@ -21,7 +19,7 @@ public class QrScannerController {
     private final AttendeeController attendeeController;
     private final EventController eventController = new EventController();
     private final Context context;
-    private String eventId = null;
+    private String eventID = null;
 
     public QrScannerController(Context context, AttendeeController attendeeController) {
         this.context = context;
@@ -51,13 +49,13 @@ public class QrScannerController {
      */
     public String handleResult(String qrId, String username) {
         if (qrId.startsWith("C")) {
-            String eventId = qrId.substring(1);
+            String eventID = qrId.substring(1);
 
-            eventController.getEventById(eventId, new EventFetchCallback() {
+            eventController.getEventById(eventID, new EventFetchCallback() {
                 @Override
                 public void onSuccess(Event event) {
                     Log.d("HANDLE_RESULT", "Handling event check-in or addition based on QR.");
-                    String attendeeId = username + eventId;
+                    String attendeeId = username + eventID;
                     attendeeController.fetchAttendee(attendeeId, new AttendeeFetchCallback() {
                         @Override
                         public void onSuccess(Attendee attendee) {
@@ -81,6 +79,7 @@ public class QrScannerController {
 
                         @Override
                         public void onError(Exception e) {
+                            Toast.makeText(context, "Checked-in Failed. Make sure to rsvp before joining an event.", Toast.LENGTH_SHORT).show();
                             Log.e("ERROR", "Error fetching attendee: " + e.getMessage(), e);
                         }
                     });
@@ -88,14 +87,16 @@ public class QrScannerController {
 
                 @Override
                 public void onError(Exception e) {
+                    Toast.makeText(context, "Checked-in Failed. Error Fetching Event.", Toast.LENGTH_SHORT).show();
                     Log.e("ERROR", "Error fetching event details: " + e.getMessage(), e);
                 }
             });
 
         } else if (qrId.startsWith("E")) {
             // Change event id for main activity to deal with
-            eventId = qrId.substring(1);
+            eventID = qrId.substring(1);
         }
-        return eventId;  // only gets changed if event starts with E and is successfully retrieved
+
+        return eventID;  // only gets changed if event starts with E and is successfully retrieved
     }
 }
