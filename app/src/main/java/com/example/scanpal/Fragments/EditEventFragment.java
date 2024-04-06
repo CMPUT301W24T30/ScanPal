@@ -2,6 +2,7 @@ package com.example.scanpal.Fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -41,6 +42,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
@@ -93,6 +95,33 @@ public class EditEventFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        autocompleteFragment = (AutocompleteSupportFragment)
+                getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        if (autocompleteFragment != null) {
+            autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+                @Override
+                public void onPlaceSelected(@NonNull Place place) {
+                    eventLocation = place.getName();
+
+                    setAutocompleteTextColor();
+                }
+
+                @Override
+                public void onError(@NonNull Status status) {
+                }
+            });
+        }
+
+        // delay to ensure color change is after fragment loads
+        view.postDelayed(this::setAutocompleteTextColor, 100);
+    }
+
+
     /**
      * Initializes the UI components of the fragment.
      * This method finds and binds the UI components to their respective fields.
@@ -115,6 +144,20 @@ public class EditEventFragment extends Fragment {
         Places.initialize(requireContext(), BuildConfig.MAPS_API_KEY);
     }
 
+    private void setAutocompleteTextColor() {
+        View autocompleteView = autocompleteFragment.getView();
+        if (autocompleteView != null) {
+            for (int i = 0; i < ((ViewGroup) autocompleteView).getChildCount(); i++) {
+                View child = ((ViewGroup) autocompleteView).getChildAt(i);
+                if (child instanceof EditText) {
+                    ((EditText) child).setTextColor(Color.WHITE);
+                    break;
+                }
+            }
+        }
+    }
+
+
     /**
      * Sets up listeners for the various buttons in the fragment.
      * This includes listeners for saving changes, navigating back, editing the image,
@@ -125,19 +168,6 @@ public class EditEventFragment extends Fragment {
         saveButton.setOnClickListener(v -> saveEventChanges());
         backButton.setOnClickListener(v -> navigateBack(false));
         deleteButton.setOnClickListener(v -> deleteEvent());
-        if (autocompleteFragment != null) {
-            autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
-            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-                @Override
-                public void onPlaceSelected(@NonNull Place place) {
-                    eventLocation = place.getName();
-                }
-
-                @Override
-                public void onError(@NonNull Status status) {
-                }
-            });
-        }
     }
 
     /**
@@ -164,6 +194,9 @@ public class EditEventFragment extends Fragment {
 
                 existingImageUri = event.getPosterURI();
                 announcementCount = event.getAnnouncementCount();
+
+                SwitchMaterial trackLocationSwitch = getView().findViewById(R.id.track_location_switch);
+                trackLocationSwitch.setChecked(event.isTrackLocation());
 
                 Glide.with(EditEventFragment.this)
                         .load(event.getPosterURI())

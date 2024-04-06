@@ -2,6 +2,7 @@ package com.example.scanpal.Fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -208,6 +209,17 @@ public class AddEventFragment extends Fragment {
                         selectedLocationName = place.getName();
                         locationCords = place.getLatLng().latitude + "," + place.getLatLng().longitude;
                         newEvent.setLocationCoords(locationCords);
+
+                        View autocompleteView = autocompleteFragment.getView();
+                        if (autocompleteView != null) {
+                            for (int i = 0; i < ((ViewGroup) autocompleteView).getChildCount(); i++) {
+                                View child = ((ViewGroup) autocompleteView).getChildAt(i);
+                                if (child instanceof EditText) {
+                                    ((EditText) child).setTextColor(Color.WHITE);
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
 

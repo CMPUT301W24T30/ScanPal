@@ -1,6 +1,8 @@
 package com.example.scanpal.Fragments;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,8 +15,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -39,6 +45,8 @@ import com.example.scanpal.Models.Attendee;
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.Models.User;
 import com.example.scanpal.R;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -64,6 +72,15 @@ public class EventDetailsFragment extends Fragment {
     private Long eventAnnouncementCount, eventCapacity;
     private MaterialButton joinButton;
     private FloatingActionButton eventEditButton;
+
+    private final ActivityResultLauncher<String> locationPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    fetchLocationAndRSVP();
+                } else {
+                    Toast.makeText(getContext(), "Location access is needed for precise event experience.", Toast.LENGTH_LONG).show();
+                }
+            });
 
     /**
      * Required empty public constructor for instantiating the fragment.
@@ -177,47 +194,29 @@ public class EventDetailsFragment extends Fragment {
                             }
                         }));
             } else {
+                // Permission already granted, directly fetch location and RSVP
                 showConfirmationDialog("Join Event", "Do you want to signup for this event?",
-                        () -> attendeeController.fetchSignedUpUsers(eventID, new AttendeeSignedUpFetchCallback() {
-                            @Override
-                            public void onSuccess(ArrayList<Attendee> attendees) {
-                                int currentCount = attendees.size();//how many people are signed up
+                    () -> attendeeController.fetchSignedUpUsers(eventID, new AttendeeSignedUpFetchCallback() {
+                        @Override
+                        public void onSuccess(ArrayList<Attendee> attendees) {
+                            int currentCount = attendees.size();//how many people are signed up
 
-                                if (currentCount >= eventCapacity && eventCapacity != 0) {
-                                    Toast.makeText(getContext(), "This event is full 😔", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-
-                                if (eventID != null && userDetails != null) {
-                                    String attendeeId = userDetails.getUsername() + eventID;
-                                    attendee = new Attendee(userDetails, eventID, true, false,0);//zero cause new object
-                                    attendee.setId(attendeeId);
-                                    attendeeController.addAttendee(attendee, new AttendeeAddCallback() {
-                                        @Override
-                                        public void onSuccess() {
-                                            Toast.makeText(getContext(), "RSVP successful.", Toast.LENGTH_SHORT).show();
-                                            FirebaseMessaging.getInstance().subscribeToTopic(eventID)
-                                                    .addOnCompleteListener(task -> {
-                                                        if (task.isSuccessful()) {
-                                                            setJoinButton(true);
-                                                            onResume();
-                                                        }
-                                                    });
-                                        }
-
-                                        @Override
-                                        public void onError(Exception e) {
-                                            Toast.makeText(getContext(), "Failed to RSVP", Toast.LENGTH_LONG).show();
-                                        }
-                                    });
-                                }
+                            if (currentCount >= eventCapacity && eventCapacity != 0) {
+                                Toast.makeText(getContext(), "This event is full 😔", Toast.LENGTH_SHORT).show();
+                                return;
                             }
 
-                            @Override
-                            public void onFailure(Exception e) {
-                                Toast.makeText(getContext(), "Failed to Get attendees count", Toast.LENGTH_LONG).show();
-                            }
-                        }));
+                            // proceed if event is not full and if user has confirmed they want to rsvp
+                            checkLocationAndRSVP();
+
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            Toast.makeText(getContext(), "Failed to Get attendees count", Toast.LENGTH_LONG).show();
+                        }
+                    })
+                );
             }
         });
 
@@ -489,4 +488,64 @@ public class EventDetailsFragment extends Fragment {
         announcementDialog.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         announcementDialog.show();
     }
+
+    private void fetchLocationAndRSVP() {
+        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation().addOnSuccessListener(requireActivity(), location -> {
+                if (location != null) {
+                    // Got the location, now proceed to RSVP with location information
+                    String locationStr = location.getLatitude() + "," + location.getLongitude();
+                    proceedWithRSVP(locationStr);
+                } else {
+                    // Couldn't get the location, proceed without it
+                    proceedWithRSVP(null);
+                }
+            });
+        }
+    }
+
+    private void checkLocationAndRSVP() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Permission not granted, request it
+            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+        } else {
+            // Permission already granted, directly fetch location and RSVP
+            fetchLocationAndRSVP();
+        }
+    }
+
+    private void proceedWithRSVP(@Nullable String locationStr) {
+        if (eventID != null && userDetails != null) {
+            String attendeeId = userDetails.getUsername() + eventID;
+            attendee = new Attendee(userDetails, eventID, true, false, 0); // Initialize your Attendee object
+            attendee.setId(attendeeId);
+            if (locationStr != null) {
+                attendee.setLocation(locationStr);
+            }
+
+            attendeeController.addAttendee(attendee, new AttendeeAddCallback() {
+                @Override
+                public void onSuccess() {
+                    // Handle successful RSVP
+                    Toast.makeText(getContext(), "RSVP successful.", Toast.LENGTH_SHORT).show();
+                    FirebaseMessaging.getInstance().subscribeToTopic(eventID).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            // Update UI as necessary, e.g., changing the RSVP button state
+                            setJoinButton(true);
+                        }
+                    });
+                    // Refresh RSVP status or any relevant UI components
+                    updateRSVPStatus(eventID);
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    // Handle RSVP error
+                    Toast.makeText(getContext(), "Failed to RSVP", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+    }
+
 }
