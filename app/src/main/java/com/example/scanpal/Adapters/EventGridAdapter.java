@@ -94,7 +94,7 @@ public class EventGridAdapter extends BaseAdapter {
 
         textView.setText(event.getName());
 
-        int strokeColor = event.isUserSignedUp() ? Color.parseColor("#4CAF50") : Color.parseColor("#0D6EFD");
+        int strokeColor = event.isUserSignedUp() ? Color.parseColor("#46db75") : Color.parseColor("#0D6EFD");
         cardView.setStrokeColor(strokeColor);
 
         return convertView;
