@@ -245,7 +245,7 @@ public class EventController {
      */
     public void editEvent(Event event, @Nullable Uri newImageUri, EventUpdateCallback callback) {
         String folderPath = "events";
-        String fileName = "event_" + event.getId() + ".jpg";
+        String fileName = event.getId() + ".jpg";
         Map<String, Object> eventMap = new HashMap<>();
         Runnable updateEventDetails = () -> {
             eventMap.put("name", event.getName());
