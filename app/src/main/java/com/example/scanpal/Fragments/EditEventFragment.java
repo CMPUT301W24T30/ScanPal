@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,7 +75,7 @@ public class EditEventFragment extends Fragment {
     private PlacesClient placesClient;
     private EventController eventController;
     private AttendeeController attendeeController;
-    private String eventID, eventLocation, locationCords;
+    private String eventID, eventLocation, locationCoords;
     private AutocompleteSupportFragment autocompleteFragment;
 
     @Nullable
@@ -111,7 +112,7 @@ public class EditEventFragment extends Fragment {
                     LatLng latLng = place.getLatLng();
                     if (latLng != null) {
                         eventLocation = place.getName();
-                        locationCords = place.getLatLng().latitude + "," + place.getLatLng().longitude;
+                        locationCoords = place.getLatLng().latitude + "," + place.getLatLng().longitude;
                     }
                     setAutocompleteTextColor();
                 }
@@ -186,12 +187,15 @@ public class EditEventFragment extends Fragment {
         eventController.getEventById(eventID, new EventFetchCallback() {
             @Override
             public void onSuccess(Event event) {
+                Log.d("EditEventFragment", "Fetched location coords: " + event.getLocationCoords());
                 eventNameForm.setText(event.getName());
                 autocompleteFragment.setText(event.getLocation());
                 eventDescriptionForm.setText(event.getDescription());
 
                 // otherwise eventLocation field stays null and you cant save the event without re-selecting location
                 eventLocation = event.getLocation();
+                locationCoords = event.getLocationCoords();
+                Log.d("LocationLog", "Location Coordinates: " + event.getLocationCoords());
 
                 if (event.getMaximumAttendees() != 0) {
                     attendeesForm.setText(String.valueOf(event.getMaximumAttendees()));
@@ -234,7 +238,8 @@ public class EditEventFragment extends Fragment {
 
         Event event = new Event(null, eventName, eventDescription);
         event.setLocation(eventLocation);
-        event.setLocationCoords(locationCords);
+        event.setLocationCoords(locationCoords);
+
 
         if (attendeesForm.getText().toString().isEmpty()) {
             event.setMaximumAttendees(0L); //treat zero as 'no limit'

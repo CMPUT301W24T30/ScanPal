@@ -83,7 +83,7 @@ public class AddEventFragment extends Fragment {
                 }
             });
     private PlacesClient placesClient;
-    private String selectedLocationName, locationCords;
+    private String selectedLocationName, locationCoords;
 
     public AddEventFragment() {
         // Required empty public constructor
@@ -206,8 +206,8 @@ public class AddEventFragment extends Fragment {
                     LatLng latLng = place.getLatLng();
                     if (latLng != null) {
                         selectedLocationName = place.getName();
-                        locationCords = place.getLatLng().latitude + "," + place.getLatLng().longitude;
-                        newEvent.setLocationCoords(locationCords);
+                        locationCoords = place.getLatLng().latitude + "," + place.getLatLng().longitude;
+                        newEvent.setLocationCoords(locationCoords);
 
                         View autocompleteView = autocompleteFragment.getView();
                         if (autocompleteView != null) {
@@ -294,7 +294,7 @@ public class AddEventFragment extends Fragment {
         }
         newEvent.setPosterURI(imageUri);
         newEvent.setAnnouncementCount(0L);
-        newEvent.setLocationCoords(locationCords);
+        newEvent.setLocationCoords(locationCoords);
         eventController.addEvent(newEvent, QrID);
         uploadImageToFirebase(imageUri);
 

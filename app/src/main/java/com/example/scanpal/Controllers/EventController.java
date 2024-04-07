@@ -204,6 +204,13 @@ public class EventController {
                             event.setId(EventID);
                             event.setAnnouncementCount((Long) Objects.requireNonNull(eventDoc.get("announcementCount")));
 
+                            String locationCoords = eventDoc.getString("locationCoords");
+                            if (locationCoords != null) {
+                                event.setLocationCoords(locationCoords);
+                            } else {
+                                Log.d(TAG, "locationCoords field is missing or null for event: " + EventID);
+                            }
+
                             fetchEventOrganizerByRef((DocumentReference) Objects.requireNonNull(eventDoc.get("organizer")),
                                     new UserFetchCallback() {
                                         @Override
