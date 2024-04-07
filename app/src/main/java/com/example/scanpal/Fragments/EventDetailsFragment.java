@@ -538,8 +538,8 @@ public class EventDetailsFragment extends Fragment {
         });
 
         announcementDialog.setTitle("Event Announcement");
-
-        announcementDialog.setPositiveButton("Send", (dialog, which) -> {
+        announcementDialog.setIcon(R.drawable.onphone);
+        announcementDialog.setPositiveButton("📣 Send", (dialog, which) -> {
             if (messageBox.getText().toString().isEmpty()) {
                 Toast.makeText(getContext(), "Error: Can't make empty Announcement", Toast.LENGTH_LONG).show();
                 dialog.cancel();
@@ -554,9 +554,9 @@ public class EventDetailsFragment extends Fragment {
 
             //triggers the cloud functions to send push notifications
             AC.createAnnouncement(announcement);
-            Toast.makeText(getContext(), "Announcement sent!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Announcement sent! 🎉", Toast.LENGTH_LONG).show();
         });
-        announcementDialog.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        announcementDialog.setNegativeButton("❌ Cancel", (dialog, which) -> dialog.cancel());
         announcementDialog.show();
     }
 
