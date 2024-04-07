@@ -43,15 +43,21 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A Fragment for adding new events to the Firestore database. It allows users to input
@@ -60,11 +66,11 @@ import java.util.List;
  */
 public class AddEventFragment extends Fragment {
     private static final String TAG = "AddEditEvent";
-    Button saveButton, deleteButton, editImageButton;
-    FloatingActionButton backButton;
+    Button editImageButton;
+    FloatingActionButton backButton, saveButton;
     Boolean QrChoice = Boolean.FALSE;
     String QrID = null;
-    EditText attendeesForm, eventNameForm, eventDescriptionForm;
+    EditText eventNameForm, eventDescriptionForm;
     Event newEvent;
     ProgressBar progressBar;
     User Organizer;
@@ -83,7 +89,8 @@ public class AddEventFragment extends Fragment {
                 }
             });
     private PlacesClient placesClient;
-    private String selectedLocationName, locationCoords;
+    private String selectedLocationName, locationCoords, date, time;
+    private TextInputEditText dateEditText, timeEditText, attendeesForm;
 
     public AddEventFragment() {
         // Required empty public constructor
@@ -104,20 +111,16 @@ public class AddEventFragment extends Fragment {
         View view = inflater.inflate(R.layout.add_edit_event, container, false);
         ((MainActivity) requireActivity()).setNavbarVisibility(false);
 
-        SwitchMaterial trackLocationSwitch = view.findViewById(R.id.track_location_switch);
+        MaterialSwitch trackLocationSwitch = view.findViewById(R.id.track_location_switch);
 
         trackLocationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            // Here, you can directly update your event's trackLocation property
             if (newEvent != null) {
                 newEvent.setTrackLocation(isChecked);
             }
         });
 
         TextView pageHeader = view.findViewById(R.id.add_edit_event_Header);
-        pageHeader.setText("Create Event");
-
-        this.deleteButton = view.findViewById(R.id.add_edit_deleteButton);
-        this.deleteButton.setVisibility(View.GONE);
+        pageHeader.setText("Create");
 
         this.saveButton = view.findViewById(R.id.add_edit_save_button);
         this.backButton = view.findViewById(R.id.add_edit_backButton);
@@ -127,6 +130,8 @@ public class AddEventFragment extends Fragment {
         this.eventDescriptionForm = view.findViewById(R.id.add_edit_event_description);
         this.profileImageView = view.findViewById(R.id.add_edit_event_ImageView);
         this.progressBar = view.findViewById(R.id.progressBar);
+        this.dateEditText = view.findViewById(R.id.add_edit_event_Date);
+        this.timeEditText = view.findViewById(R.id.add_edit_event_Time);
 
         imageController = new ImageController();
         userController = new UserController(view.getContext());
@@ -177,9 +182,8 @@ public class AddEventFragment extends Fragment {
                     selectedLocationName == null || selectedLocationName.isEmpty() ||
                     eventDescriptionForm.getText().toString().isEmpty() ||
                     null == imageUri) {
-                Toast.makeText(view.getContext(), "Please input all Required Information", Toast.LENGTH_LONG).show();
+                Toast.makeText(view.getContext(), "Please Input All Required Information", Toast.LENGTH_LONG).show();
             } else {
-
                 QROptionsDialog();
             }
         });
@@ -215,6 +219,7 @@ public class AddEventFragment extends Fragment {
                                 View child = ((ViewGroup) autocompleteView).getChildAt(i);
                                 if (child instanceof EditText) {
                                     ((EditText) child).setTextColor(Color.WHITE);
+                                    ((EditText) child).setTextSize(16);
                                     break;
                                 }
                             }
@@ -228,6 +233,34 @@ public class AddEventFragment extends Fragment {
                 }
             });
         }
+
+        dateEditText.setOnClickListener(v -> {
+            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker().build();
+            datePicker.show(requireActivity().getSupportFragmentManager(), datePicker.toString());
+            datePicker.addOnPositiveButtonClickListener(selection -> {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(selection);
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+                SimpleDateFormat dateFormat = new SimpleDateFormat("EE, MMMM dd, yyyy", Locale.getDefault());
+                date = dateFormat.format(calendar.getTime());
+                dateEditText.setText(date);
+            });
+        });
+
+
+        timeEditText.setOnClickListener(v -> {
+            MaterialTimePicker timePicker = new MaterialTimePicker.Builder().build();
+            timePicker.show(requireActivity().getSupportFragmentManager(), timePicker.toString());
+            timePicker.addOnPositiveButtonClickListener(dialog -> {
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY, timePicker.getHour());
+                calendar.set(Calendar.MINUTE, timePicker.getMinute());
+                SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault()); // "a" will show AM/PM
+                time = timeFormat.format(calendar.getTime());
+                timeEditText.setText(time);
+            });
+        });
+
         return view;
     }
 
@@ -247,7 +280,7 @@ public class AddEventFragment extends Fragment {
      */
     private void uploadImageToFirebase(Uri imageUri) {
         String folderPath = "events";
-        String fileName = "event_" + newEvent.getId() + ".jpg";
+        String fileName = newEvent.getId() + ".jpg";
 
         imageController.uploadImage(imageUri, folderPath, fileName,
                 uri -> System.out.println("Success"),
@@ -295,21 +328,20 @@ public class AddEventFragment extends Fragment {
         newEvent.setPosterURI(imageUri);
         newEvent.setAnnouncementCount(0L);
         newEvent.setLocationCoords(locationCoords);
+        newEvent.setDate(date);
+        newEvent.setTime(time);
         eventController.addEvent(newEvent, QrID);
         uploadImageToFirebase(imageUri);
 
-        eventController.getEventsByUser(getView(), new EventFetchByUserCallback() {
+        eventController.getEventsByUser(requireView(), new EventFetchByUserCallback() {
             @Override
             public void onSuccess(List<Event> events) {
                 for (Event event : events) {
-                    //get the event just created
                     if (event.getName().equals(newEvent.getName())) {
                         FirebaseMessaging.getInstance().subscribeToTopic(event.getId() + "org")
                                 .addOnCompleteListener(task -> {
                                     if (task.isSuccessful()) {
-
                                         Log.i(TAG, "Subscribed to Organizer Topic: " + event.getId() + "org");
-
                                     }
                                 });
                     }

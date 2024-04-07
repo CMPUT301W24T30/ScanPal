@@ -26,11 +26,8 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.example.scanpal.BuildConfig;
-import com.example.scanpal.Callbacks.DeleteAllAttendeesCallback;
-import com.example.scanpal.Callbacks.EventDeleteCallback;
 import com.example.scanpal.Callbacks.EventFetchCallback;
 import com.example.scanpal.Callbacks.EventUpdateCallback;
-import com.example.scanpal.Controllers.AttendeeController;
 import com.example.scanpal.Controllers.EventController;
 import com.example.scanpal.MainActivity;
 import com.example.scanpal.Models.Event;
@@ -42,12 +39,17 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.switchmaterial.SwitchMaterial;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Fragment for editing the details of an existing event.
@@ -56,9 +58,10 @@ import java.util.Arrays;
  * an option to delete the event.
  */
 public class EditEventFragment extends Fragment {
-    private Button saveButton, editImageButton, deleteButton;
-    private FloatingActionButton backButton;
-    private EditText eventNameForm, eventDescriptionForm, attendeesForm;
+    private Button editImageButton;
+    private FloatingActionButton backButton, saveButton;
+    private EditText eventNameForm, eventDescriptionForm;
+    private TextInputEditText dateForm, timeForm, attendeesForm;
     private TextView pageHeader;
     private ImageView eventImageView;
     private Uri newImageUri, existingImageUri;
@@ -67,15 +70,16 @@ public class EditEventFragment extends Fragment {
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                     newImageUri = result.getData().getData();
-                    eventImageView.setImageURI(newImageUri);
+                    Glide.with(this)
+                            .load(newImageUri)
+                            .into(eventImageView);
                 }
             });
     private Long announcementCount;
     private ProgressBar progressBar;
     private PlacesClient placesClient;
     private EventController eventController;
-    private AttendeeController attendeeController;
-    private String eventID, eventLocation, locationCoords;
+    private String eventID, eventLocation, locationCoords, date, time;
     private AutocompleteSupportFragment autocompleteFragment;
 
     @Nullable
@@ -84,9 +88,8 @@ public class EditEventFragment extends Fragment {
         View view = inflater.inflate(R.layout.add_edit_event, container, false);
         ((MainActivity) requireActivity()).setNavbarVisibility(false);
         initializeUI(view);
-        pageHeader.setText("Edit Event");
+        pageHeader.setText("Edit");
 
-        attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
         eventController = new EventController();
         eventID = requireArguments().getString("event_id");
         placesClient = Places.createClient(requireActivity());
@@ -139,8 +142,9 @@ public class EditEventFragment extends Fragment {
         saveButton = view.findViewById(R.id.add_edit_save_button);
         backButton = view.findViewById(R.id.add_edit_backButton);
         editImageButton = view.findViewById(R.id.add_edit_event_imageButton);
-        deleteButton = view.findViewById(R.id.add_edit_deleteButton);
         eventNameForm = view.findViewById(R.id.add_edit_event_Name);
+        dateForm = view.findViewById(R.id.add_edit_event_Date);
+        timeForm = view.findViewById(R.id.add_edit_event_Time);
         eventDescriptionForm = view.findViewById(R.id.add_edit_event_description);
         attendeesForm = view.findViewById(R.id.add_edit_event_Attendees);
         eventImageView = view.findViewById(R.id.add_edit_event_ImageView);
@@ -156,7 +160,6 @@ public class EditEventFragment extends Fragment {
      * This method retrieves the autocomplete view associated with the autocomplete fragment. If the view exists,
      * it iterates through its child views to find the EditText view responsible for displaying the text. Once found,
      * it sets the text color to white.
-     *
      */
     private void setAutocompleteTextColor() {
         View autocompleteView = autocompleteFragment.getView();
@@ -165,6 +168,7 @@ public class EditEventFragment extends Fragment {
                 View child = ((ViewGroup) autocompleteView).getChildAt(i);
                 if (child instanceof EditText) {
                     ((EditText) child).setTextColor(Color.WHITE);
+                    ((EditText) child).setTextSize(16);
                     break;
                 }
             }
@@ -180,8 +184,33 @@ public class EditEventFragment extends Fragment {
     private void setListeners() {
         editImageButton.setOnClickListener(v -> openGallery());
         saveButton.setOnClickListener(v -> saveEventChanges());
-        backButton.setOnClickListener(v -> navigateBack(false));
-        deleteButton.setOnClickListener(v -> deleteEvent());
+        backButton.setOnClickListener(v -> navigateBack());
+        dateForm.setOnClickListener(v -> {
+            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker().build();
+            datePicker.show(requireActivity().getSupportFragmentManager(), datePicker.toString());
+            datePicker.addOnPositiveButtonClickListener(selection -> {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(selection);
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+                SimpleDateFormat dateFormat = new SimpleDateFormat("EE, MMMM dd, yyyy", Locale.getDefault());
+                date = dateFormat.format(calendar.getTime());
+                dateForm.setText(date);
+            });
+        });
+
+        timeForm.setOnClickListener(v -> {
+            MaterialTimePicker timePicker = new MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_12H).build();
+            timePicker.show(requireActivity().getSupportFragmentManager(), timePicker.toString());
+            timePicker.addOnPositiveButtonClickListener(dialog -> {
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY, timePicker.getHour());
+                calendar.set(Calendar.MINUTE, timePicker.getMinute());
+                SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault()); // "a" will show AM/PM
+                time = timeFormat.format(calendar.getTime());
+                timeForm.setText(time);
+            });
+        });
+
     }
 
     /**
@@ -199,6 +228,8 @@ public class EditEventFragment extends Fragment {
                 eventNameForm.setText(event.getName());
                 autocompleteFragment.setText(event.getLocation());
                 eventDescriptionForm.setText(event.getDescription());
+                dateForm.setText(event.getDate());
+                timeForm.setText(event.getTime());
 
                 // otherwise eventLocation field stays null and you cant save the event without re-selecting location
                 eventLocation = event.getLocation();
@@ -212,7 +243,7 @@ public class EditEventFragment extends Fragment {
                 existingImageUri = event.getPosterURI();
                 announcementCount = event.getAnnouncementCount();
 
-                SwitchMaterial trackLocationSwitch = getView().findViewById(R.id.track_location_switch);
+                MaterialSwitch trackLocationSwitch = requireView().findViewById(R.id.track_location_switch);
                 trackLocationSwitch.setChecked(event.isTrackLocation());
 
                 Glide.with(EditEventFragment.this)
@@ -247,10 +278,11 @@ public class EditEventFragment extends Fragment {
         Event event = new Event(null, eventName, eventDescription);
         event.setLocation(eventLocation);
         event.setLocationCoords(locationCoords);
-
+        event.setDate(dateForm.getText().toString());
+        event.setTime(timeForm.getText().toString());
 
         if (attendeesForm.getText().toString().isEmpty()) {
-            event.setMaximumAttendees(0L); //treat zero as 'no limit'
+            event.setMaximumAttendees(0L); // treat zero as 'no limit'
         } else {
             Long maxAttendees = Long.parseLong(attendeesForm.getText().toString());
             event.setMaximumAttendees(maxAttendees);
@@ -264,7 +296,7 @@ public class EditEventFragment extends Fragment {
             @Override
             public void onSuccess(boolean status) {
                 progressBar.setVisibility(View.GONE);
-                navigateBack(false);
+                navigateBack();
             }
 
             @Override
@@ -273,55 +305,6 @@ public class EditEventFragment extends Fragment {
             }
         });
     }
-
-    /**
-     * Deletes the event after confirming the action with the user.
-     * Displays a confirmation dialog to the user, and if confirmed, proceeds to delete the event
-     * using the eventController and attendeeController to clean up associated data.
-     */
-    private void deleteEvent() {
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Delete Event")
-                .setMessage("Are you sure you want to delete this event?")
-                .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                    progressBar.setVisibility(View.VISIBLE);
-                    saveButton.setEnabled(false);
-                    editImageButton.setEnabled(false);
-                    deleteButton.setEnabled(false);
-
-                    attendeeController.deleteAllAttendeesForEvent(eventID, new DeleteAllAttendeesCallback() {
-                        @Override
-                        public void onSuccess() {
-                            eventController.deleteEvent(eventID, new EventDeleteCallback() {
-                                @Override
-                                public void onSuccess() {
-                                    Toast.makeText(getContext(), "Event deleted successfully!", Toast.LENGTH_SHORT).show();
-                                    progressBar.setVisibility(View.GONE);
-                                    navigateBack(true);
-                                }
-
-                                @Override
-                                public void onError(Exception e) {
-                                    progressBar.setVisibility(View.GONE);
-                                    saveButton.setEnabled(true);
-                                    editImageButton.setEnabled(true);
-                                    deleteButton.setEnabled(true);
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            progressBar.setVisibility(View.GONE);
-                            saveButton.setEnabled(true);
-                            editImageButton.setEnabled(true);
-                            deleteButton.setEnabled(true);
-                        }
-                    });
-                })
-                .setNegativeButton(android.R.string.no, null).show();
-    }
-
 
     /**
      * Opens the device's gallery for the user to pick an image.
@@ -337,11 +320,10 @@ public class EditEventFragment extends Fragment {
      * Navigates back to the previous screen.
      * Ensures that the fragment is currently added to its activity before performing the navigation.
      */
-    private void navigateBack(boolean delete) {
+    private void navigateBack() {
         if (isAdded()) {
             NavController navController = NavHostFragment.findNavController(this);
-            if (delete) navController.navigate(R.id.eventsPage);
-            else navController.popBackStack();
+            navController.popBackStack();
             ((MainActivity) requireActivity()).setNavbarVisibility(true);
         }
     }

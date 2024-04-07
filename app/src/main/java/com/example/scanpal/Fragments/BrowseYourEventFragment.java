@@ -47,7 +47,6 @@ public class BrowseYourEventFragment extends Fragment {
     protected List<Event> eventsList = new ArrayList<>();
     protected List<Event> allEvents = new ArrayList<>();
 
-    private GridView gridView;
     private EventGridAdapter adapter;
     private EventController eventController;
 
@@ -61,12 +60,10 @@ public class BrowseYourEventFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.browse_events, container, false);
-
-
         ((TextView) view.findViewById(R.id.event_page_title)).setText("Your Events");
 
         adapter = new EventGridAdapter(getContext());
-        gridView = view.findViewById(R.id.event_grid);
+        GridView gridView = view.findViewById(R.id.event_grid);
         gridView.setAdapter(adapter);
 
         // init eventController
