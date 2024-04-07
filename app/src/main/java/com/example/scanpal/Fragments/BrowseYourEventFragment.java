@@ -78,7 +78,7 @@ public class BrowseYourEventFragment extends Fragment {
         FloatingActionButton addEventButton = view.findViewById(R.id.button_add_event);
         addEventButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(BrowseYourEventFragment.this);
-            navController.navigate(R.id.addEvent);
+            navController.navigate(R.id.addEditEvent);
         });
 
         gridView.setOnItemClickListener((parent, view1, position, id) -> {

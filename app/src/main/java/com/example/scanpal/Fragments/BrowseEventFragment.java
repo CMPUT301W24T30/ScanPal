@@ -151,7 +151,7 @@ public class BrowseEventFragment extends Fragment {
         FloatingActionButton addEventButton = view.findViewById(R.id.button_add_event);
         addEventButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(BrowseEventFragment.this);
-            navController.navigate(R.id.addEvent);
+            navController.navigate(R.id.addEditEvent);
         });
 
         gridView.setOnItemClickListener((parent, view1, position, id) -> {
@@ -308,7 +308,7 @@ public class BrowseEventFragment extends Fragment {
             @Override
             public void onError(Exception e) {
                 System.out.println(e.toString());
-                Toast.makeText(getContext(), "Failed to delete image." + e.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Failed to delete image." + e, Toast.LENGTH_LONG).show();
             }
         });
     }
