@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -118,50 +117,47 @@ public class SignedUpUsersFragment extends Fragment {
 
         backButton.setOnClickListener(v -> navController.navigateUp());
 
-        listSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    attendeeController.fetchCheckedInUsers(eventID, new AttendeeSignedUpFetchCallback() {
-                        @Override
-                        public void onSuccess(ArrayList<Attendee> attendees) {
-                            usersAdapter = new UsersAdapter(getContext(), new ArrayList<>());//to empty it(bless the garbage collector)
-                            usersList.setAdapter(usersAdapter);
+        listSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                attendeeController.fetchCheckedInUsers(eventID, new AttendeeSignedUpFetchCallback() {
+                    @Override
+                    public void onSuccess(ArrayList<Attendee> attendees) {
+                        usersAdapter = new UsersAdapter(getContext(), new ArrayList<>());//to empty it(bless the garbage collector)
+                        usersList.setAdapter(usersAdapter);
 
-                            title.setText("Checked-In");
+                        title.setText("Checked-In");
 
-                            for (Attendee attendee : attendees) {
-                                usersAdapter.addUser(attendee.getUser());
-                                usersAdapter.notifyDataSetChanged();
-                            }
+                        for (Attendee attendee : attendees) {
+                            usersAdapter.addUser(attendee.getUser());
+                            usersAdapter.notifyDataSetChanged();
                         }
+                    }
 
-                        @Override
-                        public void onFailure(Exception e) {
+                    @Override
+                    public void onFailure(Exception e) {
+                    }
+                });
+            } else {
+                attendeeController.fetchSignedUpUsers(eventID, new AttendeeSignedUpFetchCallback() {
+                    @Override
+                    public void onSuccess(ArrayList<Attendee> attendees) {
+                        // upcast to User
+                        usersAdapter = new UsersAdapter(getContext(), new ArrayList<>());//to empty it(bless the garbage collector)
+                        usersList.setAdapter(usersAdapter);
+
+                        title.setText("Signed Up");
+
+                        for (Attendee attendee : attendees) {
+                            usersAdapter.addUser(attendee.getUser());
+                            usersAdapter.notifyDataSetChanged();
                         }
-                    });
-                } else {
-                    attendeeController.fetchSignedUpUsers(eventID, new AttendeeSignedUpFetchCallback() {
-                        @Override
-                        public void onSuccess(ArrayList<Attendee> attendees) {
-                            // upcast to User
-                            usersAdapter = new UsersAdapter(getContext(), new ArrayList<>());//to empty it(bless the garbage collector)
-                            usersList.setAdapter(usersAdapter);
+                    }
 
-                            title.setText("Signed Up");
-
-                            for (Attendee attendee : attendees) {
-                                usersAdapter.addUser(attendee.getUser());
-                                usersAdapter.notifyDataSetChanged();
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Exception e) {
-                            Log.e("EventDetailsFragment", e.getMessage());
-                        }
-                    });
-                }
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.e("EventDetailsFragment", e.getMessage());
+                    }
+                });
             }
         });
     }

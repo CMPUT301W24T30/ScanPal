@@ -39,7 +39,7 @@ public class UserController {
     /**
      * Initializes a new UserController instance.
      *
-     * @param context  The application's context, used for file operations.
+     * @param context The application's context, used for file operations.
      */
     public UserController(Context context) {
         this.database = FirebaseFirestore.getInstance();
@@ -103,7 +103,7 @@ public class UserController {
     public void updateUser(User user, UserUpdateCallback callback) {
         // Attempt to serialize and update user locally
         fetchStoredUsername();
-        if(Objects.equals(user.getUsername(), fetchStoredUsername())) {
+        if (Objects.equals(user.getUsername(), fetchStoredUsername())) {
             try {
                 FileOutputStream fos = context.openFileOutput("user.ser", Context.MODE_PRIVATE);
                 ObjectOutputStream oos = new ObjectOutputStream(fos);

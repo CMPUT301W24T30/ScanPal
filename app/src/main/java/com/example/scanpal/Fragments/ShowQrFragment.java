@@ -16,13 +16,9 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.example.scanpal.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import java.util.Objects;
 
 
 public class ShowQrFragment extends Fragment {
@@ -57,13 +53,13 @@ public class ShowQrFragment extends Fragment {
         // Show either check in code or event code based on request
 
         if (request == "check-in") {
-            showCheckIn(eventID,view,eventName);
+            showCheckIn(eventID, view, eventName);
         } else if (request == "event") {
             TextView textView = view.findViewById(R.id.show_qr_title);
             textView.setText("Event Details");
-            showEvent(eventID,view,eventName);
+            showEvent(eventID, view, eventName);
         }
-      
+
         return view;
     }
 
@@ -86,23 +82,17 @@ public class ShowQrFragment extends Fragment {
 
         // Get image from Firebase Storage
         imageRef.getBytes(1024 * 1024) // allow 1MB
-                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        // Load bytes into the ImageView using Glide
-                        Glide.with(ShowQrFragment.this)
-                                .load(bytes)
-                                .into(imageView);
-                        TextView title = view.findViewById(R.id.event_name_qrcode);
-                        title.setText(eventName);
-                    }
+                .addOnSuccessListener(bytes -> {
+                    // Load bytes into the ImageView using Glide
+                    Glide.with(ShowQrFragment.this)
+                            .load(bytes)
+                            .into(imageView);
+                    TextView title = view.findViewById(R.id.event_name_qrcode);
+                    title.setText(eventName);
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Handle failure
-                        Toast.makeText(getContext(), "Failed to retrieve image", Toast.LENGTH_SHORT).show();
-                    }
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                    Toast.makeText(getContext(), "Failed to retrieve image", Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -125,23 +115,17 @@ public class ShowQrFragment extends Fragment {
 
         // Get image from Firebase Storage
         imageRef.getBytes(1024 * 1024) // allow 1MB
-                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        // Load bytes into the ImageView using Glide
-                        Glide.with(ShowQrFragment.this)
-                                .load(bytes)
-                                .into(imageView);
-                        TextView title = view.findViewById(R.id.event_name_qrcode);
-                        title.setText(eventName);
-                    }
+                .addOnSuccessListener(bytes -> {
+                    // Load bytes into the ImageView using Glide
+                    Glide.with(ShowQrFragment.this)
+                            .load(bytes)
+                            .into(imageView);
+                    TextView title = view.findViewById(R.id.event_name_qrcode);
+                    title.setText(eventName);
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Handle failure
-                        Toast.makeText(getContext(), "Failed to retrieve image", Toast.LENGTH_SHORT).show();
-                    }
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                    Toast.makeText(getContext(), "Failed to retrieve image", Toast.LENGTH_SHORT).show();
                 });
     }
 

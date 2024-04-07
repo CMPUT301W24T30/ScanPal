@@ -26,7 +26,6 @@ import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,7 +99,7 @@ public class BrowseYourEventFragment extends Fragment {
      * Applies filters based on user sign-up status and sorts events.
      */
     private void fetchYourEvents() {
-        UserController userController = new UserController( getContext());
+        UserController userController = new UserController(getContext());
         String username = userController.fetchStoredUsername();
         if (username != null) {
             // Use EventController to fetch user-specific events
