@@ -3,6 +3,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="grey">#808080</color>
-    <color name="background">#16181F</color>
+    <color name="background">#040817</color>
     <color name="button_default">#0D6EFD</color>
+    <color name="success_green">#4CAF50</color>
+    <color name="default_icon_tint">#7f7f7f</color>
 </resources>
