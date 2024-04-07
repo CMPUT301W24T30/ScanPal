@@ -88,7 +88,7 @@ public class EditEventFragment extends Fragment {
         View view = inflater.inflate(R.layout.add_edit_event, container, false);
         ((MainActivity) requireActivity()).setNavbarVisibility(false);
         initializeUI(view);
-        pageHeader.setText("Edit");
+        pageHeader.setText("Edit ⚙️");
 
         eventController = new EventController();
         eventID = requireArguments().getString("event_id");

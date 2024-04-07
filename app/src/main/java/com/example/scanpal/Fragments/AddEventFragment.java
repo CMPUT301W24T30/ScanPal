@@ -120,7 +120,7 @@ public class AddEventFragment extends Fragment {
         });
 
         TextView pageHeader = view.findViewById(R.id.add_edit_event_Header);
-        pageHeader.setText("Create");
+        pageHeader.setText("Create ✏️");
 
         this.saveButton = view.findViewById(R.id.add_edit_save_button);
         this.backButton = view.findViewById(R.id.add_edit_backButton);
