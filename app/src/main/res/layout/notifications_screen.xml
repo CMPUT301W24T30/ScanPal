@@ -4,7 +4,7 @@
     android:id="@+id/body"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#16181F">
+    android:background="@color/background">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_clear_all"

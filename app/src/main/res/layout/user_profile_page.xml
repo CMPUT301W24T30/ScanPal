@@ -29,7 +29,8 @@
         android:text="Homepage"
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:textColorLink="#0D6EFD"
+        android:textColorLink="@color/button_default
+"
         android:textSize="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -83,7 +84,8 @@
         android:id="@+id/button_edit_profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="#0D6EFD"
+        android:backgroundTint="@color/button_default
+"
         android:clickable="true"
         android:focusable="true"
         android:theme="@style/AppTheme"
