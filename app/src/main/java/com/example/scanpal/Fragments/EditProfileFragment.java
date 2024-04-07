@@ -62,7 +62,10 @@ public class EditProfileFragment extends Fragment {
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                     imageUri = result.getData().getData();
-                    profileImageView.setImageURI(imageUri);
+                    Glide.with(this)
+                            .load(imageUri)
+                            .circleCrop()
+                            .into(profileImageView);
                 }
             });
     private UserController userController;

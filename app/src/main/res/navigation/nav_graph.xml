@@ -37,12 +37,6 @@
         android:label="fragment_events_page"
         tools:layout="@layout/browse_events">
         <action
-            android:id="@+id/addEvent"
-            app:destination="@id/addEditEvent" />
-        <action
-            android:id="@+id/editEvent"
-            app:destination="@+id/addEditEvent" />
-        <action
             android:id="@+id/select_event"
             app:destination="@id/eventDetailsPage" />
         <action

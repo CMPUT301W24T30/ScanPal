@@ -7,11 +7,14 @@
     android:layout_height="match_parent"
     android:background="@drawable/animated_gradient">
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/last_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:text="Last Name"
+        android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/homepage"
@@ -19,17 +22,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/first_name" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/homepage"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:autoLink="web"
         android:clickable="true"
         android:linksClickable="true"
         android:text="Homepage"
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:textColorLink="#0D6EFD"
+        android:textColorLink="@color/button_default"
         android:textSize="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -44,6 +49,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="#2d3132"
         android:clickable="true"
+        android:contentDescription="@string/content_description"
         android:focusable="true"
         android:theme="@style/AppTheme"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -55,7 +61,7 @@
         app:srcCompat="@drawable/arrow_back"
         app:tint="@color/white" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -83,8 +89,9 @@
         android:id="@+id/button_edit_profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="#0D6EFD"
+        android:backgroundTint="@color/button_default"
         android:clickable="true"
+        android:contentDescription="@string/content_description"
         android:focusable="true"
         android:theme="@style/AppTheme"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -96,12 +103,15 @@
         app:srcCompat="@drawable/settings_icon"
         app:tint="@color/white" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/addUsername"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:fontFamily="@font/bungee_inline"
         android:text="Username"
+        android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/first_name"
@@ -109,11 +119,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profile_page_image" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/first_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:text="First Name"
+        android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/last_name"

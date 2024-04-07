@@ -66,6 +66,23 @@ public class MainActivity extends AppCompatActivity {
         assert navHostFragment != null;
         navController = navHostFragment.getNavController();
 
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            buttonChat.setColorFilter(getResources().getColor(R.color.default_icon_tint));
+            buttonProfile.setColorFilter(getResources().getColor(R.color.default_icon_tint));
+            buttonYourEvents.setColorFilter(getResources().getColor(R.color.default_icon_tint));
+            buttonHomepage.setColorFilter(getResources().getColor(R.color.default_icon_tint));
+
+            if (destination.getId() == R.id.notificationsFragment) {
+                buttonChat.setColorFilter(getResources().getColor(R.color.button_default));
+            } else if (destination.getId() == R.id.profile_fragment) {
+                buttonProfile.setColorFilter(getResources().getColor(R.color.button_default));
+            } else if (destination.getId() == R.id.yourEvents) {
+                buttonYourEvents.setColorFilter(getResources().getColor(R.color.button_default));
+            } else if (destination.getId() == R.id.eventsPage) {
+                buttonHomepage.setColorFilter(getResources().getColor(R.color.button_default));
+            }
+        });
+
         UserController userController = new UserController(this);
         if (userController.isUserLoggedIn()) {
             setNavbarVisibility(true);

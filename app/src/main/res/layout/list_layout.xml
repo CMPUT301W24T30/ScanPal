@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!-- this file just has an elementary list view layout just for testing can remove later -->
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.textview.MaterialTextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/textView_event"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

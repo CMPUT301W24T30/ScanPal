@@ -3,33 +3,99 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#16181F">
+    android:background="@color/background">
 
-    <ImageView
-        android:id="@+id/event_detail_imageView"
+    <FrameLayout
+        android:id="@+id/event_detail_frame"
         android:layout_width="0dp"
-        android:layout_height="250dp"
-        android:contentDescription="@string/content_description"
-        android:scaleType="fitXY"
+        android:layout_height="300dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
+        <ImageView
+            android:id="@+id/event_detail_imageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/content_description"
+            android:scaleType="fitXY"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/event_poster_overlay" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/date_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/date_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/grey" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/event_detail_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Tue, April 09, 2024"
+                android:textColor="@color/grey"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/date_icon"
+                app:layout_constraintStart_toEndOf="@id/date_icon"
+                app:layout_constraintTop_toTopOf="@id/date_icon" />
+
+            <ImageView
+                android:id="@+id/time_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/time_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/event_detail_time"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/grey" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/event_detail_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="5:00 PM"
+                android:textColor="@color/grey"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/time_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/time_icon" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+
+
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/event_Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:text="Back Alley CSC Meetup"
         android:textColor="@color/white"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_detail_imageView" />
+        app:layout_constraintTop_toBottomOf="@id/event_detail_frame" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/event_Location"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -66,7 +132,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/onphone" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/event_orgName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -84,18 +150,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            app:backgroundTint="#0D6EFD"
+            app:backgroundTint="@color/button_default"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/share_icon" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/event_description_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
         android:text="About Event"
         android:textColor="@color/white"
         android:textSize="16sp"
@@ -108,12 +176,15 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/event_description_card"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="4dp"
-        android:minHeight="175dp"
-        app:cardBackgroundColor="@color/black"
+        android:fadeScrollbars="true"
+        android:isScrollContainer="true"
+        android:minHeight="150dp"
+        android:nestedScrollingEnabled="true"
+        app:cardBackgroundColor="@color/background"
         app:cardCornerRadius="16dp"
         app:cardElevation="8dp"
         app:contentPadding="16dp"
@@ -124,22 +195,30 @@
         app:strokeColor="@color/white"
         app:strokeWidth="2dp">
 
-        <TextView
-            android:id="@+id/event_description"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="You will meet us in the back alley of CSC no further questions asked. A tall slender man will provide pizza for you and those you came with. He will appear through the wall and return within 2 minutes of dropping off the pizza"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:fillViewport="true">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/event_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="You will meet us in the back alley of CSC no further questions asked. A tall slender man will provide pizza for you and those you came with. He will appear through the wall and return within 2 minutes of dropping off the pizza"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+        </ScrollView>
 
     </com.google.android.material.card.MaterialCardView>
+
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/join_button"
         android:layout_width="182dp"
         android:layout_height="49dp"
         android:layout_marginBottom="8dp"
-        android:backgroundTint="#0D6EFD"
+        android:backgroundTint="@color/button_default"
         android:text="Signup"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -171,7 +250,7 @@
         android:focusable="true"
         android:theme="@style/Theme.AppCompat"
         android:visibility="invisible"
-        app:backgroundTint="#0D6EFD"
+        app:backgroundTint="@color/button_default"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.96"
@@ -180,5 +259,17 @@
         app:layout_constraintVertical_bias="0.02"
         app:srcCompat="@drawable/menu_icon"
         app:tint="@color/white" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

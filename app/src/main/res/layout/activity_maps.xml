@@ -36,7 +36,7 @@
                 android:contentDescription="@string/event"
                 android:src="@drawable/ic_marker_blue" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -58,7 +58,7 @@
                 android:contentDescription="@string/attendee"
                 android:src="@drawable/ic_marker_red" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"

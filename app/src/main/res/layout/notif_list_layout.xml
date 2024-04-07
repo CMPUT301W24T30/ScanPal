@@ -4,53 +4,63 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- list_item_layout.xml -->
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+    <ImageView
+        android:id="@+id/notif_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:contentDescription="@string/content_description"
+        android:padding="8dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_launcher_background"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/notif_image"
-            android:layout_width="wrap_content"
-            android:layout_height="120dp"
-            android:padding="8dp"
-            android:src="@drawable/ic_launcher_background" />
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/Notification_Header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="8dp"
+        android:padding="8dp"
+        android:text="Item Header"
+        android:textAlignment="center"
+        android:textColor="@color/grey"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/notif_image"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/Notification_Header"
-            android:layout_width="139dp"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="Item Header"
-            android:textSize="20sp" />
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/Notification_Time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:padding="8dp"
+        android:text="TimeStamp"
+        android:textAlignment="center"
+        android:textColor="@color/grey"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/notif_image"
+        app:layout_constraintTop_toBottomOf="@+id/Notification_Header" />
 
-        <TextView
-            android:id="@+id/Notification_Time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="TimeStamp"
-            android:textSize="15sp" />
-
-
-        <!-- Add more views as needed -->
-
-    </LinearLayout>
-
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/Notification_message"
-        android:layout_width="268dp"
-        android:layout_height="58dp"
-        android:layout_marginStart="135dp"
-        android:layout_marginTop="55dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/notification_gradient"
         android:padding="8dp"
         android:text="Item Message"
-        android:textSize="15sp"
-        app:layout_constraintStart_toStartOf="@+id/linearLayout"
-        app:layout_constraintTop_toTopOf="@+id/linearLayout" />
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/notif_image"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -33,6 +33,7 @@ import java.util.ArrayList;
  */
 public class SignedUpUsersFragment extends Fragment {
 
+    private RecyclerView.OnItemTouchListener currentTouchListener;
     private AttendeeController attendeeController;
     private NavController navController;
     private String eventID;
@@ -44,121 +45,83 @@ public class SignedUpUsersFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.attendees_list, container, false);
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            eventID = bundle.getString("event_id");
-            Log.d("SignedUpUsersFragment", eventID);
-        }
+        eventID = requireArguments().getString("event_id");
+
         attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
         navController = NavHostFragment.findNavController(this);
-
         backButton = view.findViewById(R.id.button_go_back);
         usersList = view.findViewById(R.id.user_list);
+        listSwitch = view.findViewById(R.id.listSwitch1);
+        title = view.findViewById(R.id.attendeesList_title);
+
         usersList.setLayoutManager(new LinearLayoutManager(getContext()));
         usersAdapter = new UsersAdapter(getContext(), new ArrayList<>());
         usersList.setAdapter(usersAdapter);
-        listSwitch = view.findViewById(R.id.listSwitch1);
-        title = view.findViewById(R.id.attendeesList_title);
+
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        attendeeController.fetchSignedUpUsers(eventID, new AttendeeSignedUpFetchCallback() {
+        setupButtonListeners();
+        fetchUsers(false);
+    }
+
+    private void setupButtonListeners() {
+        backButton.setOnClickListener(v -> navController.navigateUp());
+        listSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> fetchUsers(isChecked));
+    }
+
+    private void fetchUsers(boolean isChecked) {
+        AttendeeSignedUpFetchCallback callback = new AttendeeSignedUpFetchCallback() {
             @Override
             public void onSuccess(ArrayList<Attendee> attendees) {
-                // upcast to User
-                usersAdapter = new UsersAdapter(getContext(), new ArrayList<>()); // to empty it (bless the garbage collector)
-                usersList.setAdapter(usersAdapter);
-                title.setText("Signed Up");
-
-                MaterialAlertDialogBuilder OrganizerOptions = new MaterialAlertDialogBuilder(getContext());
-
+                usersAdapter.clearUsers();
                 for (Attendee attendee : attendees) {
                     usersAdapter.addUser(attendee.getUser());
+                    usersAdapter.notifyDataSetChanged();
                 }
-
-                usersList.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-                    @Override
-                    public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-                        View child = rv.findChildViewUnder(e.getX(), e.getY());
-                        if (child != null) {
-                            int position = rv.getChildAdapterPosition(child);
-                            usersAdapter.getAt(position);
-                            OrganizerOptions.setTitle(usersAdapter.getAt(position).getUsername() + "'s Info");
-                            OrganizerOptions.setMessage("Check In Count: " + attendees.get(position).getCheckinCount());
-                            OrganizerOptions.show();
-                            return true;
-                        }
-                        return false;
-                    }
-
-                    @Override
-                    public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-                        // DO NOTHING
-                    }
-
-                    @Override
-                    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-                        // DO NOTHING
-                    }
-                });
+                title.setText(isChecked ? "Checked-In" : "Signed Up");
+                setupTouchListener(attendees);
             }
 
             @Override
             public void onFailure(Exception e) {
-                Log.e("EventDetailsFragment", e.getMessage());
+                Log.e("SignedUpUsersFragment", "Error fetching users: " + e.getMessage());
             }
-        });
+        };
 
-        backButton.setOnClickListener(v -> navController.navigateUp());
+        if (isChecked) {
+            attendeeController.fetchCheckedInUsers(eventID, callback);
+        } else {
+            attendeeController.fetchSignedUpUsers(eventID, callback);
+        }
+    }
 
-        listSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                attendeeController.fetchCheckedInUsers(eventID, new AttendeeSignedUpFetchCallback() {
-                    @Override
-                    public void onSuccess(ArrayList<Attendee> attendees) {
-                        usersAdapter = new UsersAdapter(getContext(), new ArrayList<>());//to empty it(bless the garbage collector)
-                        usersList.setAdapter(usersAdapter);
-
-                        title.setText("Checked-In");
-
-                        for (Attendee attendee : attendees) {
-                            usersAdapter.addUser(attendee.getUser());
-                            usersAdapter.notifyDataSetChanged();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Exception e) {
-                    }
-                });
-            } else {
-                attendeeController.fetchSignedUpUsers(eventID, new AttendeeSignedUpFetchCallback() {
-                    @Override
-                    public void onSuccess(ArrayList<Attendee> attendees) {
-                        // upcast to User
-                        usersAdapter = new UsersAdapter(getContext(), new ArrayList<>());//to empty it(bless the garbage collector)
-                        usersList.setAdapter(usersAdapter);
-
-                        title.setText("Signed Up");
-
-                        for (Attendee attendee : attendees) {
-                            usersAdapter.addUser(attendee.getUser());
-                            usersAdapter.notifyDataSetChanged();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Exception e) {
-                        Log.e("EventDetailsFragment", e.getMessage());
-                    }
-                });
+    private void setupTouchListener(ArrayList<Attendee> attendees) {
+        if (currentTouchListener != null) {
+            usersList.removeOnItemTouchListener(currentTouchListener);
+        }
+        MaterialAlertDialogBuilder organizerOptions = new MaterialAlertDialogBuilder(requireContext());
+        currentTouchListener = new RecyclerView.SimpleOnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                View child = rv.findChildViewUnder(e.getX(), e.getY());
+                if (child != null && e.getAction() == MotionEvent.ACTION_UP) {
+                    int position = rv.getChildAdapterPosition(child);
+                    Attendee attendee = attendees.get(position);
+                    organizerOptions.setIcon(R.drawable.onphone);
+                    organizerOptions.setTitle(attendee.getUser().getFirstName() + " " + attendee.getUser().getLastName());
+                    organizerOptions.setMessage("🔥 Check In Count: " + attendee.getCheckinCount());
+                    organizerOptions.show();
+                    return true;
+                }
+                return false;
             }
-        });
+        };
+        usersList.addOnItemTouchListener(currentTouchListener);
     }
 }

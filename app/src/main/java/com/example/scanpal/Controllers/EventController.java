@@ -74,6 +74,8 @@ public class EventController {
         eventMap.put("name", event.getName());
         eventMap.put("description", event.getDescription());
         eventMap.put("location", event.getLocation());
+        eventMap.put("date", event.getDate());
+        eventMap.put("time", event.getTime());
         eventMap.put("photo", event.getPosterURI());
         eventMap.put("capacity", event.getMaximumAttendees());
         eventMap.put("announcementCount", 0L);
@@ -105,7 +107,7 @@ public class EventController {
 
     /**
      * Fetches all events from the Firestore database.
-     *
+     * <p>
      * Retrieves all events stored in the Firestore collection "Events".
      * Assembles a list of Event objects representing the fetched events and utilizes a callback
      * to handle success or failure.
@@ -124,6 +126,8 @@ public class EventController {
                             String name = document.getString("name");
                             String description = document.getString("description");
                             String location = document.getString("location");
+                            String date = document.getString("date");
+                            String time = document.getString("time");
                             String photoUrlString = document.getString("photo");
                             Long maximumAttendees = document.getLong("capacity");
                             String signUpAddress = document.getString("2ndQrCode");
@@ -133,6 +137,8 @@ public class EventController {
                             Event event = new Event(null, name, description); // organizer is set to null temporarily
                             event.setId(id);
                             event.setLocation(location);
+                            event.setDate(date);
+                            event.setTime(time);
                             event.setMaximumAttendees(maximumAttendees);
                             event.setSignUpAddress(signUpAddress);
                             event.setPosterURI(photoUri);
@@ -205,6 +211,8 @@ public class EventController {
                                     Objects.requireNonNull(eventDoc.get("description")).toString());
 
                             event.setLocation(Objects.requireNonNull(eventDoc.get("location")).toString());
+                            event.setDate(Objects.requireNonNull(eventDoc.get("date")).toString());
+                            event.setTime(Objects.requireNonNull(eventDoc.get("time")).toString());
                             event.setMaximumAttendees((Long) Objects.requireNonNull(eventDoc.get("capacity")));
                             event.setTrackLocation(Objects.requireNonNull(eventDoc.getBoolean("trackLocation")));
 
@@ -245,13 +253,15 @@ public class EventController {
      */
     public void editEvent(Event event, @Nullable Uri newImageUri, EventUpdateCallback callback) {
         String folderPath = "events";
-        String fileName = "event_" + event.getId() + ".jpg";
+        String fileName = event.getId() + ".jpg";
         Map<String, Object> eventMap = new HashMap<>();
         Runnable updateEventDetails = () -> {
             eventMap.put("name", event.getName());
             eventMap.put("description", event.getDescription());
             eventMap.put("location", event.getLocation());
             eventMap.put("locationCoords", event.getLocationCoords());
+            eventMap.put("date", event.getDate());
+            eventMap.put("time", event.getTime());
             eventMap.put("capacity", event.getMaximumAttendees());
             eventMap.put("announcementCount", event.getAnnouncementCount());
             eventMap.put("trackLocation", event.isTrackLocation());
@@ -321,8 +331,6 @@ public class EventController {
     }
 
 
-
-
     /**
      * Retrieves all event IDs from the Firestore database.
      * Retrieves the IDs of all events stored in the Firestore collection "Events".
@@ -349,13 +357,13 @@ public class EventController {
     }
 
     public void deleteEvent(String eventID, EventDeleteCallback callback) {
-        imageController.deleteImage("events", eventID + ".jpg");
-        imageController.deleteImage("qr-codes", eventID + "-check-in.png");
-        imageController.deleteImage("qr-codes", eventID + "-event.png");
+        DocumentReference eventRef = database.collection("Events").document(eventID);
         attendeeController.deleteAllAttendeesForEvent(eventID, new DeleteAllAttendeesCallback() {
             @Override
             public void onSuccess() {
-                DocumentReference eventRef = database.collection("Events").document(eventID);
+                imageController.deleteImage("events", eventID + ".jpg");
+                imageController.deleteImage("qr-codes", eventID + "-check-in.png");
+                imageController.deleteImage("qr-codes", eventID + "-event.png");
                 eventRef.delete()
                         .addOnSuccessListener(aVoid -> callback.onSuccess())
                         .addOnFailureListener(callback::onError);
