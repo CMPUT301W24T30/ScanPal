@@ -1,5 +1,8 @@
 package com.example.scanpal;
 
+import android.os.Looper;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -23,6 +26,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(@NonNull RemoteMessage message) {
         super.onMessageReceived(message);
+        Looper.prepare();//causes error otherwise
+
+        String messageBody = message.getNotification().getBody();
+
+        Toast.makeText( getApplicationContext(), "You've Received a new Notification: " + messageBody, Toast.LENGTH_SHORT).show();
+
     }
 
 }
