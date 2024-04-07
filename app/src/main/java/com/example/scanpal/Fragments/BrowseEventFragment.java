@@ -159,6 +159,8 @@ public class BrowseEventFragment extends Fragment {
             NavHostFragment.findNavController(this).navigate(R.id.select_event, bundle);
         });
 
+        askNotificationPermission();
+
         return view;
     }
 
