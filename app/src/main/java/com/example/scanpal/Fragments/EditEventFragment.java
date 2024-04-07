@@ -149,6 +149,14 @@ public class EditEventFragment extends Fragment {
         Places.initialize(requireContext(), BuildConfig.MAPS_API_KEY);
     }
 
+
+    /**
+     * Sets the text color for the autocomplete view.
+     * This method retrieves the autocomplete view associated with the autocomplete fragment. If the view exists,
+     * it iterates through its child views to find the EditText view responsible for displaying the text. Once found,
+     * it sets the text color to white.
+     *
+     */
     private void setAutocompleteTextColor() {
         View autocompleteView = autocompleteFragment.getView();
         if (autocompleteView != null) {

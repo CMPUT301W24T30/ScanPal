@@ -34,6 +34,10 @@ public class NotificationsFragment extends Fragment {
     private EventController eventController;
     private List<String> allEventIDs;
 
+
+    /**
+     * Required empty public constructor for instantiating the fragment.
+     */
     public NotificationsFragment() {
 
     }

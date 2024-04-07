@@ -1,11 +1,19 @@
 package com.example.scanpal.Callbacks;
 
-import android.net.Uri;
-
-import java.util.List;
-
+/**
+ * An interface defining callbacks for image deletion operations.
+ */
 public interface ImagesDeleteCallback {
-        void onSuccess();
-        void onError(Exception e);
 
+        /**
+         * Called when the image deletion operation is successful.
+         */
+        void onSuccess();
+
+        /**
+         * Called when an error occurs during the image deletion operation.
+         *
+         * @param e The exception indicating the error encountered.
+         */
+        void onError(Exception e);
 }

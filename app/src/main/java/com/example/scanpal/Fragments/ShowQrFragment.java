@@ -29,6 +29,9 @@ public class ShowQrFragment extends Fragment {
 
     private final FirebaseStorage storage = FirebaseStorage.getInstance();
 
+    /**
+     * Required empty public constructor for instantiating the fragment.
+     */
     public ShowQrFragment() {
         // Required empty public constructor
     }
@@ -64,6 +67,16 @@ public class ShowQrFragment extends Fragment {
         return view;
     }
 
+
+    /**
+     * Displays the check-in QR code for the specified event.
+     * This method retrieves the check-in QR code image from Firebase Storage using the event ID
+     * and displays it in the provided ImageView. Additionally, it sets the event name in a TextView.
+     *
+     * @param eventID   The ID of the event for which to display the check-in QR code.
+     * @param view      The parent view containing the ImageView and TextView for displaying the QR code and event name.
+     * @param eventName The name of the event to be displayed.
+     */
     public void showCheckIn(String eventID,View view,String eventName) {
         String imageName = eventID + "-check-in.png";
         StorageReference imageRef = storage.getReference().child("qr-codes/" + imageName);
@@ -93,6 +106,16 @@ public class ShowQrFragment extends Fragment {
                 });
     }
 
+
+    /**
+     * Displays the event QR code for the specified event.
+     * This method retrieves the event QR code image from Firebase Storage using the event ID
+     * and displays it in the provided ImageView. Additionally, it sets the event name in a TextView.
+     *
+     * @param eventID   The ID of the event for which to display the event QR code.
+     * @param view      The parent view containing the ImageView and TextView for displaying the QR code and event name.
+     * @param eventName The name of the event to be displayed.
+     */
     public void showEvent(String eventID,View view,String eventName) {
         String imageName = eventID + "-event.png";
         StorageReference imageRef = storage.getReference().child("qr-codes/" + imageName);

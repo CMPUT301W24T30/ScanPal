@@ -410,6 +410,12 @@ public class EventDetailsFragment extends Fragment {
         }
     }
 
+
+    /**
+     * Navigates to the view attendees screen.
+     * This method retrieves the NavController associated with the EventDetailsFragment and navigates to the
+     * view_signed_up_users destination with the event_id parameter bundled.
+     */
     void navToViewAttendees() {
         NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
         Bundle bundle = new Bundle();
@@ -417,6 +423,11 @@ public class EventDetailsFragment extends Fragment {
         navController.navigate(R.id.view_signed_up_users, bundle);
     }
 
+
+    /**
+     * Navigates to the view map screen.
+     * This method creates an intent to navigate to the MapsActivity and adds the event_id parameter to it.
+     */
     void navToViewMap() {
         Log.d("EventDetailsFragment", "Sending eventID to MapActivity: " + eventID);
         Intent intent = new Intent(getActivity(), MapsActivity.class);
@@ -425,6 +436,15 @@ public class EventDetailsFragment extends Fragment {
         startActivity(intent);
     }
 
+
+    /**
+     * Navigates to the ShowQrFragment with the specified request type.
+     * This method retrieves the NavController associated with the EventDetailsFragment and navigates to the
+     * ShowQrFragment destination with the event_id, request, and eventName parameters bundled based on the provided type.
+     * If the type is 1, it navigates with a request for check-in QR; otherwise, it navigates with a request for event details QR.
+     *
+     * @param type The type of request (1 for check-in QR, 0 for event details QR).
+     */
     void navToShowQr(int type) {
         if (type == 1) { //check in qr
             NavController navController = NavHostFragment.findNavController(EventDetailsFragment.this);
@@ -488,6 +508,13 @@ public class EventDetailsFragment extends Fragment {
         announcementDialog.show();
     }
 
+    /**
+     * Fetches the current location and proceeds with RSVP.
+     * This method uses the FusedLocationProviderClient to fetch the last known location.
+     * If the ACCESS_FINE_LOCATION permission is granted, it retrieves the last known location
+     * and proceeds to RSVP with the location information. If the location is not available,
+     * it proceeds with RSVP without location information.
+     */
     private void fetchLocationAndRSVP() {
         FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -504,6 +531,12 @@ public class EventDetailsFragment extends Fragment {
         }
     }
 
+    /**
+     * Checks for location permission and proceeds with RSVP.
+     * This method checks if the ACCESS_FINE_LOCATION permission is granted. If not, it requests
+     * the permission using locationPermissionLauncher. If the permission is already granted,
+     * it directly fetches the location and proceeds with RSVP.
+     */
     private void checkLocationAndRSVP() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // Permission not granted, request it
@@ -514,6 +547,16 @@ public class EventDetailsFragment extends Fragment {
         }
     }
 
+
+    /**
+     * Proceeds with RSVP for the event.
+     * This method creates an attendee object with the user details, event ID, and RSVP status.
+     * If locationStr is not null, it sets the location for the attendee. Then, it adds the attendee
+     * to the database using the attendeeController. After a successful RSVP, it subscribes the user
+     * to the event's topic for notifications and updates the RSVP status UI.
+     *
+     * @param locationStr The location string to be associated with the attendee, can be null.
+     */
     private void proceedWithRSVP(@Nullable String locationStr) {
         if (eventID != null && userDetails != null) {
             String attendeeId = userDetails.getUsername() + eventID;

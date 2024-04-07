@@ -230,6 +230,17 @@ public class AttendeeController {
                 .addOnFailureListener(e -> callback.onFailure(new Exception("Error fetching attendees", e)));
     }
 
+
+    /**
+     * Fetches all attendees who have checked in for a given event from Firestore.
+     * Retrieves attendees from Firestore where the checked-in status is true for the specified eventID.
+     * Assembles a list of Attendee objects for attendees who have checked in and utilizes a callback
+     * to handle success or failure.
+     *
+     * @param eventID  The unique ID of the event.
+     * @param callback Callback to manage the fetched attendees who have checked in or errors.
+     */
+
     public void fetchCheckedInUsers(String eventID, AttendeeSignedUpFetchCallback callback) {
         DocumentReference eventRef = database.collection("Events").document(eventID);
         ArrayList<Attendee> attendees = new ArrayList<>();

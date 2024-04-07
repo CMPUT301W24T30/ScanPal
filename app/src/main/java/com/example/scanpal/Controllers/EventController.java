@@ -103,6 +103,15 @@ public class EventController {
         }, e -> Log.wtf(TAG, "Event Image Upload failed: " + e.getMessage()));
     }
 
+    /**
+     * Fetches all events from the Firestore database.
+     *
+     * Retrieves all events stored in the Firestore collection "Events".
+     * Assembles a list of Event objects representing the fetched events and utilizes a callback
+     * to handle success or failure.
+     *
+     * @param callback Callback to manage the fetched events or errors.
+     */
     public void fetchAllEvents(final EventsFetchCallback callback) {
         database.collection("Events")
                 .get()
@@ -254,6 +263,15 @@ public class EventController {
         }
     }
 
+    /**
+     * Fetches the organizer of an event referenced by a DocumentReference from the Firestore database.
+     * Retrieves the organizer details from Firestore using the provided DocumentReference.
+     * Assembles a User object representing the organizer and utilizes a callback
+     * to handle success or failure.
+     *
+     * @param eventRef The DocumentReference pointing to the event organizer's document.
+     * @param callback Callback to manage the fetched organizer or errors.
+     */
     public void fetchEventOrganizerByRef(DocumentReference eventRef, UserFetchCallback callback) {
         if (eventRef == null) {
             // Early return or callback error if the DocumentReference is null
@@ -295,6 +313,16 @@ public class EventController {
         });
     }
 
+
+
+
+    /**
+     * Retrieves all event IDs from the Firestore database.
+     * Retrieves the IDs of all events stored in the Firestore collection "Events".
+     * Assembles a list of event IDs and utilizes a callback to handle success or failure.
+     *
+     * @param callback Callback to manage the fetched event IDs or errors.
+     */
 
     public void getAllEventIds(EventIDsFetchCallback callback) {
         CollectionReference eventsRef = database.collection("Events");
