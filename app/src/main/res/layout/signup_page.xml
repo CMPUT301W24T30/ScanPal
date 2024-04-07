@@ -23,7 +23,7 @@
         app:layout_constraintTop_toBottomOf="@+id/divider"
         app:strokeColor="@color/white" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/signup_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/signup_instructions"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -84,6 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Username"
+            android:singleLine="true"
             android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -109,6 +110,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="First Name"
+            android:singleLine="true"
             android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -134,6 +136,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Last Name"
+            android:singleLine="true"
             android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -142,7 +145,7 @@
         style="@style/Widget.Material3.Button.OutlinedButton.Icon"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:backgroundTint="#3580FF"
+        android:backgroundTint="@color/button_default"
         android:text="@string/continueButton"
         android:textColor="@android:color/white"
         android:theme="@style/AppTheme"
