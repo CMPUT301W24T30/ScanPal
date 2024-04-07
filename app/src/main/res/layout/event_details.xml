@@ -96,6 +96,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
         android:text="About Event"
         android:textColor="@color/white"
         android:textSize="16sp"
@@ -108,12 +110,15 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/event_description_card"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="4dp"
+        android:fadeScrollbars="true"
+        android:isScrollContainer="true"
         android:minHeight="175dp"
-        app:cardBackgroundColor="@color/black"
+        android:nestedScrollingEnabled="true"
+        app:cardBackgroundColor="@color/background"
         app:cardCornerRadius="16dp"
         app:cardElevation="8dp"
         app:contentPadding="16dp"
@@ -124,15 +129,23 @@
         app:strokeColor="@color/white"
         app:strokeWidth="2dp">
 
-        <TextView
-            android:id="@+id/event_description"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="You will meet us in the back alley of CSC no further questions asked. A tall slender man will provide pizza for you and those you came with. He will appear through the wall and return within 2 minutes of dropping off the pizza"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:fillViewport="true">
+
+            <TextView
+                android:id="@+id/event_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="You will meet us in the back alley of CSC no further questions asked. A tall slender man will provide pizza for you and those you came with. He will appear through the wall and return within 2 minutes of dropping off the pizza"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+        </ScrollView>
 
     </com.google.android.material.card.MaterialCardView>
+
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/join_button"
