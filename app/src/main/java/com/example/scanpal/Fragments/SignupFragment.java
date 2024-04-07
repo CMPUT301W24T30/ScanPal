@@ -27,6 +27,10 @@ import java.util.Objects;
  * Fragment controlling user sign up screen
  */
 public class SignupFragment extends Fragment {
+
+    /**
+     * Required empty public constructor for instantiating the fragment.
+     */
     public SignupFragment() {
     }
 
@@ -93,6 +97,16 @@ public class SignupFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Generates a guest user for the signup process.
+     * This method generates a guest user with a random username, first name, and last name
+     * using the Faker library. It then checks if the generated username is already taken.
+     * If the username is available, it navigates to the signup continuation action with the
+     * generated user information. If the username is taken, it recursively generates another
+     * guest user until a unique username is found.
+     *
+     * @param view The parent view containing the addUserGuest button.
+     */
     private void generateGuestUser(View view) {
         view.findViewById(R.id.addUserGuest).setOnClickListener(v -> {
 

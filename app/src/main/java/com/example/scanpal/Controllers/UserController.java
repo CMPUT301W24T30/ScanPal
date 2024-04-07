@@ -327,6 +327,14 @@ public class UserController {
         });
     }
 
+
+    /**
+     * Fetches all users from the Firestore database.
+     * Retrieves all user documents stored in the Firestore collection "Users".
+     * Assembles a list of User objects representing the fetched users and utilizes a callback
+     * to handle success or failure.
+     * @param callback Callback to manage the fetched users or errors.
+     */
     public void fetchAllUsers(UsersFetchCallback callback) {
         database.collection("Users").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {

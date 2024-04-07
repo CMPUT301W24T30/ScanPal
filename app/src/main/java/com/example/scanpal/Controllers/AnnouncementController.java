@@ -18,10 +18,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+
+/**
+ * Controller class for handling announcements in the application.
+ */
 public class AnnouncementController {
     FirebaseFirestore database;
     FirebaseStorage storage;
 
+    /**
+     * Constructor initializing Firestore database and Firebase storage.
+     */
     public AnnouncementController() {
         database = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
@@ -64,6 +72,13 @@ public class AnnouncementController {
         });
     }
 
+
+    /**
+     * Retrieves announcements associated with a specific event ID.
+     *
+     * @param EventID  The ID of the event to fetch announcements for.
+     * @param callback Callback to handle success or failure of the fetch operation.
+     */
     public void getAnnouncementsByEventId(String EventID, AnnouncementsFetchCallback callback) {
         CollectionReference announcementsRef = database.collection("Announcements");
         Query query = announcementsRef.whereEqualTo("eventID", EventID);

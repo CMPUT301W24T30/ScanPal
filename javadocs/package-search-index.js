@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.example.scanpal"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.example.scanpal"},{"l":"com.example.scanpal.Adapters"},{"l":"com.example.scanpal.Callbacks"},{"l":"com.example.scanpal.Controllers"},{"l":"com.example.scanpal.Fragments"},{"l":"com.example.scanpal.Models"}];updateSearchResults();
