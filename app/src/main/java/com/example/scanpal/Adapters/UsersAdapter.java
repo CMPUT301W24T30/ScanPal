@@ -25,6 +25,11 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
     ArrayList<User> users;
     Context context;
 
+
+    /**
+     * Adapter for displaying User data in a list format. This adapter binds some of the related
+     * User's data to views containing the user profile img, and name
+     */
     public UsersAdapter(Context context, ArrayList<User> users) {
         this.users = users;
         this.context = context;
@@ -46,20 +51,42 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UsersViewHol
                 .into(holder.profilePic);
     }
 
+    /**
+     * Gets the number of Users that have signed up for related event
+     * @return The number of Users
+     *
+     */
     @Override
     public int getItemCount() {
         return users.size();
     }
 
+    /**
+     * Adds a User to the List
+     *
+     *
+     */
     public void addUser(User user) {
         users.add(user);
         notifyItemInserted(users.size() - 1);
     }
 
+
+    /**
+     * Gets the User at specific index
+     * @return The User Object
+     *
+     */
     public User getAt(int index) {
         return users.get(index);
     }
 
+
+    /**
+     * Inner class for how the views on the list of users should be
+     * @return The number of Notifications
+     *
+     */
     class UsersViewHolder extends RecyclerView.ViewHolder {
         TextView fullName;
         ImageView profilePic;

@@ -26,6 +26,9 @@ public class RoleSelectFragment extends Fragment {
 
     String deviceToken = "a";
 
+    /**
+     * Required empty public constructor for instantiating the fragment.
+     */
     public RoleSelectFragment() {
     }
 

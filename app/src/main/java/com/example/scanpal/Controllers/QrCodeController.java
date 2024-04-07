@@ -42,6 +42,14 @@ public class QrCodeController {
         storage = FirebaseStorage.getInstance();
     }
 
+    /**
+     * Generates a QR Code bitmap from the provided data.
+     * Generates a QR Code bitmap with the specified data using the ZXing library.
+     * The generated QR Code has a default width and height of 300 pixels.
+     *
+     * @param data The data to be encoded in the QR Code.
+     * @return A Bitmap object representing the generated QR Code, or null if an error occurs during generation.
+     */
     public static Bitmap generate(String data) {
         int width = 300;
         int height = 300;
@@ -75,7 +83,6 @@ public class QrCodeController {
      * @param bitmap The Bitmap to convert
      * @return A byte array representing the Bitmap
      */
-
     public static byte[] bitmapToByteArray(Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);

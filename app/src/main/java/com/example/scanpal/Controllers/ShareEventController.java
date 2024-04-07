@@ -26,6 +26,12 @@ public class ShareEventController {
     private final Context context;
     private Event eventItem;
 
+
+    /**
+     * Constructs a ShareEventController with the specified context.
+     *
+     * @param context The context of the application.
+     */
     public ShareEventController(Context context) {
         this.context = context;
     }

@@ -19,23 +19,43 @@ import com.example.scanpal.R;
 
 import java.util.List;
 
+
+/**
+ * Adapter for displaying Notification data in a list format. This adapter binds some of the relateted
+ * event's data to views containing the event poster and message
+ */
 public class NotificationListAdapter extends BaseAdapter {
     protected Context context;
     protected List<Announcement> notifications;
     private Event eventItem;
 
 
+    /**
+     * Constructs an NotificationListAdapter with the specified context and notifications list.
+     *
+     * @param context The current context. Used to inflate layout files and access resources.
+     */
     public NotificationListAdapter(Context context, List<Announcement> values) {
-        //super(context, R.layout.notif_list_layout, values);
         this.context = context;
         this.notifications = values;
     }
 
+    /**
+     * Gets the number of Announcements that have been sent out from this event
+     * @return The number of Notifications
+     *
+     */
     @Override
     public int getCount() {
         return notifications.size();
     }
 
+    /**
+     * Gets the data item associated with the specified position in the data set.
+     *
+     * @param position Position of the item within the adapter's data set whose data we want.
+     * @return The Notification object at the specified position.
+     */
     @Override
     public Object getItem(int position) {
         return notifications.get(position);
@@ -88,6 +108,11 @@ public class NotificationListAdapter extends BaseAdapter {
         return convertView;
     }
 
+    /**
+     * Updates the notifications list of the adapter and notifies the Listview to refresh the data set.
+     *
+     * @param newAnnouncements The new list of events to replace the old one.
+     */
     public void setNotifications(List<Announcement> newAnnouncements) {
         this.notifications.clear();
         this.notifications.addAll(newAnnouncements);

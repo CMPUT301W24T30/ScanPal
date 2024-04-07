@@ -101,6 +101,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    /**
+     * Adds an event marker to the map.
+     * This method adds a marker to the specified LatLng position on the map with the given title.
+     * The marker is colored blue to represent an event location. If the map is null, the marker
+     * is not added.
+     *
+     * @param latLng The LatLng position where the marker will be added.
+     * @param title  The title of the marker.
+     */
     private void addEventMarkerToMap(LatLng latLng, String title) {
         if (mMap != null) {
             BitmapDescriptor blueColor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
@@ -111,6 +120,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
+    /**
+     * Fetches event and attendee locations to display on the map.
+     * This method fetches the location coordinates of the event and the locations of attendees
+     * who have checked in to the event. It then adds markers for the event location and attendee
+     * locations on the map.
+     */
     private void fetchEventAndAttendeeLocations() {
         String eventId = getIntent().getStringExtra("event_id");
         DocumentReference eventRef = db.collection("Events").document(eventId);
@@ -192,13 +207,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .addOnFailureListener(e -> Log.e("MapsActivity", "Error fetching attendee locations", e));
     }
 
+    /**
+     * Custom InfoWindowAdapter for displaying custom info windows on Google Maps.
+     * This class provides custom rendering for info windows displayed on markers.
+     */
     private class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         private final View mWindow;
 
+        /**
+         * Constructor for CustomInfoWindowAdapter.
+         */
         public CustomInfoWindowAdapter() {
             mWindow = getLayoutInflater().inflate(R.layout.info_window_layout, null);
         }
 
+        /**
+         * Render the contents of the info window based on the marker's tag.
+         *
+         * @param marker The marker for which the info window is being rendered.
+         * @param view   The view representing the info window.
+         */
         private void renderWindowText(Marker marker, View view) {
             String imageUrl = (String) marker.getTag();
             ImageView infoWindowImage = view.findViewById(R.id.info_window_image);
@@ -225,6 +253,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     });
         }
 
+
+        /**
+         * Get the custom view for the info window.
+         *
+         * @param marker The marker for which the info window is being rendered.
+         * @return The custom view representing the info window.
+         */
         @Override
         public View getInfoWindow(Marker marker) {
             if ("eventLocation".equals(marker.getTag())) {
@@ -239,6 +274,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
 
+        /**
+         * Get the custom contents for the info window.
+         *
+         * @param marker The marker for which the info window is being rendered.
+         * @return The custom view representing the contents of the info window.
+         */
         @Override
         public View getInfoContents(Marker marker) {
             if ("eventLocation".equals(marker.getTag())) {

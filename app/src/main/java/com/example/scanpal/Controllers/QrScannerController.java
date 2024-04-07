@@ -22,6 +22,12 @@ public class QrScannerController {
     private final Context context;
     protected String eventID = null;
 
+    /**
+     * Constructs a QrScannerController with the specified context and AttendeeController.
+     *
+     * @param context            The context of the application.
+     * @param attendeeController The AttendeeController used for managing attendee data.
+     */
     public QrScannerController(Context context, AttendeeController attendeeController) {
         this.context = context;
         this.attendeeController = attendeeController;
