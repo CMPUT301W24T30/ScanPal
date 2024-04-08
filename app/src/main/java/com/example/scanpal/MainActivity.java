@@ -5,11 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.navigation.NavController;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -61,8 +64,12 @@ public class MainActivity extends AppCompatActivity {
 
         //receiver notif stuff
         IntentFilter filter = new IntentFilter("com.example.scanpal.MESSAGE_RECEIVED");
-        registerReceiver(receiver, filter);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Log.d("msg", "build good ");
+
+            registerReceiver(receiver, filter,Context.RECEIVER_EXPORTED);
+        }
 
 
         // In case user has been deleted on firebase.
