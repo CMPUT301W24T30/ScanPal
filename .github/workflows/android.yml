@@ -26,9 +26,11 @@ jobs:
       run: |
         echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
         echo "MAPS_API_KEY=${{ secrets.MAPS_API_KEY }}" >> local.properties
+        echo "FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}" >> local.properties
 
     - name: Build with Gradle
       run: ./gradlew build
       env:
         MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
+        FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
 
