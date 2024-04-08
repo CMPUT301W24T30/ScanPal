@@ -10,6 +10,7 @@ This project heavily integrates Google Cloud's [firebase](https://firebase.googl
 - **[Project Wiki](https://github.com/CMPUT301W24T30/ScanPal/wiki)**
 - **[Project Board](https://github.com/orgs/CMPUT301W24T30/projects/1)**
 - **[GitHub Repository](https://github.com/CMPUT301W24T30/ScanPal)**
+- **[App UI With User/Organizer/Admin Screens](https://github.com/CMPUT301W24T30/ScanPal/wiki/App-UI)**
 
 ## Usage
 Download the Latest APK from [Releases](https://github.com/CMPUT301W24T30/ScanPal/releases) and install it on your Android device.
