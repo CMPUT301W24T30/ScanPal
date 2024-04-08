@@ -91,6 +91,13 @@ public class EditProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        imageController = new ImageController();
+        userController = new UserController(getContext());
+        attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
+        eventController = new EventController();
+
+        fetchUserDetails();
+
         profileImageView = view.findViewById(R.id.profile_page_image);
         FloatingActionButton uploadButton = view.findViewById(R.id.upload_button);
         FloatingActionButton deleteButton = view.findViewById(R.id.delete_button);
@@ -107,10 +114,6 @@ public class EditProfileFragment extends Fragment {
         lastName = (TextInputEditText) ((TextInputLayout) view.findViewById(R.id.last_name)).getEditText();
         homepage = (TextInputEditText) ((TextInputLayout) view.findViewById(R.id.homepage)).getEditText();
 
-        imageController = new ImageController();
-        userController = new UserController(getContext());
-        attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
-        eventController = new EventController();
 
         uploadButton.setOnClickListener(v -> openGallery());
 
@@ -118,12 +121,11 @@ public class EditProfileFragment extends Fragment {
             imageUri = null;
             isDeleteIntent = true;
             Glide.with(EditProfileFragment.this)
-                    .load(R.drawable.ic_launcher_background)
+                    .load(existingUser.createProfileImage(existingUser.getUsername()))
                     .apply(new RequestOptions().circleCrop())
                     .into(profileImageView);
         });
 
-        fetchUserDetails();
 
         saveButton.setOnClickListener(v -> saveUserDetails());
         goBack.setOnClickListener(v -> {
