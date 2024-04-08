@@ -5,6 +5,11 @@ This repository contains the source code for Scanpal, an event management mobile
 
 This project heavily integrates Google Cloud's [firebase](https://firebase.google.com/?gad_source=1&gclid=Cj0KCQjwq86wBhDiARIsAJhuphmFISnNntyvfJg20RD2klsDN7WqC3mm58ZtOaN7kJlhqABiDYJXgj8aAi9QEALw_wcB&gclsrc=aw.ds) services to handle backend operations. 
 
+## 📚 Project Resources
+
+- **[Project Wiki](https://github.com/CMPUT301W24T30/ScanPal/wiki)**
+- **[Project Board](https://github.com/orgs/CMPUT301W24T30/projects/1)**
+- **[GitHub Repository](https://github.com/CMPUT301W24T30/ScanPal)**
 
 ## Usage
 Download the Latest APK from [Releases](https://github.com/CMPUT301W24T30/ScanPal/releases) and install it on your Android device.
