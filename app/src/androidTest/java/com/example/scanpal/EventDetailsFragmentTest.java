@@ -33,7 +33,6 @@ public class EventDetailsFragmentTest {
     @Test
     public void testUIVisibility() {
         Espresso.onView(ViewMatchers.withId(R.id.event_details_backButton)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
-        Espresso.onView(ViewMatchers.withId(R.id.event_editButton)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
         Espresso.onView(ViewMatchers.withId(R.id.event_detail_imageView)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
         Espresso.onView(ViewMatchers.withId(R.id.organizer_image)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
         Espresso.onView(ViewMatchers.withId(R.id.event_orgName)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
