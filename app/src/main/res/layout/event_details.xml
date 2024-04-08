@@ -154,6 +154,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            android:theme="@style/AppTheme"
             app:srcCompat="@drawable/share_icon" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -187,6 +188,7 @@
         app:cardBackgroundColor="@color/background"
         app:cardCornerRadius="16dp"
         app:cardElevation="8dp"
+        android:theme="@style/AppTheme"
         app:contentPadding="16dp"
         app:layout_constraintBottom_toTopOf="@+id/join_button"
         app:layout_constraintEnd_toEndOf="parent"
@@ -218,6 +220,7 @@
         android:layout_width="182dp"
         android:layout_height="49dp"
         android:layout_marginBottom="8dp"
+        android:theme="@style/AppTheme"
         android:backgroundTint="@color/button_default"
         android:text="Signup"
         android:textColor="@color/white"
@@ -232,7 +235,7 @@
         android:backgroundTint="#2d3132"
         android:clickable="true"
         android:focusable="true"
-        android:theme="@style/Theme.AppCompat"
+        android:theme="@style/AppTheme"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.04"
@@ -248,7 +251,7 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
-        android:theme="@style/Theme.AppCompat"
+        android:theme="@style/AppTheme"
         android:visibility="invisible"
         app:backgroundTint="@color/button_default"
         app:layout_constraintBottom_toBottomOf="parent"
