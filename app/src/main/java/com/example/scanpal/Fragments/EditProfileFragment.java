@@ -271,7 +271,8 @@ public class EditProfileFragment extends Fragment {
     }
 
     /**
-     * Handles the user & linked attendees deletion process.
+     * Handles the user and linked attendees deletion process.
+     *
      */
     private void deleteUser() {
         String username = existingUser.getUsername();
