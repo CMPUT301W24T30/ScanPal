@@ -51,6 +51,9 @@ public class QrCodeController {
      * @return A Bitmap object representing the generated QR Code, or null if an error occurs during generation.
      */
     public static Bitmap generate(String data) {
+        if (data == null || data.isEmpty()) {
+            return null;
+        }
         int width = 300;
         int height = 300;
 
