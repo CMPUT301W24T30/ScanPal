@@ -1,14 +1,20 @@
 package com.example.scanpal.Fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.GridView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,6 +74,18 @@ public class BrowseEventFragment extends Fragment {
     private GridView gridView;
     private int selectedImage;
 
+    //Specifically put here because its the first fragments the user goes to after creation
+
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent.getStringExtra("message");
+            Log.d("msg", "broadcast received MAIN: ");
+
+            showCustomPopup(context,message);
+        }
+    };
+
     /**
      * Default constructor. Initializes the fragment.
      */
@@ -100,6 +118,15 @@ public class BrowseEventFragment extends Fragment {
         ((TextView) view.findViewById(R.id.event_page_title)).setText("Events Browser");
         dropdown.setText("Events Browser");
         fetchAllEvents();
+
+
+
+        //receiver notif stuff
+        IntentFilter filter = new IntentFilter("com.example.scanpal.MESSAGE_RECEIVED");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireActivity().registerReceiver(receiver, filter,Context.RECEIVER_EXPORTED);
+        }
 
 
         // Create an ArrayAdapter using the string array and a default dropdown layout.
@@ -336,5 +363,26 @@ public class BrowseEventFragment extends Fragment {
                 Toast.makeText(getContext(), "Failed to delete image." + e, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    /**
+     * This Enables a custom pop up window to be show, when a message is
+     * detected and received
+     * @param context the current context when called
+     * @param message the message in the notification pop up
+     */
+    private void showCustomPopup(Context context, String message) {
+
+        View customView = LayoutInflater.from(context).inflate(R.layout.notif_popup, null);
+        TextView textView = customView.findViewById(R.id.popup_text);
+        textView.setText(message);
+
+        // Create and show the pop-up window at the top of screen
+        PopupWindow popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        popupWindow.showAtLocation(customView, android.view.Gravity.TOP | android.view.Gravity.CENTER_HORIZONTAL, 0, 100);
+
+        // Times long low it takes until pop up disappears
+        customView.postDelayed(popupWindow::dismiss, 3000);
+
     }
 }

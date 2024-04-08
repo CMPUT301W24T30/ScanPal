@@ -1,9 +1,17 @@
 package com.example.scanpal;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.navigation.NavController;
@@ -27,7 +35,19 @@ public class MainActivity extends AppCompatActivity {
     private View appBar;
     private ActivityResultLauncher<ScanOptions> qrCodeScanner;
     private QrScannerController qrScannerController;
+    private int buttonChatColorFlag = -1; // Default color
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent.getStringExtra("message");
+            Log.d("msg", "broadcast received MAIN: ");
 
+            updateUI(message);
+        }
+    };
+
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -40,6 +60,16 @@ public class MainActivity extends AppCompatActivity {
         initializeViews();
         setupButtonListeners();
         setupNavController();
+
+
+        //receiver notif stuff
+        IntentFilter filter = new IntentFilter("com.example.scanpal.MESSAGE_RECEIVED");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Log.d("msg", "build good");
+            registerReceiver(receiver, filter,Context.RECEIVER_EXPORTED);
+        }
+
 
         // In case user has been deleted on firebase.
         new UserController(this).getUserFirebaseOnly(
@@ -59,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     // Sets up navigation
     private void setupNavController() {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
@@ -72,7 +103,17 @@ public class MainActivity extends AppCompatActivity {
             buttonYourEvents.setColorFilter(getResources().getColor(R.color.default_icon_tint));
             buttonHomepage.setColorFilter(getResources().getColor(R.color.default_icon_tint));
 
+            if(buttonChatColorFlag == 0) {
+                buttonChat.setColorFilter(getResources().getColor(R.color.button_alert));//keep red
+                Log.d("msg", "Recreating main assets");
+
+            }else {
+                buttonChat.setColorFilter(getResources().getColor(R.color.default_icon_tint));//keep red
+            }
+
+
             if (destination.getId() == R.id.notificationsFragment) {
+                buttonChatColorFlag = -1;
                 buttonChat.setColorFilter(getResources().getColor(R.color.button_default));
             } else if (destination.getId() == R.id.profile_fragment) {
                 buttonProfile.setColorFilter(getResources().getColor(R.color.button_default));
@@ -154,5 +195,28 @@ public class MainActivity extends AppCompatActivity {
         if (buttonYourEvents != null) buttonYourEvents.setVisibility(visibility);
         if (buttonHomepage != null) buttonHomepage.setVisibility(visibility);
         if (appBar != null) appBar.setVisibility(visibility);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
+    }
+
+
+    /**
+     * Method accordingly updates the UI based on Received cloud messages
+     * @param message the message that was sent
+     */
+    private void updateUI(String message) {
+
+        if (buttonChat != null) {
+            Log.d("msg", "MAKE RED: " + "message.getNotification().getBody())");
+
+            buttonChatColorFlag = 0;
+            buttonChat.setColorFilter(getResources().getColor(R.color.button_alert));
+
+        }
+
     }
 }

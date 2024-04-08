@@ -80,7 +80,7 @@ public class ImageController {
 
         StorageReference imageRef = storage.getReference().child(filePath);
         imageRef.delete().addOnSuccessListener(result -> callback.onSuccess()).addOnFailureListener(callback::onError);
-        ;
+
     }
 
 
