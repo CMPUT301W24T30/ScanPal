@@ -38,6 +38,7 @@ public class EventController {
     private final FirebaseFirestore database;
     protected ImageController imageController;
     protected AttendeeController attendeeController;
+    protected QrCodeController qrCodeController;
 
     /**
      * Constructs an EventController with a reference to a Firestore database.
@@ -46,18 +47,21 @@ public class EventController {
         database = FirebaseFirestore.getInstance();
         imageController = new ImageController();
         attendeeController = new AttendeeController(database);
+        qrCodeController = new QrCodeController();
     }
 
     /**
      * Constructs an EventController with a reference to a Firestore database and Firebase storage.
      * @param database The Firestore database instance.
-     * @param storage The Firebase storage instance.
      * @param imageController The image controller instance.
+     * @param attendeeController The attendee controller instance.
+     * @param qrCodeController The QR code controller instance.
      */
-    public EventController(FirebaseFirestore database, FirebaseStorage storage, ImageController imageController) {
+    public EventController(FirebaseFirestore database, ImageController imageController, AttendeeController attendeeController, QrCodeController qrCodeController) {
         this.database = database;
-        this.storage = storage;
         this.imageController = imageController;
+        this.attendeeController = attendeeController;
+        this.qrCodeController = qrCodeController;
     }
 
     /**
@@ -107,7 +111,6 @@ public class EventController {
         eventMap.put("participants", participantRefs);
 
         // Generate Qr Code or get custom code
-        QrCodeController qrCodeController = new QrCodeController();
         qrCodeController.generateAndStoreQrCode(event, eventMap);  // auto generate a qr code
 
         DocumentReference eventRef = database.collection("Events").document(event.getId());
