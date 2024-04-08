@@ -17,7 +17,15 @@ import java.util.List;
  * Controller class for managing image uploads and retrievals with Firebase Storage.
  */
 public class ImageController {
-    protected FirebaseStorage storage = FirebaseStorage.getInstance();
+    protected FirebaseStorage storage;
+
+    public ImageController() {
+        storage = FirebaseStorage.getInstance();
+    }
+
+    public ImageController(FirebaseStorage storage) {
+        this.storage = storage;
+    }
 
     /**
      * Uploads an image file to Firebase Storage within a specified folder.
