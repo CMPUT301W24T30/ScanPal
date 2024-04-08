@@ -53,23 +53,4 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     }
 
-    private void showCustomPopup(Context context, String message) {
-
-        new Handler(Looper.getMainLooper()).post(() -> {
-            View customView = LayoutInflater.from(context).inflate(R.layout.notif_popup, null);
-            TextView textView = customView.findViewById(R.id.popup_text);
-            textView.setText(message);
-
-
-            // Create and show the pop-up window
-            PopupWindow popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            popupWindow.showAtLocation(customView, android.view.Gravity.TOP | android.view.Gravity.CENTER_HORIZONTAL, 0, 100);
-            //popupWindow.showAsDropDown(customView);
-
-            // Dismiss the pop-up window after a certain duration
-            customView.postDelayed(popupWindow::dismiss, 3000);
-
-        });
-    }
-
 }

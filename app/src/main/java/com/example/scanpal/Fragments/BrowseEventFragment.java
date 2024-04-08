@@ -381,7 +381,7 @@ public class BrowseEventFragment extends Fragment {
         PopupWindow popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         popupWindow.showAtLocation(customView, android.view.Gravity.TOP | android.view.Gravity.CENTER_HORIZONTAL, 0, 100);
 
-        // Dismiss the pop up in mili-seconds
+        // Times long low it takes until pop up disappears
         customView.postDelayed(popupWindow::dismiss, 3000);
 
     }
