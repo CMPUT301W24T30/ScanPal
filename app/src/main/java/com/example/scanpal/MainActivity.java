@@ -1,6 +1,12 @@
 package com.example.scanpal;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -27,6 +33,17 @@ public class MainActivity extends AppCompatActivity {
     private View appBar;
     private ActivityResultLauncher<ScanOptions> qrCodeScanner;
     private QrScannerController qrScannerController;
+    private int buttonChatColorFlag = -1; // Default color
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent.getStringExtra("message");
+            Log.d("msg", "broadcast received MAIN: ");
+
+            updateUI(message);
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +57,13 @@ public class MainActivity extends AppCompatActivity {
         initializeViews();
         setupButtonListeners();
         setupNavController();
+
+
+        //receiver notif stuff
+        IntentFilter filter = new IntentFilter("com.example.scanpal.MESSAGE_RECEIVED");
+        registerReceiver(receiver, filter);
+
+
 
         // In case user has been deleted on firebase.
         new UserController(this).getUserFirebaseOnly(
@@ -59,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     // Sets up navigation
     private void setupNavController() {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
@@ -72,7 +97,17 @@ public class MainActivity extends AppCompatActivity {
             buttonYourEvents.setColorFilter(getResources().getColor(R.color.default_icon_tint));
             buttonHomepage.setColorFilter(getResources().getColor(R.color.default_icon_tint));
 
+            if(buttonChatColorFlag == 0) {
+                buttonChat.setColorFilter(getResources().getColor(R.color.button_alert));//keep red
+                Log.d("msg", "recreate main: " + "UHH");
+
+            }else {
+                buttonChat.setColorFilter(getResources().getColor(R.color.default_icon_tint));//keep red
+            }
+
+
             if (destination.getId() == R.id.notificationsFragment) {
+                buttonChatColorFlag = -1;
                 buttonChat.setColorFilter(getResources().getColor(R.color.button_default));
             } else if (destination.getId() == R.id.profile_fragment) {
                 buttonProfile.setColorFilter(getResources().getColor(R.color.button_default));
@@ -154,5 +189,35 @@ public class MainActivity extends AppCompatActivity {
         if (buttonYourEvents != null) buttonYourEvents.setVisibility(visibility);
         if (buttonHomepage != null) buttonHomepage.setVisibility(visibility);
         if (appBar != null) appBar.setVisibility(visibility);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
+    }
+
+
+    /**
+     * Method accordingly updates the UI based on Received cloud messages
+     * @param message the message that was sent
+     */
+    private void updateUI(String message) {
+        // Find and update FloatingActionButton or any other UI element here
+        //FloatingActionButton buttonChat = findViewById(R.id.button_chat);
+        if (buttonChat != null) {
+            Log.d("msg", "MAKE RED: " + "message.getNotification().getBody())");
+
+            buttonChatColorFlag = 0;
+
+            // for in app pop up?
+            //View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+            //Snackbar.make(findViewById(R.id.popup_text) , message, Snackbar.LENGTH_SHORT).show();
+
+
+            buttonChat.setColorFilter(getResources().getColor(R.color.button_alert));
+
+
+        }
     }
 }
