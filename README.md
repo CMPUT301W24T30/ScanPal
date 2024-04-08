@@ -16,5 +16,7 @@ This project heavily integrates Google Cloud's [firebase](https://firebase.googl
 Download the Latest APK from [Releases](https://github.com/CMPUT301W24T30/ScanPal/releases) and install it on your Android device.
 
 ## Demo
-(In progress)
 
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=dmA5Nl-ztyk"><img src="https://img.youtube.com/vi/dmA5Nl-ztyk/0.jpg" alt="ScanPal Demo Video"></a>
+</div>
