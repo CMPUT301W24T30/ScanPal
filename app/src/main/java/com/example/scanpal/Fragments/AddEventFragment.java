@@ -30,6 +30,7 @@ import com.example.scanpal.Callbacks.EventIDsFetchCallback;
 import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Controllers.EventController;
 import com.example.scanpal.Controllers.ImageController;
+import com.example.scanpal.Controllers.QrCodeController;
 import com.example.scanpal.Controllers.QrScannerController;
 import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.MainActivity;
@@ -130,7 +131,8 @@ public class AddEventFragment extends Fragment {
 
         imageController = new ImageController();
         userController = new UserController(view.getContext());
-        eventController = new EventController();
+        QrCodeController qrCodeController = new QrCodeController();
+        eventController = new EventController(qrCodeController);
 
         userController.getUser(userController.fetchStoredUsername(), new UserFetchCallback() {
             @Override

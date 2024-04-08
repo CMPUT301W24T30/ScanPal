@@ -30,6 +30,7 @@ import com.example.scanpal.Callbacks.UserUpdateCallback;
 import com.example.scanpal.Controllers.AttendeeController;
 import com.example.scanpal.Controllers.EventController;
 import com.example.scanpal.Controllers.ImageController;
+import com.example.scanpal.Controllers.QrCodeController;
 import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.MainActivity;
 import com.example.scanpal.Models.User;
@@ -107,7 +108,8 @@ public class EditProfileFragment extends Fragment {
         imageController = new ImageController();
         userController = new UserController(getContext());
         attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
-        eventController = new EventController();
+        QrCodeController qrCodeController = new QrCodeController();
+        eventController = new EventController(qrCodeController);
 
         uploadButton.setOnClickListener(v -> openGallery());
 

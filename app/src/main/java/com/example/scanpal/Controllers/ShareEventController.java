@@ -71,7 +71,8 @@ public class ShareEventController {
     public void shareIntent(Bitmap imageBitmap, String eventID) {
         Uri uri = getUri(imageBitmap);
         Intent intent = new Intent(Intent.ACTION_SEND);
-        EventController eventController = new EventController();
+        QrCodeController qrCodeController = new QrCodeController();
+        EventController eventController = new EventController(qrCodeController);
 
         eventController.getEventById(eventID, new EventFetchCallback() {
             @Override

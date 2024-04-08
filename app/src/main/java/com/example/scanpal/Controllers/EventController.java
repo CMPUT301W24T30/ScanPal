@@ -36,16 +36,33 @@ import java.util.UUID;
 public class EventController {
     private static final String TAG = "EventController";
     private final FirebaseFirestore database;
-    protected ImageController imageController;
+    private final ImageController imageController;
     protected AttendeeController attendeeController;
+    private final QrCodeController qrCodeController;
 
     /**
-     * Constructs an EventController with a reference to a Firestore database.
+     * Main constructor that uses default instances for FirebaseFirestore and possibly other controllers.
+     * This is for use in the main application where default instances are acceptable.
      */
-    public EventController() {
-        database = FirebaseFirestore.getInstance();
-        imageController = new ImageController();
-        attendeeController = new AttendeeController(database);
+    public EventController(QrCodeController qrCodeController, ImageController imageController) {
+        // Initialize FirebaseFirestore with the default instance
+        this.database = FirebaseFirestore.getInstance();
+        // Initialize other controllers directly or via dependency injection as needed
+        this.qrCodeController = qrCodeController;
+        this.imageController = imageController;
+        // AttendeeController seems to rely on FirebaseFirestore; ensure it's properly initialized
+        this.attendeeController = new AttendeeController(this.database);
+    }
+
+    /**
+     * Dependency injection constructor for testing or when custom instances are needed.
+     * Allows for injecting custom FirebaseFirestore, QrCodeController, and ImageController instances.
+     */
+    public EventController(FirebaseFirestore database, QrCodeController qrCodeController, ImageController imageController) {
+        this.database = database;
+        this.qrCodeController = qrCodeController;
+        this.imageController = imageController;
+        this.attendeeController = new AttendeeController(database);
     }
 
     /**
@@ -93,7 +110,6 @@ public class EventController {
         eventMap.put("participants", participantRefs);
 
         // Generate Qr Code or get custom code
-        QrCodeController qrCodeController = new QrCodeController();
         qrCodeController.generateAndStoreQrCode(event, eventMap);  // auto generate a qr code
 
         DocumentReference eventRef = database.collection("Events").document(event.getId());

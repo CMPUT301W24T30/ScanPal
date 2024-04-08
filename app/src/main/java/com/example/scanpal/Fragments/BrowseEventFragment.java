@@ -28,6 +28,7 @@ import com.example.scanpal.Callbacks.UserSignedUpCallback;
 import com.example.scanpal.Callbacks.UsersFetchCallback;
 import com.example.scanpal.Controllers.EventController;
 import com.example.scanpal.Controllers.ImageController;
+import com.example.scanpal.Controllers.QrCodeController;
 import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.Models.User;
@@ -89,7 +90,8 @@ public class BrowseEventFragment extends Fragment {
         gridView.setAdapter(eventGridAdapter);
 
         // init eventController
-        eventController = new EventController();
+        QrCodeController qrCodeController = new QrCodeController();
+        eventController = new EventController(qrCodeController);
         userController = new UserController(this.getContext());
         imageController = new ImageController();
 

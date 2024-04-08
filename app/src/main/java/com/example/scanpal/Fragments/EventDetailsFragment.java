@@ -37,6 +37,7 @@ import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Controllers.AnnouncementController;
 import com.example.scanpal.Controllers.AttendeeController;
 import com.example.scanpal.Controllers.EventController;
+import com.example.scanpal.Controllers.QrCodeController;
 import com.example.scanpal.Controllers.ShareEventController;
 import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.MapsActivity;
@@ -281,7 +282,8 @@ public class EventDetailsFragment extends Fragment {
      * @param eventID The ID of the event to fetch details for.
      */
     void fetchEventDetails(String eventID) {
-        EventController eventController = new EventController();
+        QrCodeController qrCodeController = new QrCodeController();
+        EventController eventController = new EventController(qrCodeController);
         FirebaseFirestore db = eventController.getDatabase();
 
         CollectionReference eventCollection = db.collection("Events");
@@ -452,7 +454,8 @@ public class EventDetailsFragment extends Fragment {
         EditText messageBox = new EditText(this.getContext());
         MaterialAlertDialogBuilder announcementDialog = new MaterialAlertDialogBuilder(this.requireContext());
         announcementDialog.setView(messageBox);
-        EventController eventController = new EventController();
+        QrCodeController qrCodeController = new QrCodeController();
+        EventController eventController = new EventController(qrCodeController);
 
         eventController.getEventById(eventID, new EventFetchCallback() {
             @Override

@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.scanpal.Callbacks.EventFetchCallback;
 import com.example.scanpal.Controllers.EventController;
+import com.example.scanpal.Controllers.QrCodeController;
 import com.example.scanpal.Models.Announcement;
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.R;
@@ -59,7 +60,8 @@ public class NotificationListAdapter extends BaseAdapter {
         TextView textView1 = convertView.findViewById(R.id.Notification_message);
         TextView textView2 = convertView.findViewById(R.id.Notification_Time);
 
-        EventController eventController = new EventController();
+        QrCodeController qrCodeController = new QrCodeController();
+        EventController eventController = new EventController(qrCodeController);
         //Event event = new Event(null,"","");
         //Event eventItem = ;
         eventController.getEventById(announcement.getEventID(), new EventFetchCallback() {

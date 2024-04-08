@@ -22,6 +22,7 @@ import com.example.scanpal.Callbacks.EventFetchByUserCallback;
 import com.example.scanpal.Callbacks.EventsFetchCallback;
 import com.example.scanpal.Callbacks.UserSignedUpCallback;
 import com.example.scanpal.Controllers.EventController;
+import com.example.scanpal.Controllers.QrCodeController;
 import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.R;
@@ -71,7 +72,8 @@ public class BrowseYourEventFragment extends Fragment {
         gridView.setAdapter(adapter);
 
         // init eventController
-        eventController = new EventController();
+        QrCodeController qrCodeController = new QrCodeController();
+        eventController = new EventController(qrCodeController);
 
         fetchYourEvents();
 
@@ -154,7 +156,8 @@ public class BrowseYourEventFragment extends Fragment {
      * This method differs from fetchYourEvents by focusing on updating the existing list.
      */
     private void fetchEventsAndUpdateGrid() {
-        EventController eventController = new EventController();
+        QrCodeController qrCodeController = new QrCodeController();
+        EventController eventController = new EventController(qrCodeController);
         eventController.fetchAllEvents(new EventsFetchCallback() {
             @Override
             public void onSuccess(List<Event> events) {

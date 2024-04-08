@@ -31,6 +31,7 @@ import com.example.scanpal.Callbacks.EventFetchCallback;
 import com.example.scanpal.Callbacks.EventUpdateCallback;
 import com.example.scanpal.Controllers.AttendeeController;
 import com.example.scanpal.Controllers.EventController;
+import com.example.scanpal.Controllers.QrCodeController;
 import com.example.scanpal.MainActivity;
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.R;
@@ -86,7 +87,8 @@ public class EditEventFragment extends Fragment {
         pageHeader.setText("Edit Event");
 
         attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
-        eventController = new EventController();
+        QrCodeController qrCodeController = new QrCodeController();
+        eventController = new EventController(qrCodeController);
         eventID = requireArguments().getString("event_id");
         placesClient = Places.createClient(requireActivity());
 

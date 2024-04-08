@@ -54,7 +54,8 @@ public class AnnouncementController {
                 Log.d("CREATE ANNOUNCEMENT", "Created at: " + announcement.getTimeStamp());
             }
         });
-        EventController eventController = new EventController();
+        QrCodeController qrCodeController = new QrCodeController();
+        EventController eventController = new EventController(qrCodeController);
         eventController.getEventById(announcement.getEventID(), new EventFetchCallback() {
             @Override
             public void onSuccess(Event event) {

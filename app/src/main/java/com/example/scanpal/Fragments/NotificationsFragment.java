@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.scanpal.Controllers.QrCodeController;
 import com.example.scanpal.Models.Announcement;
 import com.example.scanpal.Controllers.AnnouncementController;
 import com.example.scanpal.Callbacks.AnnouncementsFetchCallback;
@@ -43,7 +44,8 @@ public class NotificationsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.notifications_screen, null, false);
 
-        eventController = new EventController();
+        QrCodeController qrCodeController = new QrCodeController();
+        eventController = new EventController(qrCodeController);
 
         adapter = new NotificationListAdapter(getContext(), new ArrayList<>());
         ListView listView = view.findViewById(R.id.notification_list);

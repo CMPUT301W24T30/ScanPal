@@ -18,7 +18,8 @@ import com.journeyapps.barcodescanner.ScanOptions;
  */
 public class QrScannerController {
     private final AttendeeController attendeeController;
-    private final EventController eventController = new EventController();
+    QrCodeController qrCodeController = new QrCodeController();
+    private final EventController eventController = new EventController(qrCodeController);
     private final Context context;
     protected String eventID = null;
 
