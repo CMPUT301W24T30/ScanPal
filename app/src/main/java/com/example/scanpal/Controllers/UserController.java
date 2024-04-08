@@ -327,6 +327,15 @@ public class UserController {
         });
     }
 
+
+    /**
+     * Fetches all users from the Firestore database.
+     * Retrieves all user documents stored in the Firestore collection "Users".
+     * Assembles a list of User objects representing the fetched users and utilizes a callback
+     * to handle success or failure.
+     *
+     * @param callback Callback to manage the fetched users or errors.
+     */
     public void fetchAllUsers(UsersFetchCallback callback) {
         database.collection("Users").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -340,6 +349,7 @@ public class UserController {
                             (String) document.get("deviceToken")
                     );
                     user.setPhoto(String.valueOf(document.get("photo"))); // Adjust if your user model handles photos differently
+                    user.setHomepage(String.valueOf(document.get("homepage")));
                     users.add(user);
                 }
                 callback.onSuccess(users);
@@ -348,5 +358,4 @@ public class UserController {
             }
         }).addOnFailureListener(callback::onError);
     }
-
 }

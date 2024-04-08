@@ -27,6 +27,8 @@ public class Event {
     private boolean trackLocation = false;
     private String locationCoords; // "lat,lon" format
     private Long totalCheckInCount;
+    private String date;
+    private String time;
 
     /**
      * Constructs an event with an organizer, name, and description.
@@ -177,5 +179,21 @@ public class Event {
 
     public void setUserSignedUp(boolean userSignedUp) {
         isUserSignedUp = userSignedUp;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

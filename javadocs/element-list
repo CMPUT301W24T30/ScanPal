@@ -1,1 +1,6 @@
 com.example.scanpal
+com.example.scanpal.Adapters
+com.example.scanpal.Callbacks
+com.example.scanpal.Controllers
+com.example.scanpal.Fragments
+com.example.scanpal.Models

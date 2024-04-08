@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    android:background="#16181F">
+    android:background="@color/background">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_add_event"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="#0D6EFD"
+        android:backgroundTint="@color/button_default"
         android:clickable="true"
         android:focusable="true"
         android:theme="@style/AppTheme"
@@ -24,7 +24,7 @@
         app:srcCompat="@drawable/add_button"
         app:tint="@color/white" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/event_page_title"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
@@ -42,9 +42,9 @@
         android:id="@+id/event_grid"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="1dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="1dp"
+        android:layout_marginEnd="8dp"
         android:horizontalSpacing="10dp"
         android:numColumns="2"
         android:paddingLeft="10dp"
@@ -64,7 +64,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:visibility="gone"
-        app:boxBackgroundColor="#424242"
+        app:boxBackgroundColor="#2F2F2F"
         app:boxCornerRadiusBottomEnd="8dp"
         app:boxCornerRadiusBottomStart="8dp"
         app:boxCornerRadiusTopEnd="8dp"
@@ -73,6 +73,7 @@
         app:boxStrokeWidth="2dp"
         app:elevation="4dp"
         app:endIconMode="dropdown_menu"
+        app:endIconTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_add_event">

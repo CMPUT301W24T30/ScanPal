@@ -82,6 +82,7 @@ public class BrowseEventFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.browse_events, container, false);
+        askNotificationPermission();
 
         eventGridAdapter = new EventGridAdapter(getContext());
         profileGridAdapter = new ProfileGridAdapter(getContext());
@@ -151,7 +152,7 @@ public class BrowseEventFragment extends Fragment {
         FloatingActionButton addEventButton = view.findViewById(R.id.button_add_event);
         addEventButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(BrowseEventFragment.this);
-            navController.navigate(R.id.addEvent);
+            navController.navigate(R.id.addEditEvent);
         });
 
         gridView.setOnItemClickListener((parent, view1, position, id) -> {
@@ -160,6 +161,8 @@ public class BrowseEventFragment extends Fragment {
             bundle.putString("event_id", event.getId());
             NavHostFragment.findNavController(this).navigate(R.id.select_event, bundle);
         });
+
+        askNotificationPermission();
 
         return view;
     }
@@ -221,6 +224,14 @@ public class BrowseEventFragment extends Fragment {
     }
 
 
+    /**
+     * Fetches all users from the user controller and updates the UI accordingly.
+     * This method fetches all users using the user controller and updates the UI with the retrieved users.
+     * It sets the fetched users to the profile grid adapter and sets the adapter to the grid view.
+     * Additionally, it handles item click events to navigate to the profile fragment when a user is clicked.
+     *
+     */
+
     private void fetchAllUsers() {
         userController.fetchAllUsers(new UsersFetchCallback() {
             @Override
@@ -247,6 +258,12 @@ public class BrowseEventFragment extends Fragment {
         });
     }
 
+    /**
+     * Fetches all images from the image controller and updates the UI accordingly.
+     * This method fetches all images using the image controller and updates the UI with the retrieved images.
+     * It sets the fetched images to the image grid adapter and sets the adapter to the grid view.
+     * Additionally, it handles item click events to show delete confirmation when an image is clicked.
+     */
     private void fetchAllImages() {
         imageController.fetchAllImages(new ImagesFetchCallback() {
             @Override
@@ -296,6 +313,14 @@ public class BrowseEventFragment extends Fragment {
                 .show();
     }
 
+    /**
+     * Deletes the selected image.
+     * This method deletes the image selected by the user. It retrieves the image to be deleted from the list of all images.
+     * After successful deletion, it displays a toast message indicating successful deletion and refreshes the list of images.
+     * If an error occurs during deletion, it logs the error message and displays a toast message indicating the failure.
+     *
+     */
+
     private void deleteImage() {
         String image = allImages.get(selectedImage);
         imageController.deleteImage(image, new ImagesDeleteCallback() {
@@ -308,7 +333,7 @@ public class BrowseEventFragment extends Fragment {
             @Override
             public void onError(Exception e) {
                 System.out.println(e.toString());
-                Toast.makeText(getContext(), "Failed to delete image." + e.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Failed to delete image." + e, Toast.LENGTH_LONG).show();
             }
         });
     }

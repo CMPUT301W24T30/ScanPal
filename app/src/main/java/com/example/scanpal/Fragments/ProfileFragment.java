@@ -158,8 +158,8 @@ public class ProfileFragment extends Fragment {
             public void onSuccess(User user) {
                 requireActivity().runOnUiThread(() -> {
                     addUsername.setText("@ " + user.getUsername());
-                    firstName.setText("☞ " + user.getFirstName());
-                    lastName.setText("☞ " + user.getLastName());
+                    firstName.setText("🤖 " + user.getFirstName());
+                    lastName.setText("👾 " + user.getLastName());
                     homepage.setText("⚡ ️My Homepage!");
                     homepage.setTextColor(Color.parseColor("#0D6EFD"));
                     url = user.getHomepage();
@@ -185,13 +185,15 @@ public class ProfileFragment extends Fragment {
             Toast.makeText(getContext(), "Set homepage in profile settings ⚙️", Toast.LENGTH_LONG).show();
             return;
         }
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            url = "https://" + url;
+        }
         Uri webpage = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
         if (intent.resolveActivity(requireActivity().getPackageManager()) != null) {
-            homepage.setTextColor(Color.parseColor("#7D297C"));
             startActivity(intent);
         } else {
-            Toast.makeText(getContext(), "Invalid URL", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Invalid URL ⚠️", Toast.LENGTH_LONG).show();
         }
     }
 }
