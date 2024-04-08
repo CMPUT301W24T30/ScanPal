@@ -78,6 +78,7 @@ public class ProfileFragment extends Fragment {
         String username = "";
         if (getArguments() != null) {
             username = getArguments().getString("username", "");
+            System.out.println(username);
         }
         if (Objects.equals(username, "")) {
             username = userController.fetchStoredUsername();

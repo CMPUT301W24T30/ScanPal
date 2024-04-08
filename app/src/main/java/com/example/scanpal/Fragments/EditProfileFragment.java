@@ -131,7 +131,7 @@ public class EditProfileFragment extends Fragment {
             Bundle bundle = new Bundle();
             bundle.putString("username", existingUser.getUsername());
             NavController navController = NavHostFragment.findNavController(EditProfileFragment.this);
-            navController.navigate(R.id.save_profile_edits, bundle);
+            navController.navigate(R.id.profile_fragment, bundle);
             ((MainActivity) requireActivity()).setNavbarVisibility(true);
         });
         resetButton.setOnClickListener(v -> showDeleteConfirmation());
@@ -244,8 +244,10 @@ public class EditProfileFragment extends Fragment {
             public void onSuccess() {
                 progressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "User details updated successfully 🎉", Toast.LENGTH_SHORT).show();
+                Bundle bundle = new Bundle();
+                bundle.putString("username", existingUser.getUsername());
                 NavController navController = NavHostFragment.findNavController(EditProfileFragment.this);
-                navController.navigate(R.id.save_profile_edits);
+                navController.navigate(R.id.profile_fragment, bundle);
                 ((MainActivity) requireActivity()).setNavbarVisibility(true);
             }
 
@@ -272,7 +274,6 @@ public class EditProfileFragment extends Fragment {
 
     /**
      * Handles the user and linked attendees deletion process.
-     *
      */
     private void deleteUser() {
         String username = existingUser.getUsername();
