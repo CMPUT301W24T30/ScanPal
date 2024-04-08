@@ -1,10 +1,8 @@
 package com.example.scanpal.Fragments;
 
 import android.Manifest;
-import android.content.BroadcastReceiver;
-import android.content.Context;
+
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
@@ -18,7 +16,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -111,7 +108,6 @@ public class EventDetailsFragment extends Fragment {
         updateRSVPStatus(eventID);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,

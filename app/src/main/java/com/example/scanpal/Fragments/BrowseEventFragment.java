@@ -119,8 +119,11 @@ public class BrowseEventFragment extends Fragment {
         dropdown.setText("Events Browser");
         fetchAllEvents();
 
+
+
         //receiver notif stuff
         IntentFilter filter = new IntentFilter("com.example.scanpal.MESSAGE_RECEIVED");
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requireActivity().registerReceiver(receiver, filter,Context.RECEIVER_EXPORTED);
         }
@@ -362,19 +365,23 @@ public class BrowseEventFragment extends Fragment {
         });
     }
 
+    /**
+     * This Enables a custom pop up window to be show, when a message is
+     * detected and received
+     * @param context the current context when called
+     * @param message the message in the notification pop up
+     */
     private void showCustomPopup(Context context, String message) {
 
         View customView = LayoutInflater.from(context).inflate(R.layout.notif_popup, null);
         TextView textView = customView.findViewById(R.id.popup_text);
         textView.setText(message);
 
-
-        // Create and show the pop-up window
+        // Create and show the pop-up window at the top of screen
         PopupWindow popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         popupWindow.showAtLocation(customView, android.view.Gravity.TOP | android.view.Gravity.CENTER_HORIZONTAL, 0, 100);
-        //popupWindow.showAsDropDown(customView);
 
-        // Dismiss the pop-up window after a certain duration
+        // Dismiss the pop up in mili-seconds
         customView.postDelayed(popupWindow::dismiss, 3000);
 
     }

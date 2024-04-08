@@ -66,8 +66,7 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter("com.example.scanpal.MESSAGE_RECEIVED");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Log.d("msg", "build good ");
-
+            Log.d("msg", "build good");
             registerReceiver(receiver, filter,Context.RECEIVER_EXPORTED);
         }
 
@@ -106,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
             if(buttonChatColorFlag == 0) {
                 buttonChat.setColorFilter(getResources().getColor(R.color.button_alert));//keep red
-                Log.d("msg", "recreate main: " + "UHH");
+                Log.d("msg", "Recreating main assets");
 
             }else {
                 buttonChat.setColorFilter(getResources().getColor(R.color.default_icon_tint));//keep red
@@ -210,21 +209,14 @@ public class MainActivity extends AppCompatActivity {
      * @param message the message that was sent
      */
     private void updateUI(String message) {
-        // Find and update FloatingActionButton or any other UI element here
-        //FloatingActionButton buttonChat = findViewById(R.id.button_chat);
+
         if (buttonChat != null) {
             Log.d("msg", "MAKE RED: " + "message.getNotification().getBody())");
 
             buttonChatColorFlag = 0;
-
-            // for in app pop up?
-            //View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
-            //Snackbar.make(findViewById(R.id.popup_text) , message, Snackbar.LENGTH_SHORT).show();
-
-
             buttonChat.setColorFilter(getResources().getColor(R.color.button_alert));
 
-
         }
+
     }
 }
