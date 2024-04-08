@@ -16,10 +16,10 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.scanpal.Callbacks.UsernameCheckCallback;
-import com.example.scanpal.R;
 import com.example.scanpal.Controllers.UserController;
+import com.example.scanpal.R;
+import com.github.javafaker.Faker;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Objects;
 
@@ -27,6 +27,10 @@ import java.util.Objects;
  * Fragment controlling user sign up screen
  */
 public class SignupFragment extends Fragment {
+
+    /**
+     * Required empty public constructor for instantiating the fragment.
+     */
     public SignupFragment() {
     }
 
@@ -65,7 +69,7 @@ public class SignupFragment extends Fragment {
                     bundle.putString("firstName", firstNameStr);
                     bundle.putString("lastName", lastNameStr);
 
-                    new UserController( getContext()).isUsernameTaken(usernameStr,
+                    new UserController(getContext()).isUsernameTaken(usernameStr,
                             new UsernameCheckCallback() {
                                 @Override
                                 public void onUsernameTaken(boolean isTaken) {
@@ -87,6 +91,54 @@ public class SignupFragment extends Fragment {
                 }
             }
         });
+
+        generateGuestUser(view);
+
         return view;
+    }
+
+    /**
+     * Generates a guest user for the signup process.
+     * This method generates a guest user with a random username, first name, and last name
+     * using the Faker library. It then checks if the generated username is already taken.
+     * If the username is available, it navigates to the signup continuation action with the
+     * generated user information. If the username is taken, it recursively generates another
+     * guest user until a unique username is found.
+     *
+     * @param view The parent view containing the addUserGuest button.
+     */
+    private void generateGuestUser(View view) {
+        view.findViewById(R.id.addUserGuest).setOnClickListener(v -> {
+
+            Faker faker = new Faker();
+
+
+            String usernameStr = "G_" + faker.name().username();
+            String firstNameStr = faker.name().firstName();
+            String lastNameStr = faker.name().lastName();
+
+            Bundle bundle = new Bundle();
+            bundle.putString("username", usernameStr);
+            bundle.putString("firstName", firstNameStr);
+            bundle.putString("lastName", lastNameStr);
+
+            new UserController(getContext()).isUsernameTaken(usernameStr,
+                    new UsernameCheckCallback() {
+                        @Override
+                        public void onUsernameTaken(boolean isTaken) {
+                            if (isTaken) {
+                                generateGuestUser(view);
+                            } else {
+                                NavController navController = NavHostFragment.findNavController(SignupFragment.this);
+                                navController.navigate(R.id.addUserContinueAction, bundle);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Toast.makeText(view.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+        });
     }
 }

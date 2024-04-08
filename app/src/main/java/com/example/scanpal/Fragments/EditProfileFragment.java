@@ -23,10 +23,12 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.scanpal.Callbacks.DeleteAllAttendeesCallback;
+import com.example.scanpal.Callbacks.EventDeleteCallback;
 import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Callbacks.UserRemoveCallback;
 import com.example.scanpal.Callbacks.UserUpdateCallback;
 import com.example.scanpal.Controllers.AttendeeController;
+import com.example.scanpal.Controllers.EventController;
 import com.example.scanpal.Controllers.ImageController;
 import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.MainActivity;
@@ -60,11 +62,15 @@ public class EditProfileFragment extends Fragment {
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                     imageUri = result.getData().getData();
-                    profileImageView.setImageURI(imageUri);
+                    Glide.with(this)
+                            .load(imageUri)
+                            .circleCrop()
+                            .into(profileImageView);
                 }
             });
     private UserController userController;
     private AttendeeController attendeeController;
+    private EventController eventController;
 
     /**
      * Inflates the layout for the edit profile page.
@@ -85,6 +91,13 @@ public class EditProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        imageController = new ImageController();
+        userController = new UserController(getContext());
+        attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
+        eventController = new EventController();
+
+        fetchUserDetails();
+
         profileImageView = view.findViewById(R.id.profile_page_image);
         FloatingActionButton uploadButton = view.findViewById(R.id.upload_button);
         FloatingActionButton deleteButton = view.findViewById(R.id.delete_button);
@@ -101,9 +114,6 @@ public class EditProfileFragment extends Fragment {
         lastName = (TextInputEditText) ((TextInputLayout) view.findViewById(R.id.last_name)).getEditText();
         homepage = (TextInputEditText) ((TextInputLayout) view.findViewById(R.id.homepage)).getEditText();
 
-        imageController = new ImageController();
-        userController = new UserController( getContext());
-        attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
 
         uploadButton.setOnClickListener(v -> openGallery());
 
@@ -111,12 +121,11 @@ public class EditProfileFragment extends Fragment {
             imageUri = null;
             isDeleteIntent = true;
             Glide.with(EditProfileFragment.this)
-                    .load(R.drawable.ic_launcher_background)
+                    .load(existingUser.createProfileImage(existingUser.getUsername()))
                     .apply(new RequestOptions().circleCrop())
                     .into(profileImageView);
         });
 
-        fetchUserDetails();
 
         saveButton.setOnClickListener(v -> saveUserDetails());
         goBack.setOnClickListener(v -> {
@@ -124,7 +133,7 @@ public class EditProfileFragment extends Fragment {
             Bundle bundle = new Bundle();
             bundle.putString("username", existingUser.getUsername());
             NavController navController = NavHostFragment.findNavController(EditProfileFragment.this);
-            navController.navigate(R.id.save_profile_edits, bundle);
+            navController.navigate(R.id.profile_fragment, bundle);
             ((MainActivity) requireActivity()).setNavbarVisibility(true);
         });
         resetButton.setOnClickListener(v -> showDeleteConfirmation());
@@ -237,8 +246,10 @@ public class EditProfileFragment extends Fragment {
             public void onSuccess() {
                 progressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "User details updated successfully 🎉", Toast.LENGTH_SHORT).show();
+                Bundle bundle = new Bundle();
+                bundle.putString("username", existingUser.getUsername());
                 NavController navController = NavHostFragment.findNavController(EditProfileFragment.this);
-                navController.navigate(R.id.save_profile_edits);
+                navController.navigate(R.id.profile_fragment, bundle);
                 ((MainActivity) requireActivity()).setNavbarVisibility(true);
             }
 
@@ -264,7 +275,7 @@ public class EditProfileFragment extends Fragment {
     }
 
     /**
-     * Handles the user & linked attendees deletion process.
+     * Handles the user and linked attendees deletion process.
      */
     private void deleteUser() {
         String username = existingUser.getUsername();
@@ -276,15 +287,24 @@ public class EditProfileFragment extends Fragment {
                     userController.removeUser(username, new UserRemoveCallback() {
                         @Override
                         public void onSuccess() {
-                            Toast.makeText(getContext(), "Profile reset successfully", Toast.LENGTH_SHORT).show();
-                            NavController navController = NavHostFragment.findNavController(EditProfileFragment.this);
-                            if (Objects.equals(oldUsername, username)) {
-                                navController.navigate(R.id.signupFragment);
-                            } else {
-                                navController.navigate(R.id.eventsPage);
-                                ((MainActivity) requireActivity()).setNavbarVisibility(true);
-                            }
+                            eventController.deleteEventsByOrganizer(username, new EventDeleteCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Toast.makeText(getContext(), "Profile reset successfully", Toast.LENGTH_SHORT).show();
+                                    NavController navController = NavHostFragment.findNavController(EditProfileFragment.this);
+                                    if (Objects.equals(oldUsername, username)) {
+                                        navController.navigate(R.id.signupFragment);
+                                    } else {
+                                        navController.navigate(R.id.eventsPage);
+                                        ((MainActivity) requireActivity()).setNavbarVisibility(true);
+                                    }
+                                }
 
+                                @Override
+                                public void onError(Exception e) {
+
+                                }
+                            });
                         }
 
                         @Override

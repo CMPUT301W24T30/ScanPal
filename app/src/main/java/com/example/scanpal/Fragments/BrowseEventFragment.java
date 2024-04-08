@@ -1,24 +1,25 @@
 package com.example.scanpal.Fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.media.Image;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.GridView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -33,24 +34,18 @@ import com.example.scanpal.Callbacks.ImagesFetchCallback;
 import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Callbacks.UserSignedUpCallback;
 import com.example.scanpal.Callbacks.UsersFetchCallback;
-import com.example.scanpal.Callbacks.UserUpdateCallback;
 import com.example.scanpal.Controllers.EventController;
 import com.example.scanpal.Controllers.ImageController;
 import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.Models.Event;
-import com.example.scanpal.Models.ImageData;
 import com.example.scanpal.Models.User;
 import com.example.scanpal.R;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import android.Manifest;
 
 /**
  * Fragment for displaying a list of events. Allows users to navigate to event details,
@@ -66,16 +61,6 @@ public class BrowseEventFragment extends Fragment {
                 }
             });
 
-    private final ActivityResultLauncher<String> locationPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    logUserLocation();
-                    askNotificationPermission();
-                } else {
-                    Toast.makeText(getContext(), "Location access is required to use this feature.", Toast.LENGTH_LONG).show();
-                }
-            });
-
     protected List<Event> allEvents = new ArrayList<>();
     protected List<User> allUsers = new ArrayList<>();
     protected List<String> allImages = new ArrayList<>();
@@ -83,12 +68,23 @@ public class BrowseEventFragment extends Fragment {
     private ProfileGridAdapter profileGridAdapter;
     private ImageGridAdapter imageGridAdapter;
     private EventController eventController;
-    private FusedLocationProviderClient fusedLocationClient;
     private ImageController imageController;
     private UserController userController;
 
     private GridView gridView;
     private int selectedImage;
+
+    //Specifically put here because its the first fragments the user goes to after creation
+
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent.getStringExtra("message");
+            Log.d("msg", "broadcast received MAIN: ");
+
+            showCustomPopup(context,message);
+        }
+    };
 
     /**
      * Default constructor. Initializes the fragment.
@@ -99,13 +95,12 @@ public class BrowseEventFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         View view = inflater.inflate(R.layout.browse_events, container, false);
+        askNotificationPermission();
 
         eventGridAdapter = new EventGridAdapter(getContext());
         profileGridAdapter = new ProfileGridAdapter(getContext());
@@ -123,6 +118,15 @@ public class BrowseEventFragment extends Fragment {
         ((TextView) view.findViewById(R.id.event_page_title)).setText("Events Browser");
         dropdown.setText("Events Browser");
         fetchAllEvents();
+
+
+
+        //receiver notif stuff
+        IntentFilter filter = new IntentFilter("com.example.scanpal.MESSAGE_RECEIVED");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireActivity().registerReceiver(receiver, filter,Context.RECEIVER_EXPORTED);
+        }
 
 
         // Create an ArrayAdapter using the string array and a default dropdown layout.
@@ -175,7 +179,7 @@ public class BrowseEventFragment extends Fragment {
         FloatingActionButton addEventButton = view.findViewById(R.id.button_add_event);
         addEventButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(BrowseEventFragment.this);
-            navController.navigate(R.id.addEvent);
+            navController.navigate(R.id.addEditEvent);
         });
 
         gridView.setOnItemClickListener((parent, view1, position, id) -> {
@@ -185,7 +189,7 @@ public class BrowseEventFragment extends Fragment {
             NavHostFragment.findNavController(this).navigate(R.id.select_event, bundle);
         });
 
-        askLocationPermissionAndLogLocation();
+        askNotificationPermission();
 
         return view;
     }
@@ -246,47 +250,14 @@ public class BrowseEventFragment extends Fragment {
         });
     }
 
-    private void askLocationPermissionAndLogLocation() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
-        } else {
-            logUserLocation();
-        }
-    }
 
-    private void logUserLocation() {
-        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
-
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            fusedLocationClient.getLastLocation().addOnSuccessListener(requireActivity(), location -> {
-                if (location != null) {
-                    String locationStr = location.getLatitude() + "," + location.getLongitude();
-
-                    // Fetch current user's username
-                    UserController userController = new UserController(getContext());
-                    String currentUsername = userController.fetchStoredUsername();
-
-                    // Update user location
-                    if (currentUsername != null) {
-                        userController.updateUserLocation(currentUsername, locationStr, new UserUpdateCallback() {
-                            @Override
-                            public void onSuccess() {
-                                Log.d("EventPageFragment", "User location updated successfully");
-                            }
-
-                            @Override
-                            public void onError(Exception e) {
-                                Log.e("EventPageFragment", "Failed to update user location", e);
-                            }
-                        });
-                    }
-                } else {
-                    Log.d("EventPageFragment", "No location detected.");
-                }
-            });
-        }
-    }
-
+    /**
+     * Fetches all users from the user controller and updates the UI accordingly.
+     * This method fetches all users using the user controller and updates the UI with the retrieved users.
+     * It sets the fetched users to the profile grid adapter and sets the adapter to the grid view.
+     * Additionally, it handles item click events to navigate to the profile fragment when a user is clicked.
+     *
+     */
 
     private void fetchAllUsers() {
         userController.fetchAllUsers(new UsersFetchCallback() {
@@ -314,6 +285,12 @@ public class BrowseEventFragment extends Fragment {
         });
     }
 
+    /**
+     * Fetches all images from the image controller and updates the UI accordingly.
+     * This method fetches all images using the image controller and updates the UI with the retrieved images.
+     * It sets the fetched images to the image grid adapter and sets the adapter to the grid view.
+     * Additionally, it handles item click events to show delete confirmation when an image is clicked.
+     */
     private void fetchAllImages() {
         imageController.fetchAllImages(new ImagesFetchCallback() {
             @Override
@@ -363,6 +340,14 @@ public class BrowseEventFragment extends Fragment {
                 .show();
     }
 
+    /**
+     * Deletes the selected image.
+     * This method deletes the image selected by the user. It retrieves the image to be deleted from the list of all images.
+     * After successful deletion, it displays a toast message indicating successful deletion and refreshes the list of images.
+     * If an error occurs during deletion, it logs the error message and displays a toast message indicating the failure.
+     *
+     */
+
     private void deleteImage() {
         String image = allImages.get(selectedImage);
         imageController.deleteImage(image, new ImagesDeleteCallback() {
@@ -375,8 +360,29 @@ public class BrowseEventFragment extends Fragment {
             @Override
             public void onError(Exception e) {
                 System.out.println(e.toString());
-                Toast.makeText(getContext(), "Failed to delete image." + e.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Failed to delete image." + e, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    /**
+     * This Enables a custom pop up window to be show, when a message is
+     * detected and received
+     * @param context the current context when called
+     * @param message the message in the notification pop up
+     */
+    private void showCustomPopup(Context context, String message) {
+
+        View customView = LayoutInflater.from(context).inflate(R.layout.notif_popup, null);
+        TextView textView = customView.findViewById(R.id.popup_text);
+        textView.setText(message);
+
+        // Create and show the pop-up window at the top of screen
+        PopupWindow popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        popupWindow.showAtLocation(customView, android.view.Gravity.TOP | android.view.Gravity.CENTER_HORIZONTAL, 0, 100);
+
+        // Times long low it takes until pop up disappears
+        customView.postDelayed(popupWindow::dismiss, 3000);
+
     }
 }

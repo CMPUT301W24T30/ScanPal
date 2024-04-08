@@ -1,15 +1,22 @@
 package com.example.scanpal.Callbacks;
-
-import android.net.Uri;
-
-import com.example.scanpal.Models.ImageData;
-import com.example.scanpal.Models.User;
-
 import java.util.List;
 
+/**
+ * An interface defining callbacks for image fetch operations.
+ */
 public interface ImagesFetchCallback {
 
+        /**
+         * Called when the image fetch operation is successful.
+         *
+         * @param images A list of URIs representing the fetched images.
+         */
         void onSuccess(List<String> images);
-        void onError(Exception e);
 
+        /**
+         * Called when an error occurs during the image fetch operation.
+         *
+         * @param e The exception indicating the error encountered.
+         */
+        void onError(Exception e);
 }

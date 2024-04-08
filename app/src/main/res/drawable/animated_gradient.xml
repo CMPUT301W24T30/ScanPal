@@ -2,17 +2,17 @@
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:drawable="@drawable/gradient1"
-        android:duration="9000"/>
+        android:duration="9000" />
     <item
         android:drawable="@drawable/gradient2"
-        android:duration="6000"/>
+        android:duration="6000" />
     <item
         android:drawable="@drawable/gradient3"
-        android:duration="6000"/>
+        android:duration="6000" />
     <item
         android:drawable="@drawable/gradient4"
-        android:duration="6000"/>
+        android:duration="6000" />
     <item
         android:drawable="@drawable/gradient5"
-        android:duration="6000"/>
+        android:duration="6000" />
 </animation-list>

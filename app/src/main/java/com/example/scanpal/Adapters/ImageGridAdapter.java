@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-
 import com.example.scanpal.Controllers.ImageController;
 import com.example.scanpal.R;
 import com.google.android.material.card.MaterialCardView;
@@ -79,9 +78,7 @@ public class ImageGridAdapter extends BaseAdapter {
                     .load(uri)
                     .transform(new RoundedCorners(16))
                     .into(imageView);
-        }, e -> {
-            Log.e("EventGridAdapter", "Failed to load image: " + e.getMessage());
-        });
+        }, e -> Log.e("EventGridAdapter", "Failed to load image: " + e.getMessage()));
 
         ImageView imageView = convertView.findViewById(R.id.event_image);
         TextView textView = convertView.findViewById(R.id.event_title);

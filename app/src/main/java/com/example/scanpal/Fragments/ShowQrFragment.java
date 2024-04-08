@@ -16,8 +16,6 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.example.scanpal.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -29,6 +27,9 @@ public class ShowQrFragment extends Fragment {
 
     private final FirebaseStorage storage = FirebaseStorage.getInstance();
 
+    /**
+     * Required empty public constructor for instantiating the fragment.
+     */
     public ShowQrFragment() {
         // Required empty public constructor
     }
@@ -53,18 +54,28 @@ public class ShowQrFragment extends Fragment {
 
         // Show either check in code or event code based on request
 
-        if (request == "check-in") {
-            showCheckIn(eventID,view,eventName);
-        } else if (request == "event") {
+        if (Objects.equals(request, "check-in")) {
+            showCheckIn(eventID, view, eventName);
+        } else if (Objects.equals(request, "event")) {
             TextView textView = view.findViewById(R.id.show_qr_title);
             textView.setText("Event Details");
-            showEvent(eventID,view,eventName);
+            showEvent(eventID, view, eventName);
         }
-      
+
         return view;
     }
 
-    public void showCheckIn(String eventID,View view,String eventName) {
+
+    /**
+     * Displays the check-in QR code for the specified event.
+     * This method retrieves the check-in QR code image from Firebase Storage using the event ID
+     * and displays it in the provided ImageView. Additionally, it sets the event name in a TextView.
+     *
+     * @param eventID   The ID of the event for which to display the check-in QR code.
+     * @param view      The parent view containing the ImageView and TextView for displaying the QR code and event name.
+     * @param eventName The name of the event to be displayed.
+     */
+    public void showCheckIn(String eventID, View view, String eventName) {
         String imageName = eventID + "-check-in.png";
         StorageReference imageRef = storage.getReference().child("qr-codes/" + imageName);
         //View view = getView();
@@ -73,27 +84,31 @@ public class ShowQrFragment extends Fragment {
 
         // Get image from Firebase Storage
         imageRef.getBytes(1024 * 1024) // allow 1MB
-                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        // Load bytes into the ImageView using Glide
-                        Glide.with(ShowQrFragment.this)
-                                .load(bytes)
-                                .into(imageView);
-                        TextView title = view.findViewById(R.id.event_name_qrcode);
-                        title.setText(eventName);
-                    }
+                .addOnSuccessListener(bytes -> {
+                    // Load bytes into the ImageView using Glide
+                    Glide.with(ShowQrFragment.this)
+                            .load(bytes)
+                            .into(imageView);
+                    TextView title = view.findViewById(R.id.event_name_qrcode);
+                    title.setText(eventName);
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Handle failure
-                        Toast.makeText(getContext(), "Failed to retrieve image", Toast.LENGTH_SHORT).show();
-                    }
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                    Toast.makeText(getContext(), "Failed to retrieve image", Toast.LENGTH_SHORT).show();
                 });
     }
 
-    public void showEvent(String eventID,View view,String eventName) {
+
+    /**
+     * Displays the event QR code for the specified event.
+     * This method retrieves the event QR code image from Firebase Storage using the event ID
+     * and displays it in the provided ImageView. Additionally, it sets the event name in a TextView.
+     *
+     * @param eventID   The ID of the event for which to display the event QR code.
+     * @param view      The parent view containing the ImageView and TextView for displaying the QR code and event name.
+     * @param eventName The name of the event to be displayed.
+     */
+    public void showEvent(String eventID, View view, String eventName) {
         String imageName = eventID + "-event.png";
         StorageReference imageRef = storage.getReference().child("qr-codes/" + imageName);
         //View view = getView();
@@ -102,23 +117,17 @@ public class ShowQrFragment extends Fragment {
 
         // Get image from Firebase Storage
         imageRef.getBytes(1024 * 1024) // allow 1MB
-                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        // Load bytes into the ImageView using Glide
-                        Glide.with(ShowQrFragment.this)
-                                .load(bytes)
-                                .into(imageView);
-                        TextView title = view.findViewById(R.id.event_name_qrcode);
-                        title.setText(eventName);
-                    }
+                .addOnSuccessListener(bytes -> {
+                    // Load bytes into the ImageView using Glide
+                    Glide.with(ShowQrFragment.this)
+                            .load(bytes)
+                            .into(imageView);
+                    TextView title = view.findViewById(R.id.event_name_qrcode);
+                    title.setText(eventName);
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Handle failure
-                        Toast.makeText(getContext(), "Failed to retrieve image", Toast.LENGTH_SHORT).show();
-                    }
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                    Toast.makeText(getContext(), "Failed to retrieve image", Toast.LENGTH_SHORT).show();
                 });
     }
 

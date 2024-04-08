@@ -2,7 +2,6 @@ package com.example.scanpal.Adapters;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.scanpal.Models.Event;
-import com.example.scanpal.Models.User;
 import com.example.scanpal.R;
 import com.google.android.material.card.MaterialCardView;
 
@@ -96,7 +94,7 @@ public class EventGridAdapter extends BaseAdapter {
 
         textView.setText(event.getName());
 
-        int strokeColor = event.isUserSignedUp() ? Color.parseColor("#4CAF50") : Color.parseColor("#0D6EFD");
+        int strokeColor = event.isUserSignedUp() ? Color.parseColor("#46db75") : Color.parseColor("#0D6EFD");
         cardView.setStrokeColor(strokeColor);
 
         return convertView;

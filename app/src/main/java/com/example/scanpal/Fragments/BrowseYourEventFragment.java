@@ -26,7 +26,6 @@ import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +47,6 @@ public class BrowseYourEventFragment extends Fragment {
     protected List<Event> eventsList = new ArrayList<>();
     protected List<Event> allEvents = new ArrayList<>();
 
-    private GridView gridView;
     private EventGridAdapter adapter;
     private EventController eventController;
 
@@ -62,12 +60,10 @@ public class BrowseYourEventFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.browse_events, container, false);
-
-
         ((TextView) view.findViewById(R.id.event_page_title)).setText("Your Events");
 
         adapter = new EventGridAdapter(getContext());
-        gridView = view.findViewById(R.id.event_grid);
+        GridView gridView = view.findViewById(R.id.event_grid);
         gridView.setAdapter(adapter);
 
         // init eventController
@@ -79,7 +75,7 @@ public class BrowseYourEventFragment extends Fragment {
         FloatingActionButton addEventButton = view.findViewById(R.id.button_add_event);
         addEventButton.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(BrowseYourEventFragment.this);
-            navController.navigate(R.id.addEvent);
+            navController.navigate(R.id.addEditEvent);
         });
 
         gridView.setOnItemClickListener((parent, view1, position, id) -> {
@@ -100,7 +96,7 @@ public class BrowseYourEventFragment extends Fragment {
      * Applies filters based on user sign-up status and sorts events.
      */
     private void fetchYourEvents() {
-        UserController userController = new UserController( getContext());
+        UserController userController = new UserController(getContext());
         String username = userController.fetchStoredUsername();
         if (username != null) {
             // Use EventController to fetch user-specific events

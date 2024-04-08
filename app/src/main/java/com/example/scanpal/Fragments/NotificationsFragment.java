@@ -12,17 +12,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.scanpal.Models.Announcement;
-import com.example.scanpal.Controllers.AnnouncementController;
-import com.example.scanpal.Callbacks.AnnouncementsFetchCallback;
-import com.example.scanpal.Models.Attendee;
-import com.example.scanpal.Controllers.AttendeeController;
-import com.example.scanpal.Callbacks.AttendeeFetchCallback;
-import com.example.scanpal.Controllers.EventController;
-import com.example.scanpal.Callbacks.EventIDsFetchCallback;
 import com.example.scanpal.Adapters.NotificationListAdapter;
-import com.example.scanpal.R;
+import com.example.scanpal.Callbacks.AnnouncementsFetchCallback;
+import com.example.scanpal.Callbacks.AttendeeFetchCallback;
+import com.example.scanpal.Callbacks.EventIDsFetchCallback;
+import com.example.scanpal.Controllers.AnnouncementController;
+import com.example.scanpal.Controllers.AttendeeController;
+import com.example.scanpal.Controllers.EventController;
 import com.example.scanpal.Controllers.UserController;
+import com.example.scanpal.Models.Announcement;
+import com.example.scanpal.Models.Attendee;
+import com.example.scanpal.R;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -34,6 +34,10 @@ public class NotificationsFragment extends Fragment {
     private EventController eventController;
     private List<String> allEventIDs;
 
+
+    /**
+     * Required empty public constructor for instantiating the fragment.
+     */
     public NotificationsFragment() {
 
     }
@@ -65,7 +69,7 @@ public class NotificationsFragment extends Fragment {
         notificationsList.clear();
         AnnouncementController announcementController = new AnnouncementController();
         AttendeeController attendeeController = new AttendeeController(FirebaseFirestore.getInstance());
-        UserController userController = new UserController( this.getContext());
+        UserController userController = new UserController(this.getContext());
         String userName = userController.fetchStoredUsername();
 
 

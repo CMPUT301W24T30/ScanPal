@@ -1,16 +1,21 @@
 package com.example.scanpal;
 
-import android.location.Address;
-import android.location.Geocoder;
+
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.scanpal.databinding.ActivityMapsBinding;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -25,9 +30,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
-import java.io.IOException;
-import java.util.List;
 
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -52,9 +54,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Find the FloatingActionButton and set a click listener to finish the activity
         FloatingActionButton backButton = findViewById(R.id.back_button);
-        backButton.setOnClickListener(v -> {
-            finish();
-        });
+        backButton.setOnClickListener(v -> finish());
     }
 
     /**
@@ -73,8 +73,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         fetchEventAndAttendeeLocations();
 
         mMap.setOnMarkerClickListener(marker -> {
-            // Trigger the info window to show
-            marker.showInfoWindow();
+
+            String toastText = "";
+
+            if ("eventLocation".equals(marker.getTag())) {
+                // For event markers, set the toast text to the event's name
+                toastText = marker.getTitle() != null ? marker.getTitle() : "Event location";
+            } else {
+                // For attendee markers, set the toast text to the attendee's name
+                toastText = marker.getTitle() != null ? marker.getTitle() : "Attendee";
+                marker.showInfoWindow();
+            }
+
+            // Only show the toast if we have non-null text
+            if (!toastText.isEmpty()) {
+                Toast.makeText(MapsActivity.this, toastText, Toast.LENGTH_SHORT).show();
+            }
+
             return true;
         });
     }
@@ -86,38 +101,31 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void geocodeLocation(String locationName) {
-        String apiKey = BuildConfig.MAPS_API_KEY; // Your API key
-
-        Geocoder geocoder = new Geocoder(this);
-        try {
-            List<Address> addresses = geocoder.getFromLocationName(locationName, 1);
-            if (addresses != null && !addresses.isEmpty()) {
-                Address address = addresses.get(0);
-                // Use the address object to create a LatLng object
-                LatLng eventLocation = new LatLng(address.getLatitude(), address.getLongitude());
-                BitmapDescriptor eventIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE); // Custom color
-
-                MarkerOptions eventMarkerOptions = new MarkerOptions()
-                        .position(eventLocation)
-                        .title(locationName)
-                        .icon(eventIcon)
-                        .zIndex(1.0f);
-
-                Marker eventMarker = mMap.addMarker(eventMarkerOptions);
-                eventMarker.setTag("eventLocation");
-
-                mMap.addMarker(eventMarkerOptions);
-
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLocation, 15));
-            } else {
-                Log.e("MapActivity", "No address found for location: " + locationName);
-            }
-        } catch (IOException e) {
-            Log.e("MapActivity", "Geocoder I/O exception", e);
+    /**
+     * Adds an event marker to the map.
+     * This method adds a marker to the specified LatLng position on the map with the given title.
+     * The marker is colored blue to represent an event location. If the map is null, the marker
+     * is not added.
+     *
+     * @param latLng The LatLng position where the marker will be added.
+     * @param title  The title of the marker.
+     */
+    private void addEventMarkerToMap(LatLng latLng, String title) {
+        if (mMap != null) {
+            BitmapDescriptor blueColor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+            MarkerOptions options = new MarkerOptions().position(latLng).title(title).icon(blueColor);
+            Marker marker = mMap.addMarker(options);
+            marker.setTag("eventLocation");
         }
     }
 
+
+    /**
+     * Fetches event and attendee locations to display on the map.
+     * This method fetches the location coordinates of the event and the locations of attendees
+     * who have checked in to the event. It then adds markers for the event location and attendee
+     * locations on the map.
+     */
     private void fetchEventAndAttendeeLocations() {
         String eventId = getIntent().getStringExtra("event_id");
         DocumentReference eventRef = db.collection("Events").document(eventId);
@@ -133,7 +141,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             double latitude = Double.parseDouble(latLng[0]);
                             double longitude = Double.parseDouble(latLng[1]);
                             LatLng eventLocation = new LatLng(latitude, longitude);
-                            addMarkerToMap(eventLocation, documentSnapshot.getString("name")); // Adjust the title as needed
+                            addEventMarkerToMap(eventLocation, documentSnapshot.getString("name"));
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLocation, 15));
                         } catch (NumberFormatException e) {
                             Log.e("MapsActivity", "Failed to parse event locationCoords string: " + locationCoords, e);
@@ -157,6 +165,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if (userRef != null) {
                             userRef.get().addOnSuccessListener(userSnapshot -> {
                                 if (userSnapshot.exists()) {
+                                    String firstName = userSnapshot.getString("firstName");
+                                    String lastName = userSnapshot.getString("lastName");
+
+                                    String fullName = "";
+                                    if (firstName != null && lastName != null) {
+                                        fullName = firstName + " " + lastName;
+                                    } else if (firstName != null) {
+                                        fullName = firstName;
+                                    } else if (lastName != null) {
+                                        fullName = lastName;
+                                    } else {
+                                        // Fallback in case both names are null
+                                        fullName = "Attendee";
+                                    }
+
                                     String photoUrl = userSnapshot.getString("photo");
                                     String locationString = documentSnapshot.getString("location");
                                     if (locationString != null && !locationString.isEmpty()) {
@@ -166,7 +189,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                 double latitude = Double.parseDouble(latLng[0]);
                                                 double longitude = Double.parseDouble(latLng[1]);
                                                 LatLng latLngObj = new LatLng(latitude, longitude);
-                                                Marker attendeeMarker = mMap.addMarker(new MarkerOptions().position(latLngObj).title(userSnapshot.getString("name"))); // Example, adjust as needed
+                                                MarkerOptions markerOptions = new MarkerOptions()
+                                                        .position(latLngObj)
+                                                        .title(fullName != null ? fullName : "Username Not Found");
+                                                Marker attendeeMarker = mMap.addMarker(markerOptions);
                                                 attendeeMarker.setTag(photoUrl);
                                             } catch (NumberFormatException e) {
                                                 Log.e("MapsActivity", "Failed to parse location string: " + locationString, e);
@@ -181,13 +207,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .addOnFailureListener(e -> Log.e("MapsActivity", "Error fetching attendee locations", e));
     }
 
+    /**
+     * Custom InfoWindowAdapter for displaying custom info windows on Google Maps.
+     * This class provides custom rendering for info windows displayed on markers.
+     */
     private class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         private final View mWindow;
 
+        /**
+         * Constructor for CustomInfoWindowAdapter.
+         */
         public CustomInfoWindowAdapter() {
             mWindow = getLayoutInflater().inflate(R.layout.info_window_layout, null);
         }
 
+        /**
+         * Render the contents of the info window based on the marker's tag.
+         *
+         * @param marker The marker for which the info window is being rendered.
+         * @param view   The view representing the info window.
+         */
         private void renderWindowText(Marker marker, View view) {
             String imageUrl = (String) marker.getTag();
             ImageView infoWindowImage = view.findViewById(R.id.info_window_image);
@@ -196,9 +235,31 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Glide.with(getApplicationContext())
                     .load(imageUrl)
                     .circleCrop()
-                    .into(infoWindowImage);
+                    .into(new CustomTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            infoWindowImage.setImageDrawable(resource);
+                            if (marker.isInfoWindowShown()) {
+                                // Refresh the marker to update the info window.
+                                marker.hideInfoWindow();
+                                marker.showInfoWindow();
+                            }
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                            // Handle cleanup if needed
+                        }
+                    });
         }
 
+
+        /**
+         * Get the custom view for the info window.
+         *
+         * @param marker The marker for which the info window is being rendered.
+         * @return The custom view representing the info window.
+         */
         @Override
         public View getInfoWindow(Marker marker) {
             if ("eventLocation".equals(marker.getTag())) {
@@ -213,6 +274,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
 
+        /**
+         * Get the custom contents for the info window.
+         *
+         * @param marker The marker for which the info window is being rendered.
+         * @return The custom view representing the contents of the info window.
+         */
         @Override
         public View getInfoContents(Marker marker) {
             if ("eventLocation".equals(marker.getTag())) {

@@ -26,7 +26,6 @@ import com.example.scanpal.Controllers.UserController;
 import com.example.scanpal.Models.User;
 import com.example.scanpal.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Objects;
 
@@ -79,6 +78,7 @@ public class ProfileFragment extends Fragment {
         String username = "";
         if (getArguments() != null) {
             username = getArguments().getString("username", "");
+            System.out.println(username);
         }
         if (Objects.equals(username, "")) {
             username = userController.fetchStoredUsername();
@@ -159,8 +159,8 @@ public class ProfileFragment extends Fragment {
             public void onSuccess(User user) {
                 requireActivity().runOnUiThread(() -> {
                     addUsername.setText("@ " + user.getUsername());
-                    firstName.setText("☞ " + user.getFirstName());
-                    lastName.setText("☞ " + user.getLastName());
+                    firstName.setText("🤖 " + user.getFirstName());
+                    lastName.setText("👾 " + user.getLastName());
                     homepage.setText("⚡ ️My Homepage!");
                     homepage.setTextColor(Color.parseColor("#0D6EFD"));
                     url = user.getHomepage();
@@ -186,13 +186,15 @@ public class ProfileFragment extends Fragment {
             Toast.makeText(getContext(), "Set homepage in profile settings ⚙️", Toast.LENGTH_LONG).show();
             return;
         }
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            url = "https://" + url;
+        }
         Uri webpage = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
         if (intent.resolveActivity(requireActivity().getPackageManager()) != null) {
-            homepage.setTextColor(Color.parseColor("#7D297C"));
             startActivity(intent);
         } else {
-            Toast.makeText(getContext(), "Invalid URL", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Invalid URL ⚠️", Toast.LENGTH_LONG).show();
         }
     }
 }

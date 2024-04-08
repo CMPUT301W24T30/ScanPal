@@ -6,10 +6,12 @@
     <string name="continueButton">Continue</string>
     <string name="addUserImage">User Image</string>
     <string name="title_activity_maps">MapsActivity</string>
-    <string name="trackLocation">Track Location?</string>
+    <string name="trackLocation">Track Location</string>
     <string name="cancel_rsvp">Cancel RSVP</string>
     <string name="join_event">Signup</string>
     <string name="content_description">image</string>
+    <string name="event">Event</string>
+    <string name="attendee">Attendee</string>
     <string-array name="browser_select_array">
         <item>Events Browser</item>
         <item>Image Browser</item>

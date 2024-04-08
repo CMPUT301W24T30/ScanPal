@@ -1,6 +1,10 @@
 package com.example.scanpal.Models;
 
 import java.io.Serializable;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 
 /**
@@ -15,7 +19,6 @@ public class User implements Serializable {
     private String lastName;
     private String photo; // Profile Photo of the User
     private String deviceToken;
-    private String location;
     private String homepage;
 
     /**
@@ -57,6 +60,25 @@ public class User implements Serializable {
     }
 
     /**
+     * Generates an MD5 hash of a given string as a hex format.
+     *
+     * @param input String to hash.
+     * @return Hexadecimal string of the MD5 hash.
+     * @throws RuntimeException if MD5 algorithm is unavailable.
+     */
+
+    public static String md5Hex(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] digest = md.digest(input.getBytes(StandardCharsets.UTF_8));
+            return String.format("%032x", new BigInteger(1, digest));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
      * Generates a URL for a default profile image based on the username. This method
      * utilizes Gravatar's service to create a URL pointing to an identicon image,
      * which serves as the user's default profile picture. The resulting image has
@@ -65,8 +87,9 @@ public class User implements Serializable {
      * @param username The username for which the profile image URL is generated.
      * @return A string representing the URL to the generated default profile image.
      */
-    public String createProfileImage(String username) {
-        return "https://www.gravatar.com/avatar/" + username + "?s=400&d=monsterid&r=pg";
+    public static String createProfileImage(String username) {
+        String hash = md5Hex(username.trim().toLowerCase());
+        return "https://www.gravatar.com/avatar/" + hash + "?s=400&d=monsterid&r=pg";
     }
 
     public String getUsername() {
@@ -107,14 +130,6 @@ public class User implements Serializable {
 
     public void setPhoto(String photo) {
         this.photo = photo;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
     }
 
     public String getDeviceToken() {

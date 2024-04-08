@@ -1,20 +1,27 @@
 package com.example.scanpal;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.scanpal.Callbacks.QrScanResultCallback;
 import com.example.scanpal.Callbacks.UserFetchCallback;
 import com.example.scanpal.Controllers.AttendeeController;
 import com.example.scanpal.Controllers.QrScannerController;
 import com.example.scanpal.Controllers.UserController;
-import com.example.scanpal.Fragments.BrowseEventFragment;
 import com.example.scanpal.Models.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -28,7 +35,19 @@ public class MainActivity extends AppCompatActivity {
     private View appBar;
     private ActivityResultLauncher<ScanOptions> qrCodeScanner;
     private QrScannerController qrScannerController;
+    private int buttonChatColorFlag = -1; // Default color
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent.getStringExtra("message");
+            Log.d("msg", "broadcast received MAIN: ");
 
+            updateUI(message);
+        }
+    };
+
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -41,6 +60,16 @@ public class MainActivity extends AppCompatActivity {
         initializeViews();
         setupButtonListeners();
         setupNavController();
+
+
+        //receiver notif stuff
+        IntentFilter filter = new IntentFilter("com.example.scanpal.MESSAGE_RECEIVED");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Log.d("msg", "build good");
+            registerReceiver(receiver, filter,Context.RECEIVER_EXPORTED);
+        }
+
 
         // In case user has been deleted on firebase.
         new UserController(this).getUserFirebaseOnly(
@@ -60,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     // Sets up navigation
     private void setupNavController() {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
@@ -67,11 +97,37 @@ public class MainActivity extends AppCompatActivity {
         assert navHostFragment != null;
         navController = navHostFragment.getNavController();
 
-        UserController userController = new UserController( this);
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            buttonChat.setColorFilter(getResources().getColor(R.color.default_icon_tint));
+            buttonProfile.setColorFilter(getResources().getColor(R.color.default_icon_tint));
+            buttonYourEvents.setColorFilter(getResources().getColor(R.color.default_icon_tint));
+            buttonHomepage.setColorFilter(getResources().getColor(R.color.default_icon_tint));
+
+            if(buttonChatColorFlag == 0) {
+                buttonChat.setColorFilter(getResources().getColor(R.color.button_alert));//keep red
+                Log.d("msg", "Recreating main assets");
+
+            }else {
+                buttonChat.setColorFilter(getResources().getColor(R.color.default_icon_tint));//keep red
+            }
+
+
+            if (destination.getId() == R.id.notificationsFragment) {
+                buttonChatColorFlag = -1;
+                buttonChat.setColorFilter(getResources().getColor(R.color.button_default));
+            } else if (destination.getId() == R.id.profile_fragment) {
+                buttonProfile.setColorFilter(getResources().getColor(R.color.button_default));
+            } else if (destination.getId() == R.id.yourEvents) {
+                buttonYourEvents.setColorFilter(getResources().getColor(R.color.button_default));
+            } else if (destination.getId() == R.id.eventsPage) {
+                buttonHomepage.setColorFilter(getResources().getColor(R.color.button_default));
+            }
+        });
+
+        UserController userController = new UserController(this);
         if (userController.isUserLoggedIn()) {
             setNavbarVisibility(true);
             navController.navigate(R.id.eventsPage);
-            // Make navbar visible after user is confirmed to be logged in// Now that user is logged in, set up listeners.
         } else {
             navController.navigate(R.id.signupFragment);
             setNavbarVisibility(false);
@@ -101,33 +157,34 @@ public class MainActivity extends AppCompatActivity {
         // Initialize QR Code Scanner and set up scan button.
         qrCodeScanner = registerForActivityResult(new ScanContract(), result -> {
             if (result.getContents() != null) {
-                UserController userController = new UserController( this);
+                UserController userController = new UserController(this);
                 String username = userController.fetchStoredUsername();
-                qrScannerController.handleResult(result.getContents(), username);
-            } else {
-                Toast.makeText(MainActivity.this, "Invalid QR Code", Toast.LENGTH_SHORT).show();
+                qrScannerController.handleResult(result.getContents(), username, new QrScanResultCallback() {
+                    @Override
+                    public void onResult(String eventID) {
+                        if (eventID != null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putString("event_id", eventID);
+                            navController.navigate(R.id.eventDetailsPage, bundle);  // pass id to event details fragment to display event scanned
+                        }
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                    }
+                });
             }
         });
 
-        buttonScan.setOnClickListener(v -> {
-            qrCodeScanner.launch(QrScannerController.getOptions());
-        });
+        buttonScan.setOnClickListener(v -> qrCodeScanner.launch(QrScannerController.getOptions()));
 
-        buttonChat.setOnClickListener(v -> {
-            navController.navigate(R.id.notificationsFragment);
-        });
+        buttonChat.setOnClickListener(v -> navController.navigate(R.id.notificationsFragment));
 
-        buttonProfile.setOnClickListener(v -> {
-            navController.navigate(R.id.profile_fragment);
-        });
+        buttonProfile.setOnClickListener(v -> navController.navigate(R.id.profile_fragment));
 
-        buttonYourEvents.setOnClickListener(v -> {
-            navController.navigate(R.id.yourEvents);
-        });
+        buttonYourEvents.setOnClickListener(v -> navController.navigate(R.id.yourEvents));
 
-        buttonHomepage.setOnClickListener(v -> {
-            navController.navigate(R.id.eventsPage);
-        });
+        buttonHomepage.setOnClickListener(v -> navController.navigate(R.id.eventsPage));
     }
 
     public void setNavbarVisibility(boolean isVisible) {
@@ -140,4 +197,26 @@ public class MainActivity extends AppCompatActivity {
         if (appBar != null) appBar.setVisibility(visibility);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
+    }
+
+
+    /**
+     * Method accordingly updates the UI based on Received cloud messages
+     * @param message the message that was sent
+     */
+    private void updateUI(String message) {
+
+        if (buttonChat != null) {
+            Log.d("msg", "MAKE RED: " + "message.getNotification().getBody())");
+
+            buttonChatColorFlag = 0;
+            buttonChat.setColorFilter(getResources().getColor(R.color.button_alert));
+
+        }
+
+    }
 }
