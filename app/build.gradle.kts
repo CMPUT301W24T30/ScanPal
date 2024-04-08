@@ -10,6 +10,9 @@ val localProperties = Properties().apply {
 val mapsApiKey = localProperties.getProperty("MAPS_API_KEY") ?: System.getenv("MAPS_API_KEY")
 ?: throw Exception("MAPS_API_KEY not found in local.properties or environment variables.")
 
+val firebaseApiKey = localProperties.getProperty("FIREBASE_API_KEY") ?: System.getenv("FIREBASE_API_KEY")
+?: throw Exception("FIREBASE_API_KEY not found in local.properties or environment variables.")
+
 
 plugins {
     id("com.android.application")
@@ -32,6 +35,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
+        buildConfigField("String", "FIREBASE_API_KEY", "\"$firebaseApiKey\"")
 
     }
 
