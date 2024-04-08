@@ -1,4 +1,4 @@
-package com.example.scanpal.ControllersTest;
+package com.example.scanpal;
 
 import android.graphics.Bitmap;
 import org.junit.Test;

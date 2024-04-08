@@ -1,4 +1,4 @@
-package com.example.scanpal.ModelsTest;
+package com.example.scanpal;
 
 import org.junit.Before;
 import org.junit.Test;

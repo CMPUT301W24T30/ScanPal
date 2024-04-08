@@ -1,4 +1,4 @@
-package com.example.scanpal.ModelsTest;
+package com.example.scanpal;
 
 import com.example.scanpal.Models.Administrator;
 import org.junit.Test;
