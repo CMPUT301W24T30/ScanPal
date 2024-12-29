@@ -13,7 +13,7 @@ ScanPal is not your average event management app. Offering a modern UI, unique u
 Download the Latest APK from [Releases](https://github.com/CMPUT301W24T30/ScanPal/releases) and install it on your Android device.
 
 ## Demo
-[![ScanPal Demo Video](https://github.com/CMPUT301W24T30/ScanPal/assets/69805659/f53a523d-fa8b-407c-9fe1-dba28051e76b)](https://www.youtube.com/watch?v=dmA5Nl-ztyk)
+Click the image below to watch the video demo
 <a href="https://www.youtube.com/watch?v=dmA5Nl-ztyk">
   <img src="https://github.com/CMPUT301W24T30/ScanPal/assets/69805659/f53a523d-fa8b-407c-9fe1-dba28051e76b" alt="ScanPal Demo Video">
 </a>
