@@ -14,7 +14,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/nav_graph" />
 
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
@@ -38,6 +37,7 @@
         app:layout_constraintEnd_toEndOf="@+id/app_bar"
         app:layout_constraintStart_toStartOf="@+id/app_bar"
         app:layout_constraintTop_toTopOf="@+id/app_bar"
+        app:layout_constraintVertical_bias="0"
         app:srcCompat="@drawable/camera_icon"
         app:tint="@color/white" />
 
@@ -52,8 +52,23 @@
         app:layout_constraintBottom_toBottomOf="@id/app_bar"
         app:layout_constraintStart_toEndOf="@+id/button_scan"
         app:layout_constraintTop_toTopOf="@+id/app_bar"
+        app:layout_constraintVertical_bias="0.15"
         app:srcCompat="@drawable/notification_icon"
         app:tint="#7f7f7f" />
+
+    <TextView
+        android:id="@+id/text_chat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-5dp"
+        android:alpha="0"
+        android:elevation="15dp"
+        android:text="Alerts"
+        android:textColor="#7f7f7f"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@id/button_chat"
+        app:layout_constraintStart_toStartOf="@id/button_chat"
+        app:layout_constraintTop_toBottomOf="@id/button_chat" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_profile"
@@ -66,8 +81,23 @@
         app:layout_constraintBottom_toBottomOf="@+id/app_bar"
         app:layout_constraintStart_toEndOf="@+id/button_chat"
         app:layout_constraintTop_toTopOf="@+id/app_bar"
+        app:layout_constraintVertical_bias="0.15"
         app:srcCompat="@drawable/profile_icon"
         app:tint="#7f7f7f" />
+
+    <TextView
+        android:id="@+id/text_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-5dp"
+        android:alpha="0"
+        android:elevation="15dp"
+        android:text="Profile"
+        android:textColor="#7f7f7f"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@id/button_profile"
+        app:layout_constraintStart_toStartOf="@id/button_profile"
+        app:layout_constraintTop_toBottomOf="@id/button_profile" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_your_events"
@@ -80,8 +110,23 @@
         app:layout_constraintBottom_toBottomOf="@id/app_bar"
         app:layout_constraintEnd_toStartOf="@+id/button_scan"
         app:layout_constraintTop_toTopOf="@+id/app_bar"
+        app:layout_constraintVertical_bias="0.15"
         app:srcCompat="@drawable/menu_fill"
         app:tint="#7f7f7f" />
+
+    <TextView
+        android:id="@+id/text_your_events"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-5dp"
+        android:alpha="0"
+        android:elevation="15dp"
+        android:text="Events"
+        android:textColor="#7f7f7f"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@id/button_your_events"
+        app:layout_constraintStart_toStartOf="@id/button_your_events"
+        app:layout_constraintTop_toBottomOf="@id/button_your_events" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_homepage"
@@ -94,7 +139,22 @@
         app:layout_constraintBottom_toBottomOf="@id/app_bar"
         app:layout_constraintEnd_toStartOf="@+id/button_your_events"
         app:layout_constraintTop_toTopOf="@+id/app_bar"
+        app:layout_constraintVertical_bias="0.15"
         app:srcCompat="@drawable/home_icon"
         app:tint="#7f7f7f" />
+
+    <TextView
+        android:id="@+id/text_homepage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-5dp"
+        android:alpha="0"
+        android:elevation="15dp"
+        android:text="Home"
+        android:textColor="#7f7f7f"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@id/button_homepage"
+        app:layout_constraintStart_toStartOf="@id/button_homepage"
+        app:layout_constraintTop_toBottomOf="@id/button_homepage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
