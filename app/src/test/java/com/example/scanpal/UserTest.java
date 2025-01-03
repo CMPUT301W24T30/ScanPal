@@ -47,8 +47,10 @@ public class UserTest {
 
     @Test
     public void createProfileImage_generatesCorrectUrl() {
-        String expectedUrl = "https://www.gravatar.com/avatar/johnDoe?s=400&d=monsterid&r=pg";
-        String actualUrl = user.createProfileImage("johnDoe");
+        String username = "johnDoe";
+        String hash = User.md5Hex(username.trim().toLowerCase());
+        String expectedUrl = "https://www.gravatar.com/avatar/" + hash + "?s=400&d=monsterid&r=pg";
+        String actualUrl = User.createProfileImage(username);
         assertEquals(expectedUrl, actualUrl);
     }
 }
