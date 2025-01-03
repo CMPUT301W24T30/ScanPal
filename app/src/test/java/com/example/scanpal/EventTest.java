@@ -1,12 +1,15 @@
 package com.example.scanpal;
 
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.example.scanpal.Models.Attendee;
 import com.example.scanpal.Models.Event;
 import com.example.scanpal.Models.User;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.ArrayList;
 
@@ -19,6 +22,7 @@ public class EventTest {
     public void setUp() {
         organizer = new User("organizerUsername", "OrganizerFirstName", "OrganizerLastName", "deviceToken");
         event = new Event(organizer, "EventName", "EventDescription");
+        event.setAnnouncementCount(0L);
     }
 
     @Test
@@ -114,9 +118,6 @@ public class EventTest {
         event.setAnnouncementCount(event.getAnnouncementCount() + 1);
         assertEquals("Announcement count should be incremented to 6", Long.valueOf(6L), event.getAnnouncementCount());
     }
-
-
-
 
 
 }
