@@ -3,6 +3,7 @@
 ScanPal is not your average event management app. Offering a modern UI, unique user experience, cloud functionality, and built-in QR scanning amongst other exciting features, ScanPal is the perfect companion to help you meet all your event management needs!
 
 ## 📚 Project Resources
+
 - **[ScanPal Youtube Demo](https://youtu.be/dmA5Nl-ztyk)**
 - **[ScanPal's Wiki](https://github.com/CMPUT301W24T30/ScanPal/wiki)**
 - **[ScanPal's UI Demo](https://github.com/CMPUT301W24T30/ScanPal/wiki/App-UI)**
@@ -13,7 +14,9 @@ ScanPal is not your average event management app. Offering a modern UI, unique u
 Download the Latest APK from [Releases](https://github.com/CMPUT301W24T30/ScanPal/releases) and install it on your Android device.
 
 ## Demo
-Click the image below to watch the video demo
+
+Click the image below to watch ScanPal in action! ⬇️⬇️⬇️
+
 <a href="https://www.youtube.com/watch?v=dmA5Nl-ztyk">
-  <img src="https://github.com/CMPUT301W24T30/ScanPal/assets/69805659/f53a523d-fa8b-407c-9fe1-dba28051e76b" alt="ScanPal Demo Video">
+<img src="https://github.com/CMPUT301W24T30/ScanPal/assets/69805659/f53a523d-fa8b-407c-9fe1-dba28051e76b" alt="ScanPal Demo Video">
 </a>
