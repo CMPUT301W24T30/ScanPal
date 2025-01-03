@@ -1,8 +1,9 @@
 <resources>
-    <!-- Base application theme. -->
+
     <style name="Base.Theme.ScanPal" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/background</item>
+        <item name="colorPrimaryDark">@color/background</item>
+        <item name="android:statusBarColor">@color/background</item>
     </style>
 
     <style name="Theme.ScanPal" parent="Base.Theme.ScanPal" />
