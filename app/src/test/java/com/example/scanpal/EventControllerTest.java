@@ -45,7 +45,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class EventControllerTest {
     @Mock
     private ImageController imageController;
