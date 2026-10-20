@@ -68,6 +68,8 @@ dependencies {
         implementation("com.google.protobuf:protobuf-javalite:3.25.8")
         implementation("org.apache.commons:commons-lang3:3.18.0")
         implementation("org.yaml:snakeyaml:1.33")
+        implementation("com.squareup.okio:okio:1.17.6")
+        testImplementation("org.bouncycastle:bcprov-jdk18on:1.85")
     }
 
     implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
