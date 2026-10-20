@@ -1,4 +1,4 @@
-const functions = require("firebase-functions");
+const functions = require("firebase-functions/v1");
 const admin = require("firebase-admin");
 
 /* eslint-disable */
@@ -58,7 +58,7 @@ exports.sendNotificationOnAnnouncement = functions.firestore
                 };
 
                 try {
-                  admin.messaging().sendToTopic(eventID, payload1);
+                  await admin.messaging().send({...payload1, topic: eventID});
                   console.log("\n Announcement sent successfully Topic: " + eventID);
 
                 } catch(error) {
@@ -155,7 +155,7 @@ exports.sendNotificationOnAnnouncement = functions.firestore
               };
                   
                 try {
-                  admin.messaging().sendToTopic( eventRef.id + "org", payload1);
+                  await admin.messaging().send({...payload1, topic: eventRef.id + "org"});
                   console.log("\n Announcement sent successfully Topic: " + (eventRef.id + "org") );
 
                 } catch(error) {
