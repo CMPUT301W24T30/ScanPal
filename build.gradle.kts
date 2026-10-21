@@ -15,6 +15,7 @@ buildscript {
         constraints {
             add("classpath", "com.google.protobuf:protobuf-java:3.25.8")
             add("classpath", "commons-io:commons-io:2.14.0")
+            add("classpath", "org.apache.commons:commons-lang3:3.18.0")
             add("classpath", "org.apache.commons:commons-compress:1.26.2")
             add("classpath", "org.bitbucket.b_c:jose4j:0.9.6")
             add("classpath", "org.jdom:jdom2:2.0.6.1")
